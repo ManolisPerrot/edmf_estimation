@@ -90,7 +90,7 @@ dz_U_les = {}
 dz_V_les = {}
 for case in cases:
     file = 'GN_01.1.OC_01.000_copy.nc'
-    path= 'edmf/data/'+case+'/'
+    path= './data/'+case+'/'
     les = xr.open_dataset(path+file)
     LG_MEAN = xr.open_dataset(path+file,group ='/LES_budgets/Mean/Cartesian/Not_time_averaged/Not_normalized/cart')
     TH_les[case] = (LG_MEAN.MEAN_TH - 273.15).data.transpose() #transpose to have coordinates as level then time, 
