@@ -21,6 +21,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 from case_configs import case_params
 from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
+import subprocess
+
+#################Function to check edmf_ocean versions##########################
+def get_expected_version():
+  with open("./fetch_and_compile_edmf_ocean.sh", "r") as fp:
+    lines = fp.readlines()
+    for line in lines:
+      if line.startswith("VERSION"):
+        version = line.split("=")[1].replace('\n', '')
+        return version
+  return "unknown"
+
+def get_current_version():
+  return subprocess.getoutput("cd ./edmf_ocean && git rev-parse HEAD")
+
+def check_edmf_ocean_version():
+  expected_version = get_expected_version()
+  current_version = get_current_version()
+  if expected_version != current_version:
+     raise Exception(f"Version conflict in edmf_ocean: Need to run ./fetch_and_compile_edmf_ocean.sh, expected version={expected_version}, current version={current_version}")
+
+check_edmf_ocean_version()
+###########################################
 
 # ===================================Choose cases/datasets========================================
 
