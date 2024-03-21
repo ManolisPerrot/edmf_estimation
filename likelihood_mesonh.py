@@ -40,7 +40,7 @@ def check_edmf_ocean_version():
   expected_version = get_expected_version()
   current_version = get_current_version()
   if expected_version != current_version:
-     raise Exception(f"Version conflict in edmf_ocean: Need to run ./fetch_and_compile_edmf_ocean.sh, expected version={expected_version}, current version={current_version}")
+     raise Exception(f"Version conflict for edmf_ocean: you need to run ./fetch_and_compile_edmf_ocean.sh, expected version={expected_version}, current version={current_version}")
 
 check_edmf_ocean_version()
 ###########################################
