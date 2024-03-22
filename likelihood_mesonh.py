@@ -9,7 +9,7 @@
 ###########################################
 
 import sys  # to put the SCM into the PYTHONPATH
-sys.path.append('edmf/library/F2PY')
+sys.path.append('edmf_ocean/library/F2PY')
 from sys import exit
 import time as TIME
 import xarray as xr
@@ -234,13 +234,14 @@ def likelihood_mesonh(
 
     likelihoods=np.zeros(len(cases))
     # parrallelized for-loop
-    if __name__ == '__main__':
-        with Pool() as p:
-            likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    
+    with Pool() as p:
+        likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
 
     # total likelihood is the product of likelihood of each case
     return np.prod(likelihoods)
 
 #### run the function
-out=likelihood_mesonh()
-print('likelihood is ',out)
+if __name__ == '__main__':
+  out=likelihood_mesonh()
+  print('likelihood is ',out)
