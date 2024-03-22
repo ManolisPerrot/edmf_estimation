@@ -9,4 +9,8 @@
 *.blg
 *.xml
 *.pdf
-*.zip__pycache__/
+*.zip
+*.o
+*.mod
+*.pyc
+__pycache__

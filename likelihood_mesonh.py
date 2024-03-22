@@ -21,6 +21,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 from case_configs import case_params
 from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
+import subprocess
+
+#################Function to check edmf_ocean versions##########################
+def get_expected_version():
+  with open("./fetch_and_compile_edmf_ocean.sh", "r") as fp:
+    lines = fp.readlines()
+    for line in lines:
+      if line.startswith("VERSION"):
+        version = line.split("=")[1].replace('\n', '')
+        return version
+  return "unknown"
+
+def get_current_version():
+  return subprocess.getoutput("cd ./edmf_ocean && git rev-parse HEAD")
+
+def check_edmf_ocean_version():
+  expected_version = get_expected_version()
+  current_version = get_current_version()
+  if expected_version != current_version:
+     raise Exception(f"Version conflict in edmf_ocean: Need to run ./fetch_and_compile_edmf_ocean.sh, expected version={expected_version}, current version={current_version}")
+
+check_edmf_ocean_version()
+###########################################
 
 # ===================================Choose cases/datasets========================================
 
@@ -67,7 +90,7 @@ dz_U_les = {}
 dz_V_les = {}
 for case in cases:
     file = 'GN_01.1.OC_01.000_copy.nc'
-    path= 'edmf/data/'+case+'/'
+    path= './data/'+case+'/'
     les = xr.open_dataset(path+file)
     LG_MEAN = xr.open_dataset(path+file,group ='/LES_budgets/Mean/Cartesian/Not_time_averaged/Not_normalized/cart')
     TH_les[case] = (LG_MEAN.MEAN_TH - 273.15).data.transpose() #transpose to have coordinates as level then time, 
@@ -124,7 +147,8 @@ common_params = {
     'up_c': 0.5,
     'vp_c': 0.5,
     'bc_ap': 0.2,    
-    'delta_bkg': 0.005,  
+    'delta_bkg': 0.005,
+    'wp0'    : -1.e-08,
     'output_filename': 'run'
 }
 
@@ -134,25 +158,27 @@ def likelihood_mesonh(
     Cdet      = 1.99,
     wp_a      = 1.,
     wp_b      = 1.25,
-    wp_bp     = 0.003,
-    up_c      = 0.5,
+    wp_bp     = 0.003*250,
+    up_c      = 0.5, #we take up_c=vp_c
     bc_ap     = 0.2,
-    delta_bkg = 0.005):
+    delta_bkg = 0.005*250,
+    wp0     = -1.e-08):
 
     # Load the case specific parameters
     # ATTENTION, any parameter entered in case params will 
     # OVERWRITE common params. Double-check scm_configs before running
 
     params_to_estimate = {
-                        'Cent': Cent,
-                        'Cdet': Cdet,
-                        'wp_a': wp_a,
-                        'wp_b': wp_b,
-                        'wp_bp': wp_bp,
-                        'up_c': up_c,
-                        'vp_c': up_c,
-                        'bc_ap': bc_ap,
-                        'delta_bkg': delta_bkg}
+                        'Cent': Cent, #0=< Cent =< 1
+                        'Cdet': Cdet, #1=< Cdet =< 2?
+                        'wp_a': wp_a, #0=< wp_a =< 1
+                        'wp_b': wp_b, #0=< wp_b =< 1
+                        'wp_bp': wp_bp,#0=< wp_bp =< 10?
+                        'up_c': up_c, #0=< up_c < 1
+                        'vp_c': up_c, 
+                        'bc_ap': bc_ap, #0=< bc_ap =< 1
+                        'delta_bkg': delta_bkg, #0=< delta_bkg =< 10?
+                        'wp0' : wp0} # wp0 < -0.1?  /!\ negative !!
 
     scm = {}
 
@@ -215,4 +241,6 @@ def likelihood_mesonh(
     # total likelihood is the product of likelihood of each case
     return np.prod(likelihoods)
 
-likelihood_mesonh()
+#### run the function
+out=likelihood_mesonh()
+print('likelihood is ',out)
