@@ -47,14 +47,14 @@ check_edmf_ocean_version()
 
 # ===================================Choose cases/datasets========================================
 
-#cases = ['FC500', 'W005_C500_NO_COR']
-cases = [ 'W005_C500_NO_COR']
+cases = ['FC500', 'W005_C500_NO_COR']
+#cases = [ 'W005_C500_NO_COR']
 
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
-model_error_t,data_error_t=0.2,0.2 #°C
-model_error_u,data_error_u=1.0,1.0 #ms-1 
-model_error_v,data_error_v=1.0,1.0 #ms-1
+model_error_t,data_error_t=0.01,0.01 #°C
+model_error_u,data_error_u=0.01,0.01 #ms-1 
+model_error_v,data_error_v=0.01,0.01 #ms-1
 # importance of each field in the cost function (non-dimensional)
 weight_t=1.
 weight_u=1.
@@ -65,20 +65,20 @@ beta_u = weight_u / (model_error_u**2 + data_error_u**2)
 beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
 
 # use H1 Sobolev norm
-sobolev=False
+sobolev=True
 #If sobolev=True, the following hyperparameters are
 # dimensional error tolerance for H1 norm
-model_error_dz_t,data_error_dz_t=0.001,0.001 #°Cm-1
-model_error_dz_u,data_error_dz_u=0.001,0.001 #s-1
-model_error_dz_v,data_error_dz_v=0.001,0.001 #s-1
+model_error_dz_t,data_error_dz_t=0.005,0.005 #°Cm-1
+model_error_dz_u,data_error_dz_u=0.005,0.005 #s-1
+model_error_dz_v,data_error_dz_v=0.005,0.005 #s-1
 # importance of each field in the cost function (non-dimensional)
 weight_dzt=1.
 weight_dzu=1.
 weight_dzv=1.
 #TODO find the form of beta for H1
-beta_t_h1 = 1.
-beta_u_h1 = 1.
-beta_v_h1 = 1.
+beta_t_h1 = weight_dzt / (model_error_dz_t**2 + data_error_dz_t**2) 
+beta_u_h1 = weight_dzu / (model_error_dz_u**2 + data_error_dz_u**2) 
+beta_v_h1 = weight_dzv / (model_error_dz_v**2 + data_error_dz_v**2) 
 # ===================================Load LES========================================
 TH_les = {}
 U_les  = {}
@@ -196,10 +196,10 @@ def likelihood_mesonh(
         
         #interpolate scm output on LES #TODO do the converse to reduce computation cost?
         TH_scm = scm[case].t_history
-        # plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
-        # plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
-        # plt.legend()
-        # plt.show()
+        plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
+        plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
+        plt.legend()
+        plt.show()
         U_scm = scm[case].u_history
         V_scm = scm[case].v_history
         z_r_scm = scm[case].z_r
@@ -241,15 +241,16 @@ def likelihood_mesonh(
     likelihoods=np.zeros(len(cases))
     # parrallelized for-loop
     
-    # with Pool() as p:
-    #     likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
-    like1 = likelihood_of_one_case(0)
-    #like2 = likelihood_of_one_case(1)
+    with Pool() as p:
+        likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    #like1 = likelihood_of_one_case(0)
+    ##like2 = likelihood_of_one_case(1)
 
     # total likelihood is the product of likelihood of each case
-    return like1 
-
+    #return like1 
+    return np.prod(likelihoods)
 #### run the function
 if __name__ == '__main__':
-  out=likelihood_mesonh()
+  out=likelihood_mesonh(Cent=0.99)
+  print('sobolev norm ?', sobolev)
   print('likelihood is ',out)
