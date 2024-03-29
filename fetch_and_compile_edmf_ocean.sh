@@ -1,12 +1,16 @@
 #!/bin/bash
 # this script fetches and compiles edmf_ocean at a manually specified version.
 # to see what is the latest version, go to https://github.com/ManolisPerrot/edmf_ocean.git
-# DO NOT modifiy the library edmf_ocean
-# Python functions are in likelihood_mesonh to check that versions are compatible
+# /!\ DO NOT modify the library edmf_ocean, since it will cause conflicts with the latest version 
+# in the edmf_ocean repo /!\
+#
+# Additionally, some functions in likelihood_mesonh ensure that versions of .so
+# libraries are compatible with the version below.
 
 set -e
 set -x
 
+# enter here the version you want to utilize, based on git hash
 VERSION=7784a84ba69401834a0860661009bdff18dcdca8
 
 if test -d edmf_ocean; then
