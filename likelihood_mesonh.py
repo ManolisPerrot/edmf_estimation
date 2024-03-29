@@ -47,24 +47,25 @@ check_edmf_ocean_version()
 
 # ===================================Choose cases/datasets========================================
 
-cases = ['FC500', 'W005_C500_NO_COR']
+#cases = ['FC500', 'W005_C500_NO_COR']
+cases = [ 'W005_C500_NO_COR']
 
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
-model_error_t,data_error_t=0.001,0.001 #°C
-model_error_u,data_error_u=0.001,0.001 #ms-1 
-model_error_v,data_error_v=0.001,0.001 #ms-1
+model_error_t,data_error_t=0.2,0.2 #°C
+model_error_u,data_error_u=1.0,1.0 #ms-1 
+model_error_v,data_error_v=1.0,1.0 #ms-1
 # importance of each field in the cost function (non-dimensional)
 weight_t=1.
 weight_u=1.
 weight_v=1.
 # Bayesian beta hyperparameter
-beta_t = weight_t * (model_error_t**2 + data_error_t**2) 
-beta_u = weight_u * (model_error_u**2 + data_error_u**2) 
-beta_v = weight_v * (model_error_v**2 + data_error_v**2) 
+beta_t = weight_t / (model_error_t**2 + data_error_t**2) 
+beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
+beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
 
 # use H1 Sobolev norm
-sobolev=True
+sobolev=False
 #If sobolev=True, the following hyperparameters are
 # dimensional error tolerance for H1 norm
 model_error_dz_t,data_error_dz_t=0.001,0.001 #°Cm-1
@@ -133,7 +134,7 @@ common_params = {
     'mass_flux_dyn': True,
     'mass_flux_tke': True,
     'mass_flux_tke_trplCorr': True,
-    'mass_flux_small_ap': False,
+    'mass_flux_small_ap': True,
     'lin_eos': True,
     'extrap_ak_surf': True,
     'tke_sfc_dirichlet': False,
@@ -157,11 +158,11 @@ def likelihood_mesonh(
     Cent      = 0.99,
     Cdet      = 1.99,
     wp_a      = 1.,
-    wp_b      = 1.25,
-    wp_bp     = 0.003*250,
+    wp_b      = 1.0,
+    wp_bp     = 0.005*250,
     up_c      = 0.5, #we take up_c=vp_c
     bc_ap     = 0.2,
-    delta_bkg = 0.005*250,
+    delta_bkg = 0.0025*250,
     wp0     = -1.e-08):
 
     # Load the case specific parameters
@@ -188,12 +189,17 @@ def likelihood_mesonh(
         params = common_params.copy()  # Create a copy of common_params
         params.update(case_params[case])  # Update with the specific case hyperparameters in case_params[case]
         params.update(params_to_estimate) # Update with the parameters to estimate 
+        print(params)
         scm[case] = SCM(**params)
         scm[case].run_direct()            # Run the SCM
-        print(case+": zinv =", scm[case].zinv)
+        # print(case+": zinv =", scm[case].zinv)
         
         #interpolate scm output on LES #TODO do the converse to reduce computation cost?
         TH_scm = scm[case].t_history
+        # plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
+        # plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
+        # plt.legend()
+        # plt.show()
         U_scm = scm[case].u_history
         V_scm = scm[case].v_history
         z_r_scm = scm[case].z_r
@@ -214,9 +220,9 @@ def likelihood_mesonh(
         #trapz is a trapezoidal integral 
 
         metric_t = np.trapz( np.trapz( (TH_scm_int - TH_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-
+        print("metric_t", metric_t)
         metric_u = np.trapz( np.trapz( (U_scm_int - U_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-
+        print("metric_u", metric_u)
         metric_v = np.trapz( np.trapz( (V_scm_int - V_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
 
         likelihood = np.exp(-beta_t*metric_t - beta_u*metric_u - beta_v*metric_v)
@@ -235,11 +241,13 @@ def likelihood_mesonh(
     likelihoods=np.zeros(len(cases))
     # parrallelized for-loop
     
-    with Pool() as p:
-        likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    # with Pool() as p:
+    #     likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    like1 = likelihood_of_one_case(0)
+    #like2 = likelihood_of_one_case(1)
 
     # total likelihood is the product of likelihood of each case
-    return np.prod(likelihoods)
+    return like1 
 
 #### run the function
 if __name__ == '__main__':
