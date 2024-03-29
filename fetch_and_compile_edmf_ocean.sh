@@ -7,7 +7,7 @@
 set -e
 set -x
 
-VERSION=23c8fef893f2e7dc12a482904858bcc0c2bb463d
+VERSION=7784a84ba69401834a0860661009bdff18dcdca8
 
 if test -d edmf_ocean; then
     cd edmf_ocean
