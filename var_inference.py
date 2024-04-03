@@ -19,7 +19,7 @@ jl.seval("using Hypatia")
 #from julia import Main
 
 ## Determine parameter ranges
-likelihood = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
+likelihood  = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
 likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], wp_a=x[1], wp_b=x[2], up_c=x[3], bc_ap=x[4])
 
 
@@ -27,8 +27,8 @@ likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], wp_a=x[1], wp_b=x[2], up_c=
 jl.seval("""
 # L = [0.1, 1.1,  0.1,  0.1,  210*0.005,   0.1,  0.1,    210*0.0025] # lower bounds of parameters
 # R = [0.9, 1.9,  0.9,  0.9,  390*0.005,   0.9,   0.9,   390*0.0025] # upper bounds of parameters
-L = [0.0, 0, 0, 0] # lower bounds of parameters
-R = [1.0, 1, 0.9, 0.3] # upper bounds of parameters
+L = [0.0, 0, 0, 0, 0] # lower bounds of parameters
+R = [1.0, 1, 1, 0.9, 0.3] # upper bounds of parameters
 N = length(L)
 reference_map = SMT.ScalingReference{N}(L, R)
 model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=50)
@@ -43,12 +43,36 @@ sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func2, model, 4, :Chi2,
                         reference_map; trace=true,
                         ϵ=1e-6, λ_2=0.0, λ_1=0.0,
                         algebraic_base=2.0,
-                        N_sample=100,
+                        N_sample=10, #at least 2000
                         threading=false,  # threading can not be used with pyobject function
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
+#TODO: save output in a file 
+
 ## start generating samples or etc.
-from julia import Base
-Base.rand(sra_sampler, 10)
+from juliacall import Base
+import numpy as np
+
+sample = Base.rand(sra_sampler, 100)
+
+jl.seval("""Pkg.add("StatsPlots")""")
+jl.seval("using StatsPlots")
+jl.seval("cornerplot(sample)")
+
+jl.cornerplot(sample)
+
+#TODO: j'ai l'impression qu'on remet une erreur si on doit resampler puis recalculer les stat à partir du sample ?
+
+# jl.seval("""Pkg.add("Distributions")""")
+
+# jl.seval("using Distributions")
+
+# jl.seval("pdf(sra_sampler,[0.,0.,0.,0.])")
+
+# pdf_func = jl.seval("f(x)=pdf(sra_sampler,x)")
+
+# pdf_func([0.,0.,0.,0.])
+
+sample_py = np.array(sample)
