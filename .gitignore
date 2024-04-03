@@ -16,3 +16,5 @@
 __pycache__
 makefile
 temporary.ipynb
+data
+*.cpython-311.pyc
