@@ -19,36 +19,14 @@ from scm_class import SCM
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 import numpy as np
-from case_configs import case_params
+from case_configs import case_params, default_params
 from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
 import subprocess
-
-#################Function to check edmf_ocean versions##########################
-def get_expected_version():
-  with open("./fetch_and_compile_edmf_ocean.sh", "r") as fp:
-    lines = fp.readlines()
-    for line in lines:
-      if line.startswith("VERSION"):
-        version = line.split("=")[1].replace('\n', '')
-        return version
-  return "unknown"
-
-def get_current_version():
-  return subprocess.getoutput("cd ./edmf_ocean && git rev-parse HEAD")
-
-def check_edmf_ocean_version():
-  expected_version = get_expected_version()
-  current_version = get_current_version()
-  if expected_version != current_version:
-     raise Exception(f"Version conflict for edmf_ocean: you need to run ./fetch_and_compile_edmf_ocean.sh, expected version={expected_version}, current version={current_version}")
-
+from test_version_edmf_ocean import check_edmf_ocean_version
 check_edmf_ocean_version()
-###########################################
+from interpolate_LES_on_SCM_grids import regrid_and_save
 
-# ===================================Choose cases/datasets========================================
 
-cases = ['FC500', 'W005_C500_NO_COR']
-#cases = [ 'W005_C500_NO_COR']
 
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
@@ -79,7 +57,16 @@ weight_dzv=1.
 beta_t_h1 = weight_dzt / (model_error_dz_t**2 + data_error_dz_t**2) 
 beta_u_h1 = weight_dzu / (model_error_dz_u**2 + data_error_dz_u**2) 
 beta_v_h1 = weight_dzv / (model_error_dz_v**2 + data_error_dz_v**2) 
+
+
+# ===================================Choose cases/datasets========================================
+cases = ['FC500', 'W005_C500_NO_COR']
+
+# ===================================Interpolate LES on SCM grid========================================
+regrid_and_save(cases=cases)
+
 # ===================================Load LES========================================
+
 TH_les = {}
 U_les  = {}
 V_les  = {}
@@ -107,9 +94,11 @@ for case in cases:
         dz_U_les [case] = (np.divide( ((U_les[case][1:,:]-U_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
         dz_V_les [case] = (np.divide( ((V_les[case][1:,:]-V_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
 
+
+
 # ====================================Define configurations=======================
 # Define the common parameters (attention some of them will be overwritten by case_configurations.py):
-common_params = {
+default_params = {
     'nz': 100,
     'dt': 50.,
     'h0': 2000.,
@@ -186,20 +175,30 @@ def likelihood_mesonh(
     def likelihood_of_one_case(case_index):
         case=cases[case_index]
         # ====================================Run the SCM cases=======================================
-        params = common_params.copy()  # Create a copy of common_params
+        params = default_params.copy()  # Create a copy of default_params
         params.update(case_params[case])  # Update with the specific case hyperparameters in case_params[case]
         params.update(params_to_estimate) # Update with the parameters to estimate 
-        print(params)
+        #print(params)
+        print(          'Cent', Cent, #0=< Cent =< 1
+                        'Cdet', Cdet, #1=< Cdet =< 2?
+                        'wp_a', wp_a, #0=< wp_a =< 1
+                        'wp_b', wp_b, #0=< wp_b =< 1
+                        'wp_bp', wp_bp,#0=< wp_bp =< 10?
+                        'up_c', up_c, #0=< up_c < 1
+                        'vp_c', up_c, 
+                        'bc_ap', bc_ap, #0=< bc_ap =< 1
+                        'delta_bkg', delta_bkg, #0=< delta_bkg =< 10?
+                        'wp0', wp0)
         scm[case] = SCM(**params)
         scm[case].run_direct()            # Run the SCM
         # print(case+": zinv =", scm[case].zinv)
         
         #interpolate scm output on LES #TODO do the converse to reduce computation cost?
         TH_scm = scm[case].t_history
-        plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
-        plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
-        plt.legend()
-        plt.show()
+        # plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
+        # plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
+        # plt.legend()
+        # plt.show()
         U_scm = scm[case].u_history
         V_scm = scm[case].v_history
         z_r_scm = scm[case].z_r
@@ -220,9 +219,9 @@ def likelihood_mesonh(
         #trapz is a trapezoidal integral 
 
         metric_t = np.trapz( np.trapz( (TH_scm_int - TH_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        print("metric_t", metric_t)
+        #print("metric_t", metric_t)
         metric_u = np.trapz( np.trapz( (U_scm_int - U_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        print("metric_u", metric_u)
+        #print("metric_u", metric_u)
         metric_v = np.trapz( np.trapz( (V_scm_int - V_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
 
         likelihood = np.exp(-beta_t*metric_t - beta_u*metric_u - beta_v*metric_v)
@@ -248,9 +247,11 @@ def likelihood_mesonh(
 
     # total likelihood is the product of likelihood of each case
     #return like1 
+    print('likelihood is', np.prod(likelihoods))
     return np.prod(likelihoods)
+
 #### run the function
 if __name__ == '__main__':
-  out=likelihood_mesonh(Cent=0.99)
+  out=likelihood_mesonh()
   print('sobolev norm ?', sobolev)
   print('likelihood is ',out)
