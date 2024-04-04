@@ -51,7 +51,7 @@ def interpolate_les_on_scm(X_les, z_les, z_scm):
     X_les_int_filtered = X_les_int[valid_indices]
     z_scm_filtered = z_scm[valid_indices] 
 
-    return X_les_int_filtered, z_scm_filtered
+    return X_les_int_filtered, z_scm_filtered, valid_indices
 
 #===========================================================================================
 default_cases=[key for key in case_params]
@@ -89,13 +89,15 @@ def regrid_and_save(cases=default_cases):
           z_r_scm, z_w_scm, grid_params = get_SCM_grid(case)
           print('Interpolate LES on SCM with grid spec', grid_params)
 
-          TH_les_int,z_r_scm_filtered = interpolate_les_on_scm(TH_les[case], z_r_les[case], z_r_scm )
-          U_les_int ,z_r_scm_filtered = interpolate_les_on_scm(U_les[case], z_r_les[case], z_r_scm )
-          V_les_int ,z_r_scm_filtered = interpolate_les_on_scm(V_les[case], z_r_les[case], z_r_scm )
+          TH_les_int,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(TH_les[case], z_r_les[case], z_r_scm )
+          U_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(U_les[case], z_r_les[case], z_r_scm )
+          V_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(V_les[case], z_r_les[case], z_r_scm )
           
-          dz_TH_les_int,z_w_scm_filtered = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
-          dz_U_les_int ,z_w_scm_filtered = interpolate_les_on_scm(dz_U_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
-          dz_V_les_int ,z_w_scm_filtered = interpolate_les_on_scm(dz_V_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
+
+  
+          dz_TH_les_int,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
+          dz_U_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_U_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
+          dz_V_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_V_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
 
           dsout = xr.Dataset( 
                   data_vars={     'TH_les':    (['time','z_r'], TH_les_int.T ),
@@ -103,11 +105,13 @@ def regrid_and_save(cases=default_cases):
                                   'V_les':     (['time','z_r'], V_les_int.T ), 
                                   'dz_TH_les': (['time','z_w'], dz_TH_les_int.T ),
                                   'dz_U_les':  (['time','z_w'], dz_U_les_int.T ),
-                                  'dz_V_les':  (['time','z_w'], dz_V_les_int.T ),
+                                  'dz_V_les':  (['time','z_w'], dz_V_les_int.T )
                         }, 
                   coords={        'z_r': z_r_scm_filtered,
                                   'z_w': z_w_scm_filtered,
-                                  'time': time[case]
+                                  'time': time[case],
+                                  'z_r_boolean_filter': z_r_boolean_filter,
+                                  'z_w_boolean_filter': z_w_boolean_filter
                           },
                   attrs={         'Description': 'LES interpolated on the SCM grid defined in case_configs',
                                   'Case': case,
@@ -118,3 +122,6 @@ def regrid_and_save(cases=default_cases):
           
           dsout.to_netcdf(path+case+'_interpolated_on_SCM.nc', mode='w', format="NETCDF4")
           print('Interpolated LES saved at', path+case+'_interpolated_on_SCM.nc' )
+
+if __name__ == '__main__':
+     regrid_and_save()
