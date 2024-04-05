@@ -90,6 +90,7 @@ case_params = {
         'T0': 2.,
         'N0': 1.5865490613891073e-08, #equals to f(60°)
         'SaltCst': 32.6,
+        'nbhours': 276,
         'lat0': 60.,
         'sustr': 0.,
         'svstr': 0.,
@@ -102,6 +103,7 @@ case_params = {
         'T0': 2.,
         'N0': 1.9620001275490499e-6,
         'SaltCst': 32.6,
+        'nbhours': 72,
         'lat0': 0.,
         'sustr': 0.05/1027,
         'svstr': 0.,
@@ -113,6 +115,7 @@ case_params = {
         'h0': 1000.,
         'T0': 2.,
         'N0': 1.9620001275490499e-6,
+        'nbhours': 72,
         'SaltCst': 32.6,
         'lat0': 0.,
         'sustr': 0.,
