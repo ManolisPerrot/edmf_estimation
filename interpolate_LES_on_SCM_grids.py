@@ -93,11 +93,11 @@ def regrid_and_save(cases=default_cases):
           U_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(U_les[case], z_r_les[case], z_r_scm )
           V_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(V_les[case], z_r_les[case], z_r_scm )
           
-
-  
-          dz_TH_les_int,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
-          dz_U_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_U_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
-          dz_V_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_V_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), z_w_scm )
+          # z_w_boolean filter is not z_w_scm 
+          # but the z_w that we would obtain computing dz_X_scm
+          dz_TH_les_int,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
+          dz_U_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_U_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
+          dz_V_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_V_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
 
           dsout = xr.Dataset( 
                   data_vars={     'TH_les':    (['time','z_r'], TH_les_int.T ),
