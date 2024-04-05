@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
 
 #!/usr/bin/env python
 # coding: utf-8
@@ -28,6 +26,7 @@ from interpolate_LES_on_SCM_grids import regrid_and_save
 
 
 
+
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
 model_error_t,data_error_t=0.01,0.01 #°C
@@ -43,7 +42,7 @@ beta_u = weight_u / (model_error_u**2 + data_error_u**2)
 beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
 
 # use H1 Sobolev norm
-sobolev=True
+sobolev=False
 #If sobolev=True, the following hyperparameters are
 # dimensional error tolerance for H1 norm
 model_error_dz_t,data_error_dz_t=0.005,0.005 #°Cm-1
@@ -57,9 +56,8 @@ weight_dzv=1.
 beta_t_h1 = weight_dzt / (model_error_dz_t**2 + data_error_dz_t**2) 
 beta_u_h1 = weight_dzu / (model_error_dz_u**2 + data_error_dz_u**2) 
 beta_v_h1 = weight_dzv / (model_error_dz_v**2 + data_error_dz_v**2) 
-
-
 # ===================================Choose cases/datasets========================================
+#cases = ['FC500', 'W005_C500_NO_COR','WANG1_FR']
 cases = ['FC500', 'W005_C500_NO_COR']
 
 # ===================================Interpolate LES on SCM grid========================================
@@ -71,77 +69,38 @@ TH_les = {}
 U_les  = {}
 V_les  = {}
 time = {}
-z_r_les = {}
-z_w_les = {}
+z_r = {}
+z_w = {}
+z_r_boolean_filter = {}
+z_w_boolean_filter = {}
 dz_TH_les= {}
 dz_U_les = {}
 dz_V_les = {}
 for case in cases:
-    file = 'GN_01.1.OC_01.000_copy.nc'
+    #------ Opening LES
     path= './data/'+case+'/'
-    les = xr.open_dataset(path+file)
-    LG_MEAN = xr.open_dataset(path+file,group ='/LES_budgets/Mean/Cartesian/Not_time_averaged/Not_normalized/cart')
-    TH_les[case] = (LG_MEAN.MEAN_TH - 273.15).data.transpose() #transpose to have coordinates as level then time, 
-                                                         #as in the SCM  
-    U_les[case]=LG_MEAN.MEAN_U.data.transpose()
-    V_les[case]=LG_MEAN.MEAN_V.data.transpose()
-    time_les = les.time_les 
+    les = xr.open_dataset(path+case+'_interpolated_on_SCM.nc')
+    print('opening', path+case+'_interpolated_on_SCM.nc')
+    
+    
+    TH_les[case] = les['TH_les'].data.transpose() #transpose to have coordinates as level then time,                                #as in the SCM  
+    U_les[case]=les['U_les'].data.transpose()
+    V_les[case]=les['U_les'].data.transpose()
+
+    dz_TH_les[case] = les['dz_TH_les'].data.transpose() #transpose to have coordinates as level then time,                                #as in the SCM  
+    dz_U_les[case]  = les['dz_U_les'].data.transpose()
+    dz_V_les[case]  = les['dz_U_les'].data.transpose()
+
+        #booleans that has been used to filter LES data
+    z_r_boolean_filter[case] = les['z_r_boolean_filter'].data
+    z_w_boolean_filter[case] = les['z_w_boolean_filter'].data
+
+    time_les = les.time
     time[case] = ((time_les - time_les[0]) / np.timedelta64(1, 'h')).data.astype(int) + 1 #numpy array of integer hours, starting at inital time + 1h
-    z_r_les[case] = (les.level_les - (les.level_les[0] + les.level_les[-1])).data #remap level_les on negative depth values
-    z_w_les[case] = (les['level_w'][1:] - (les.level_les[0] + les.level_les[-1])).data
-    if sobolev==True:
-        dz_TH_les[case] = (np.divide( ((TH_les[case][1:,:]-TH_les[case][0:-1,:])).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
-        dz_U_les [case] = (np.divide( ((U_les[case][1:,:]-U_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
-        dz_V_les [case] = (np.divide( ((V_les[case][1:,:]-V_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
-
-
-
-# ====================================Define configurations=======================
-# Define the common parameters (attention some of them will be overwritten by case_configurations.py):
-default_params = {
-    'nz': 100,
-    'dt': 50.,
-    'h0': 2000.,
-    'thetas': 6.5,
-    'hc': 400,
-    'nbhours': 72,
-    'outfreq': 1,
-    'output_filename': "scm_output.nc",
-    'T0': 2.,
-    'N0': 1.9620001275490499e-6,
-    'Tcoef': 0.2048,
-    'SaltCst': 35.,
-    'lat0': 0.,
-    'sustr': 0.,
-    'svstr': 0.,
-    'stflx': -500.,
-    'srflx': 0.,
-    'ssflx': 0.,
-    'eddy_diff': True,
-    'evd': False,
-    'mass_flux_tra': True,
-    'mass_flux_dyn': True,
-    'mass_flux_tke': True,
-    'mass_flux_tke_trplCorr': True,
-    'mass_flux_small_ap': True,
-    'lin_eos': True,
-    'extrap_ak_surf': True,
-    'tke_sfc_dirichlet': False,
-    'eddy_diff_tke_const': 'NEMO',
-    'entr_scheme': 'R10',
-    'Cent': 0.99,
-    'Cdet': 1.99,       
-    'wp_a': 1.,
-    'wp_b': 1.25,      
-    'wp_bp': 0.003,    
-    'up_c': 0.5,
-    'vp_c': 0.5,
-    'bc_ap': 0.2,    
-    'delta_bkg': 0.005,
-    'wp0'    : -1.e-08,
-    'output_filename': 'run'
-}
-
+    
+    z_r[case] = les['z_r'].data
+    z_w[case] = les['z_w'].data
+    
 
 def likelihood_mesonh(    
     Cent      = 0.99,
@@ -152,11 +111,12 @@ def likelihood_mesonh(
     up_c      = 0.5, #we take up_c=vp_c
     bc_ap     = 0.2,
     delta_bkg = 0.0025*250,
-    wp0     = -1.e-08):
+    wp0     = -1.e-08,
+    sobolev=False):
 
     # Load the case specific parameters
     # ATTENTION, any parameter entered in case params will 
-    # OVERWRITE common params. Double-check scm_configs before running
+    # OVERWRITE default params. Double-check case_configs before running
 
     params_to_estimate = {
                         'Cent': Cent, #0=< Cent =< 1
@@ -191,67 +151,82 @@ def likelihood_mesonh(
                         'wp0', wp0)
         scm[case] = SCM(**params)
         scm[case].run_direct()            # Run the SCM
-        # print(case+": zinv =", scm[case].zinv)
+        print('run SCM case',case+": zinv =", scm[case].zinv)
         
-        #interpolate scm output on LES #TODO do the converse to reduce computation cost?
-        TH_scm = scm[case].t_history
-        # plt.plot(TH_scm[:,10], scm[case].z_r, label='scm')
-        # plt.plot(TH_les[case][:,10], z_r_les[case], label='les')
-        # plt.legend()
+        # filter scm outputs
+        TH_scm = scm[case].t_history[z_r_boolean_filter[case]]
+        U_scm  = scm[case].u_history[z_r_boolean_filter[case]]
+        V_scm  = scm[case].v_history[z_r_boolean_filter[case]]
+        
+        # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
+        # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
+        # plt.plot(U_scm[:,-1] ,z_r[case])
+        # plt.plot(U_scm[:,-20],z_r[case])
+        # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
+        # plt.plot(U_les[case][:,-20],z_r[case],'k+')
         # plt.show()
-        U_scm = scm[case].u_history
-        V_scm = scm[case].v_history
-        z_r_scm = scm[case].z_r
-        TH_scm_int = np.zeros( TH_les[case].shape )
-        TH_scm_int = interp1d(z_r_scm, TH_scm, kind = 'linear', axis=0)(z_r_les[case])
-        U_scm_int = np.zeros( U_les[case].shape )
-        U_scm_int = interp1d(z_r_scm, U_scm, kind = 'linear', axis=0)(z_r_les[case])
-        V_scm_int = np.zeros( V_les[case].shape )
-        V_scm_int = interp1d(z_r_scm, V_scm, kind = 'linear', axis=0)(z_r_les[case])
 
-        if sobolev==True:
-            dz_TH_scm_int = np.divide((TH_scm_int[1:,:]-TH_scm_int[0:-1,:]).T, z_r_scm[1:]-z_r_scm[0:-1] ).T
-            dz_U_scm_int =  np.divide((U_scm_int[1:,:]-U_scm_int[0:-1,:]  ).T, z_r_scm[1:]-z_r_scm[0:-1] ).T
-            dz_V_scm_int =  np.divide((V_scm_int[1:,:]-V_scm_int[0:-1,:]  ).T, z_r_scm[1:]-z_r_scm[0:-1] ).T
+        # print(TH_scm.shape)
+
 
         # compute the space-time L2 average,
         # divided by total depth and duration
         #trapz is a trapezoidal integral 
 
-        metric_t = np.trapz( np.trapz( (TH_scm_int - TH_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        #print("metric_t", metric_t)
-        metric_u = np.trapz( np.trapz( (U_scm_int - U_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        #print("metric_u", metric_u)
-        metric_v = np.trapz( np.trapz( (V_scm_int - V_les[case])**2, z_r_les[case], axis=0) , time[case]) * 1/(z_r_les[case][-1] - z_r_les[case][0]) * 1 / (time[case][-1] - time[case][0]) 
+        metric_t = np.trapz( np.trapz( (TH_scm - TH_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
+        print("metric_t", metric_t)
+        metric_u = np.trapz( np.trapz( (U_scm - U_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
+        print("metric_u", metric_u)
+        metric_v = np.trapz( np.trapz( (V_scm - V_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
+        print("metric_u", metric_u)
 
         likelihood = np.exp(-beta_t*metric_t - beta_u*metric_u - beta_v*metric_v)
+        print(likelihood)
+
 
         if sobolev==True:
-            metric_t_h1 = np.trapz( np.trapz( (dz_TH_scm_int - dz_TH_les[case])**2, z_w_les[case][1:-1], axis=0) , time[case]) * 1/(z_w_les[case][1:-1][-1] - z_w_les[case][1:-1][0]) * 1 / (time[case][-1] - time[case][0])  
+            dz_TH_scm_tempo = np.divide( (scm[case].t_history[1:] - scm[case].t_history[:-1]).T ,  scm[case].z_r[1:]-scm[case].z_r[:-1]  ).T
+            dz_U_scm_tempo  = np.divide( (scm[case].u_history[1:] - scm[case].u_history[:-1]).T ,  scm[case].z_r[1:]-scm[case].z_r[:-1]  ).T
+            dz_V_scm_tempo  = np.divide( (scm[case].v_history[1:] - scm[case].v_history[:-1]).T ,  scm[case].z_r[1:]-scm[case].z_r[:-1]  ).T
 
-            metric_u_h1 = np.trapz( np.trapz( (dz_U_scm_int - dz_U_les[case])**2, z_w_les[case][1:-1], axis=0) , time[case]) * 1/(z_w_les[case][1:-1][-1] - z_w_les[case][1:-1][0]) * 1 / (time[case][-1] - time[case][0])  
+            # print(z_w_boolean_filter[case].shape)
+            # print(dz_TH_scm_tempo.shape)
+
+            dz_TH_scm = dz_TH_scm_tempo[z_w_boolean_filter[case]]
+            dz_U_scm  = dz_U_scm_tempo[z_w_boolean_filter[case]]
+            dz_V_scm  = dz_V_scm_tempo[z_w_boolean_filter[case]]
+
+            # #print(dz_TH_scm - dz_TH_les[case].shape)
+            # print(dz_TH_scm.shape)
+            # print(z_w[case].shape)
+            # plt.plot(dz_TH_scm[:,-1],z_w[case])
+            # plt.plot(dz_TH_les[case][:,-1],z_w[case])
+            # plt.show()
             
-            metric_v_h1 = np.trapz( np.trapz( (dz_V_scm_int - dz_V_les[case])**2, z_w_les[case][1:-1], axis=0) , time[case]) * 1/(z_w_les[case][1:-1][-1] - z_w_les[case][1:-1][0]) * 1 / (time[case][-1] - time[case][0])  
+            #  compute metrics
+            # (z_w[case] is already filtered)
+            metric_t_h1 = np.trapz( np.trapz( (dz_TH_scm - dz_TH_les[case])**2, z_w[case], axis=0) , time[case]) * 1/(z_w[case][-1] - z_w[case][0]) * 1 / (time[case][-1] - time[case][0])  
+
+            metric_u_h1 = np.trapz( np.trapz( (dz_U_scm - dz_U_les[case])**2, z_w[case], axis=0) , time[case]) * 1/(z_w[case][-1] - z_w[case][0]) * 1 / (time[case][-1] - time[case][0])  
+            
+            metric_v_h1 = np.trapz( np.trapz( (dz_V_scm - dz_V_les[case])**2, z_w[case], axis=0) , time[case]) * 1/(z_w[case][-1] - z_w[case][0]) * 1 / (time[case][-1] - time[case][0])  
 
             likelihood = likelihood * np.exp(-beta_t_h1*metric_t_h1 - beta_u_h1*metric_u_h1 - beta_v_h1*metric_v_h1)
         
         return likelihood
 
     likelihoods=np.zeros(len(cases))
-    # parrallelized for-loop
     
+    # parrallelized for-loop
     with Pool() as p:
         likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
-    #like1 = likelihood_of_one_case(0)
-    ##like2 = likelihood_of_one_case(1)
 
     # total likelihood is the product of likelihood of each case
-    #return like1 
     print('likelihood is', np.prod(likelihoods))
     return np.prod(likelihoods)
 
-#### run the function
-if __name__ == '__main__':
-  out=likelihood_mesonh()
-  print('sobolev norm ?', sobolev)
-  print('likelihood is ',out)
+#likelihood_mesonh(sobolev=True)
+
+# if "__name__"=="__main__":
+#    likelihood_mesonh()
+#     # print(likelihood)
