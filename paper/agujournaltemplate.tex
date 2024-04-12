@@ -376,6 +376,19 @@ Compared to the original version exposed in \cite{perrotEnergeticallyConsistentE
 
 \section{Bayesian estimation method}
 
+\section{Sobol' Indices}
+
+Compute the variance/sensitivity of $Y=f(X)$ wrt to $X$. One can use the prior distribution. But one can also use the posterior distribution to sample $X$. Thus if $X_1$ has a small variance (meaning that we have learned from the data the distribution with good accuracy), posterior Sobol indices  assess if the model is sensitive or not to the remaining uncertainty (ie the variance) of the distribution of $X_1$. 
+\\
+\blu{This is NOT WORKING since inputs needs to be independent! }
+Alternatives:
+\begin{itemize}
+    \item Shapley indices: Clementine's book provide implementation in R. But the problem is that it will work for point-wise scalar product, not L2 scalar product
+    \item Global Sobol' indices ? 
+\end{itemize}
+
+To assess the quality of the estimation, we can also cross-validate with additional observations.
+
 \section{Numerical results}
 
 \section{Discussion}

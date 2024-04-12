@@ -6,10 +6,10 @@ from likelihood_mesonh import likelihood_mesonh
 import time
 
 ## install Julia packages
-jl.seval("using Pkg")
-jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
-jl.seval("""Pkg.add("ApproxFun")""")
-jl.seval("""Pkg.add("Hypatia")""")
+# jl.seval("using Pkg")
+# jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
+# jl.seval("""Pkg.add("ApproxFun")""")
+# jl.seval("""Pkg.add("Hypatia")""")
 
 ## import Julia packages
 jl.seval("using SequentialMeasureTransport")
@@ -31,7 +31,7 @@ L = [0.0, 0, 0, 0, 0] # lower bounds of parameters
 R = [1.0, 1, 1, 0.9, 0.3] # upper bounds of parameters
 N = length(L)
 reference_map = SMT.ScalingReference{N}(L, R)
-model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=50)
+model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=25) #50 default
 """)
 jl.likelihood = likelihood        # set the likelihood function in Julia
 jl.likelihood2 = likelihood2        # set the likelihood function in Julia
@@ -39,40 +39,69 @@ jl.seval("likelihood_func(x) = pyconvert(Float64, likelihood(x))")  # make pyobj
 jl.seval("likelihood_func2(x) = pyconvert(Float64, likelihood2(x))")  # make pyobject a function in Julia (not threadsafe!!)
 ## create the sampler
 sra_sampler = jl.seval("""
-sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func2, model, 4, :Chi2,
-                        reference_map; trace=true,
+sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func2, 
+                        model, 
+                        4,              #L, number of layers
+                        :Chi2,          #loss function to build approximation
+                        reference_map; 
+                        trace=true,
                         ϵ=1e-6, λ_2=0.0, λ_1=0.0,
-                        algebraic_base=2.0,
-                        N_sample=10, #at least 2000
+                        algebraic_base=2.0, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
+                        N_sample=10, #at least 2000 for 4 parameters
                         threading=false,  # threading can not be used with pyobject function
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
-#TODO: save output in a file 
+jl.seval("""SMT.save_sampler(sra_chi2, "smp.jld2" )""")
+# #TODO: save output in a file 
 
-## start generating samples or etc.
-from juliacall import Base
-import numpy as np
+# ## start generating samples or etc.
+# from juliacall import Base
+# import numpy as np
 
-sample = Base.rand(sra_sampler, 100)
+# sample = Base.rand(sra_sampler, 100)
 
-jl.seval("""Pkg.add("StatsPlots")""")
-jl.seval("using StatsPlots")
-jl.seval("cornerplot(sample)")
+# import os
+# import pickle
+# from juliacall import Main as jl
 
-jl.cornerplot(sample)
+# # Define the filename for the serialized sampler
+# sampler_file = "sampler.pkl"
 
-#TODO: j'ai l'impression qu'on remet une erreur si on doit resampler puis recalculer les stat à partir du sample ?
+# # Serialize the sra_sampler object and save it to a file
+# with open(sampler_file, "wb") as f:
+#     pickle.dump(sra_sampler, f)
 
-# jl.seval("""Pkg.add("Distributions")""")
+# # Move the serialized file to Julia's working directory
+# jl.eval("""using Serialization""")
+# jl.eval(f"""sampler_file = "{sampler_file}" """)
+# jl.eval("""sra_sampler = pickle.load(open(sampler_file, "rb"))""")
 
-# jl.seval("using Distributions")
 
-# jl.seval("pdf(sra_sampler,[0.,0.,0.,0.])")
 
-# pdf_func = jl.seval("f(x)=pdf(sra_sampler,x)")
 
-# pdf_func([0.,0.,0.,0.])
 
-sample_py = np.array(sample)
+
+
+
+
+# jl.seval("""Pkg.add("StatsPlots")""")
+# jl.seval("using StatsPlots")
+# jl.seval("cornerplot(sample)")
+
+# jl.cornerplot(sample)
+
+# #TODO: j'ai l'impression qu'on remet une erreur si on doit resampler puis recalculer les stat à partir du sample ?
+
+# # jl.seval("""Pkg.add("Distributions")""")
+
+# # jl.seval("using Distributions")
+
+# # jl.seval("pdf(sra_sampler,[0.,0.,0.,0.])")
+
+# # pdf_func = jl.seval("f(x)=pdf(sra_sampler,x)")
+
+# # pdf_func([0.,0.,0.,0.])
+
+# sample_py = np.array(sample)
