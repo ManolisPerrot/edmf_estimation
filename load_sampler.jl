@@ -13,5 +13,5 @@ sample
 
 using StatsPlots
 # hcat transforms a vector of vector to matrix
-cornerplot(hcat(sample...))
+cornerplot(hcat(sample...)')
 
