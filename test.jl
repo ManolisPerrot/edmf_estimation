@@ -1,14 +1,11 @@
-using Serialization
-using Random
+from juliacall import Main as jl
+import numpy as np
+jl.seval("""using SequentialMeasureTransport""")
+jl.seval("""import SequentialMeasureTransport as SMT""")
+jl.seval("""using Distributions""")
+jl.seval("""using PyCall""")
 
-# Load the serialized sampler from the file
-sampler_file = "sampler.jls"
-sra_sampler = deserialize(sampler_file)
 
-# Seed the default random number generator
-Random.seed!(1234)
-
-# Sample from the loaded sampler
-sample = rand(sra_sampler, 100)
-
-# Now you can use the sampled values as needed
+# Load sampler and sample
+jl.seval("""sampler = SMT.load_sampler("smp.jld2")""")
+jl.seval("""sample = rand(sampler, 100) #10 000 samples""")
