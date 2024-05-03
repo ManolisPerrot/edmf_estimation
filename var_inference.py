@@ -1,9 +1,13 @@
 #from julia.api import Julia
 from juliacall import Main as jl
 #jl = Julia(compiled_modules=False)
-
 from likelihood_mesonh import likelihood_mesonh
 import time
+
+#monitor duration of execution 
+start = time.time()
+
+
 
 ## install Julia packages
 # jl.seval("using Pkg")
@@ -19,23 +23,23 @@ jl.seval("using Hypatia")
 #from julia import Main
 
 ## Determine parameter ranges
-likelihood  = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
-likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], wp_a=x[1], wp_b=x[2], up_c=x[3], bc_ap=x[4])
+#likelihood  = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
+likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_bp=x[2], delta_bkg=x[3], wp_a=x[4])
 
 
 # create everything needed for the model
 jl.seval("""
 # L = [0.1, 1.1,  0.1,  0.1,  210*0.005,   0.1,  0.1,    210*0.0025] # lower bounds of parameters
 # R = [0.9, 1.9,  0.9,  0.9,  390*0.005,   0.9,   0.9,   390*0.0025] # upper bounds of parameters
-L = [0.0, 0, 0, 0, 0] # lower bounds of parameters
-R = [1.0, 1, 1, 0.9, 0.3] # upper bounds of parameters
+L = [0.0, 1, 300*0.0001, 300*0.0001, 0] # lower bounds of parameters
+R = [1.0, 2, 300*0.01  , 300*0.01  , 1] # upper bounds of parameters
 N = length(L)
 reference_map = SMT.ScalingReference{N}(L, R)
-model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=25) #50 default
+model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=50) #50 default
 """)
-jl.likelihood = likelihood        # set the likelihood function in Julia
+#jl.likelihood = likelihood        # set the likelihood function in Julia
 jl.likelihood2 = likelihood2        # set the likelihood function in Julia
-jl.seval("likelihood_func(x) = pyconvert(Float64, likelihood(x))")  # make pyobject a function in Julia (not threadsafe!!)
+#jl.seval("likelihood_func(x) = pyconvert(Float64, likelihood(x))")  # make pyobject a function in Julia (not threadsafe!!)
 jl.seval("likelihood_func2(x) = pyconvert(Float64, likelihood2(x))")  # make pyobject a function in Julia (not threadsafe!!)
 ## create the sampler
 sra_sampler = jl.seval("""
@@ -47,14 +51,17 @@ sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func2,
                         trace=true,
                         ϵ=1e-6, λ_2=0.0, λ_1=0.0,
                         algebraic_base=2.0, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
-                        N_sample=10, #at least 2000 for 4 parameters
+                        N_sample=5, #at least 2000 for 4 parameters
                         threading=false,  # threading can not be used with pyobject function
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
+#save the sampler
 jl.seval("""SMT.save_sampler(sra_chi2, "smp.jld2" )""")
-# #TODO: save output in a file 
+
+stop = time.time()
+print('duration of execution', stop-start)
 
 # ## start generating samples or etc.
 # from juliacall import Base
