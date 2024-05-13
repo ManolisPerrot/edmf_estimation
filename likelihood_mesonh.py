@@ -112,7 +112,9 @@ def likelihood_mesonh(
     bc_ap     = 0.2,
     delta_bkg = 0.0025*250,
     wp0     = -1.e-08,
-    sobolev=False):
+    sobolev=False,
+    nan_file='nan_parameters.txt'
+    ):
 
     # Load the case specific parameters
     # ATTENTION, any parameter entered in case params will 
@@ -222,8 +224,20 @@ def likelihood_mesonh(
         likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
 
     # total likelihood is the product of likelihood of each case
-    print('likelihood is', np.prod(likelihoods))
-    return np.prod(likelihoods)
+    tot_likelihood=np.prod(likelihoods)
+    print('likelihood is', tot_likelihood)
+    
+    if np.isnan(tot_likelihood):
+        #write parameters leading to Nan is a file
+        with open(nan_file, "a") as file:
+            file.write("\n")
+            for key, value in params_to_estimate.items():
+                file.write(f"{key}: {value}\n")
+            file.write("\n")
+        #fix estimation crash by putting 0. for NaN
+        return 0.
+    else:
+        return tot_likelihood
 
 #likelihood_mesonh(sobolev=True)
 
