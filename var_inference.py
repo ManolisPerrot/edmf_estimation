@@ -24,13 +24,15 @@ jl.seval("using Hypatia")
 
 ## Determine parameter ranges
 #likelihood  = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
-likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_bp=x[2], delta_bkg=x[3], wp_a=x[4],nan_file='nan_parameters_likelihood2_N2000_L4_phi50.txt')
-
+#likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_bp=x[2], delta_bkg=x[3], wp_a=x[4],nan_file='nan_parameters_likelihood2_N2000_L4_phi50.txt')
+likelihood3 = lambda x: likelihood_mesonh(Cent=x[0], delta_bkg=x[3], wp_a=x[4],nan_file='nan_parameters_likelihood3_N500_L8_phi50.txt')
 
 # create everything needed for the model
 jl.seval("""
 # L = [0.1, 1.1,  0.1,  0.1,  210*0.005,   0.1,  0.1,    210*0.0025] # lower bounds of parameters
 # R = [0.9, 1.9,  0.9,  0.9,  390*0.005,   0.9,   0.9,   390*0.0025] # upper bounds of parameters
+# L = [0.0, 1.00001, 300*0.0001, 300*0.0001, 0] # lower bounds of parameters
+# R = [0.999, 1.999, 300*0.01  , 300*0.01  , 0.99] # upper bounds of parameters
 L = [0.0, 1.00001, 300*0.0001, 300*0.0001, 0] # lower bounds of parameters
 R = [0.999, 1.999, 300*0.01  , 300*0.01  , 0.99] # upper bounds of parameters
 N = length(L)
@@ -38,27 +40,28 @@ reference_map = SMT.ScalingReference{N}(L, R)
 model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=50) #50 default
 """)
 #jl.likelihood = likelihood        # set the likelihood function in Julia
-jl.likelihood2 = likelihood2        # set the likelihood function in Julia
+jl.likelihood3 = likelihood3        # set the likelihood function in Julia
 #jl.seval("likelihood_func(x) = pyconvert(Float64, likelihood(x))")  # make pyobject a function in Julia (not threadsafe!!)
-jl.seval("likelihood_func2(x) = pyconvert(Float64, likelihood2(x))")  # make pyobject a function in Julia (not threadsafe!!)
+#jl.seval("likelihood_func2(x) = pyconvert(Float64, likelihood2(x))")  # make pyobject a function in Julia (not threadsafe!!)
+jl.seval("likelihood_func3(x) = pyconvert(Float64, likelihood3(x))")  # make pyobject a function in Julia (not threadsafe!!)
 ## create the sampler
 sra_sampler = jl.seval("""
-sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func2, 
+sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func3, 
                         model, 
-                        4,              #L, number of layers
+                        8,              #L, number of layers
                         :Chi2,          #loss function to build approximation
                         reference_map; 
                         trace=true,
                         ϵ=1e-6, λ_2=0.0, λ_1=0.0,
-                        algebraic_base=2.0, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
-                        N_sample=2000, #at least 2000 for 4 parameters
+                        algebraic_base=1.2, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
+                        N_sample=800, #at least 2000 for 4 parameters
                         threading=false,  # threading can not be used with pyobject function
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
 #save the sampler
-jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood2_N2000_L4_phi50.jld2" )""")
+jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood3_N800_L8_phi50_algb1_2.jld2" )""")
 
 stop = time.time()
 print('duration of execution', stop-start)
