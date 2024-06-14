@@ -9,9 +9,9 @@ start = time.time()
 
 
 
-## install Julia packages
-# jl.seval("using Pkg")
-# jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
+## install/update Julia packages
+#jl.seval("using Pkg")
+#jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
 # jl.seval("""Pkg.add("ApproxFun")""")
 # jl.seval("""Pkg.add("Hypatia")""")
 
@@ -20,6 +20,7 @@ jl.seval("using SequentialMeasureTransport")
 jl.seval("import SequentialMeasureTransport as SMT")
 jl.seval("using ApproxFun")
 jl.seval("using Hypatia")
+
 #from julia import Main
 
 ## Determine parameter ranges
@@ -67,6 +68,9 @@ jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood3_N300_L8_phi50_algb1_
 
 stop = time.time()
 print('duration of execution', stop-start)
+
+
+
 
 # ## start generating samples or etc.
 # from juliacall import Base
