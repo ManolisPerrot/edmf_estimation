@@ -48,20 +48,22 @@ jl.seval("likelihood_func3(x) = pyconvert(Float64, likelihood3(x))")  # make pyo
 sra_sampler = jl.seval("""
 sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func3, 
                         model, 
-                        10,              #L, number of layers
+                        8,              #L, number of layers
                         :Chi2,          #loss function to build approximation
                         reference_map; 
                         trace=true,
-                        ϵ=1e-6, λ_2=0.0, λ_1=0.0,
+                        ϵ=1e-6, 
+                        λ_2=0.0, # controls the regularization, test 1e-4
+                        λ_1=0.0, # controls the regularization
                         algebraic_base=1.2, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
-                        N_sample=30, #at least 2000 for 4 parameters
+                        N_sample=300, #at least 2000 for 4 parameters
                         threading=false,  # threading can not be used with pyobject function
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
 #save the sampler
-jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood3_N30_L10_phi50_algb1_2.jld2" )""")
+jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood3_N300_L8_phi50_algb1_2.jld2" )""")
 
 stop = time.time()
 print('duration of execution', stop-start)
