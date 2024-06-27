@@ -113,7 +113,8 @@ def likelihood_mesonh(
     delta_bkg = 0.0025*250,
     wp0     = -1.e-08,
     sobolev=False,
-    nan_file='nan_parameters.txt'
+    nan_file='nan_parameters.txt',
+    trace=False,
     ):
 
     # Load the case specific parameters
@@ -141,19 +142,21 @@ def likelihood_mesonh(
         params.update(case_params[case])  # Update with the specific case hyperparameters in case_params[case]
         params.update(params_to_estimate) # Update with the parameters to estimate 
         #print(params)
-        print(          'Cent', Cent, #0=< Cent =< 1
-                        'Cdet', Cdet, #1=< Cdet =< 2?
-                        'wp_a', wp_a, #0=< wp_a =< 1
-                        'wp_b', wp_b, #0=< wp_b =< 1
-                        'wp_bp', wp_bp,#0=< wp_bp =< 10?
-                        'up_c', up_c, #0=< up_c < 1
-                        'vp_c', up_c, 
-                        'bc_ap', bc_ap, #0=< bc_ap =< 1
-                        'delta_bkg', delta_bkg, #0=< delta_bkg =< 10?
-                        'wp0', wp0)
+        if trace:
+            print(          'Cent', Cent, #0=< Cent =< 1
+                            'Cdet', Cdet, #1=< Cdet =< 2?
+                            'wp_a', wp_a, #0=< wp_a =< 1
+                            'wp_b', wp_b, #0=< wp_b =< 1
+                            'wp_bp', wp_bp,#0=< wp_bp =< 10?
+                            'up_c', up_c, #0=< up_c < 1
+                            'vp_c', up_c, 
+                            'bc_ap', bc_ap, #0=< bc_ap =< 1
+                            'delta_bkg', delta_bkg, #0=< delta_bkg =< 10?
+                            'wp0', wp0)
         scm[case] = SCM(**params)
         scm[case].run_direct()            # Run the SCM
-        print('run SCM case',case+": zinv =", scm[case].zinv)
+        if trace:
+            print('run SCM case',case+": zinv =", scm[case].zinv)
         
         # filter scm outputs
         TH_scm = scm[case].t_history[z_r_boolean_filter[case]]
@@ -176,14 +179,16 @@ def likelihood_mesonh(
         #trapz is a trapezoidal integral 
 
         metric_t = np.trapz( np.trapz( (TH_scm - TH_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        print("metric_t", metric_t)
         metric_u = np.trapz( np.trapz( (U_scm - U_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        print("metric_u", metric_u)
         metric_v = np.trapz( np.trapz( (V_scm - V_les[case])**2, z_r[case], axis=0) , time[case]) * 1/(z_r[case][-1] - z_r[case][0]) * 1 / (time[case][-1] - time[case][0]) 
-        print("metric_u", metric_u)
+        if trace:
+            print("metric_t", metric_t)
+            print("metric_u", metric_u)
+            print("metric_v", metric_v)
 
         likelihood = np.exp(-beta_t*metric_t - beta_u*metric_u - beta_v*metric_v)
-        print(likelihood)
+        if trace:
+            print(likelihood)
 
 
         if sobolev==True:
@@ -220,12 +225,15 @@ def likelihood_mesonh(
     likelihoods=np.zeros(len(cases))
     
     # parrallelized for-loop
-    with Pool() as p:
-        likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    # with Pool() as p:
+    #     likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
+    for case_index in range(len(cases)):
+        likelihoods[case_index] = likelihood_of_one_case(case_index)
 
     # total likelihood is the product of likelihood of each case
     tot_likelihood=np.prod(likelihoods)
-    print('likelihood is', tot_likelihood)
+    if trace:
+        print('likelihood is', tot_likelihood)
     
     if np.isnan(tot_likelihood):
         #write parameters leading to Nan is a file

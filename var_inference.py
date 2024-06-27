@@ -1,8 +1,12 @@
 #from julia.api import Julia
 from juliacall import Main as jl
+# from juliacall import Py
 #jl = Julia(compiled_modules=False)
 from likelihood_mesonh import likelihood_mesonh
 import time
+from multiprocess import Pool
+import numpy as np
+from copy import deepcopy
 
 #monitor duration of execution 
 start = time.time()
@@ -10,8 +14,9 @@ start = time.time()
 
 
 ## install/update Julia packages
-#jl.seval("using Pkg")
-#jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
+# jl.seval("using Pkg")
+# jl.seval("Pkg.update()")
+# jl.seval("""Pkg.add(url="https://github.com/benjione/SequentialMeasureTransport.jl.git")""")
 # jl.seval("""Pkg.add("ApproxFun")""")
 # jl.seval("""Pkg.add("Hypatia")""")
 
@@ -19,7 +24,7 @@ start = time.time()
 jl.seval("using SequentialMeasureTransport")
 jl.seval("import SequentialMeasureTransport as SMT")
 jl.seval("using ApproxFun")
-jl.seval("using Hypatia")
+# jl.seval("using Hypatia")
 
 #from julia import Main
 
@@ -27,6 +32,25 @@ jl.seval("using Hypatia")
 #likelihood  = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_a=x[2], wp_b=x[3], wp_bp=x[4], up_c=x[5], bc_ap=x[6], delta_bkg=x[7])
 #likelihood2 = lambda x: likelihood_mesonh(Cent=x[0], Cdet=x[1], wp_bp=x[2], delta_bkg=x[3], wp_a=x[4],nan_file='nan_parameters_likelihood2_N2000_L4_phi50.txt')
 likelihood3 = lambda x: likelihood_mesonh(Cent=x[0], delta_bkg=x[1], wp_a=x[2],nan_file='nan_parameters_likelihood3_N30_L10_phi50.txt')
+
+start_l = time.time()
+likelihood3([0.5, 0.5, 0.5])
+stop_l = time.time()
+print('duration of execution', stop_l-start_l)
+
+def likelihood_broadcast(X):
+    # return map(likelihood3, X)
+    ret = []
+    X = deepcopy(np.array(X))
+    
+    with Pool() as p:
+        ret =  p.map(likelihood3, X)
+    return ret
+
+start_l = time.time()
+likelihood_broadcast([[0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0.5, 0.5]])
+stop_l = time.time()
+print('duration of execution', stop_l-start_l)
 
 # create everything needed for the model
 jl.seval("""
@@ -42,29 +66,43 @@ model = PSDModel(Legendre(0.0..1.0)^(N), :downward_closed, 5, max_Φ_size=50) #5
 """)
 #jl.likelihood = likelihood        # set the likelihood function in Julia
 jl.likelihood3 = likelihood3        # set the likelihood function in Julia
+jl.likelihood_broadcast = likelihood_broadcast        # set the likelihood function in Julia
 #jl.seval("likelihood_func(x) = pyconvert(Float64, likelihood(x))")  # make pyobject a function in Julia (not threadsafe!!)
 #jl.seval("likelihood_func2(x) = pyconvert(Float64, likelihood2(x))")  # make pyobject a function in Julia (not threadsafe!!)
 jl.seval("likelihood_func3(x) = pyconvert(Float64, likelihood3(x))")  # make pyobject a function in Julia (not threadsafe!!)
+jl.seval("likelihood_broadcast_func(x) = pyconvert(Vector{Float64}, likelihood_broadcast(x))")  # make pyobject a function in Julia (not threadsafe!!)
+
+jl.seval("likelihood3([0.5, 0.5, 0.5])")
+
+jl.seval("ret_val = likelihood_broadcast_func([[0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0.5, 0.5]])")
 ## create the sampler
 sra_sampler = jl.seval("""
-sra_chi2 = SMT.SelfReinforcedSampler(likelihood_func3, 
+adaptive_struct = SMT.AdaptiveSamplingStruct{Float64, N}(0.02, 0.975;
+                    Nmax=20000, addmax=2000)
+
+custom_fit!(model, X, Y, g; kwargs...) = SMT._adaptive_CV_α_divergence_Manopt!(model, 2.0, 
+                X, Y, g, adaptive_struct; trace=true, 
+                    maxit=2000, adaptive_sample_steps=20, broadcasted_target=true, threading=false)
+
+sra_chi2 = SMT.SelfReinforcedSampler(likelihood_broadcast_func, 
                         model, 
-                        8,              #L, number of layers
-                        :Chi2,          #loss function to build approximation
+                        3,              #L, number of layers
+                        :adaptive,          #loss function to build approximation
                         reference_map; 
                         trace=true,
-                        ϵ=1e-6, 
-                        λ_2=1e-3, # controls the regularization, test 1e-4
+                        custom_fit=custom_fit!, #custom fit function 
+                        λ_2=0.0, # controls the regularization, test 1e-4
                         λ_1=0.0, # controls the regularization
                         algebraic_base=1.2, #tempering coefficient are beta = 1/(algebraic_base)^{L - layer index}
                         N_sample=300, #at least 2000 for 4 parameters
                         threading=false,  # threading can not be used with pyobject function
+                       broadcasted_tar_pdf=true,
                         # optimizer=Hypatia.Optimizer
                     )
 """)
 
 #save the sampler
-jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood3_N300_L8_phi50_algb1_2_lambda2_1e-3.jld2" )""")
+jl.seval("""SMT.save_sampler(sra_chi2, "sampler_likelihood_adaptive_sampling_3L.jld2" )""")
 
 stop = time.time()
 print('duration of execution', stop-start)
