@@ -22,7 +22,7 @@ class LogLike(Op):
         Cent = pt.as_tensor(Cent)
         Cdet = pt.as_tensor(Cdet)
         delta_bkg = pt.as_tensor(delta_bkg)
-        data = pt.as_tensor(data)
+        data = pt.as_tensor(data)    #keep this empty
 
         inputs = [Cent, Cdet, delta_bkg, data]
         # Define output type, in our case a vector of likelihoods
@@ -59,6 +59,7 @@ def custom_model_loglike(data, Cent, Cdet, delta_bkg):
 MC_model = pm.Model()
 
 with MC_model:
+    # Defining the prior
     Cent = pm.Uniform('Cent', lower=0, upper=1)
     Cdet = pm.Uniform('Cdet', lower=1, upper=2)
     # wp_a = pm.Uniform('wp_a', lower=0, upper=1)
@@ -74,8 +75,8 @@ with MC_model:
 
 with MC_model:
     start = time.time()
-    step = pm.Metropolis()
-    trace = pm.sample(10, step=step)
+    step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
+    trace = pm.sample(10, step=step)  # samples
     end = time.time()
     print('Time taken: ', end - start)
 
