@@ -5,4 +5,5 @@
 - [ ] Sobol
 
 # Benji
-- [ ] implement MCMC
+- [x] implement MCMC
+- [ ] methods to diagnose MCMC
