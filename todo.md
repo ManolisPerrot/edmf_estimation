@@ -4,6 +4,7 @@
 - [X] send Benji .nc cases
 - [ ] Sobol
 - [X] ask Florian for gradient
+  - we need to evaluate the gradients
 - [ ] saving/plotting of MCMC
 - [ ] how to save MCMC - MAP
 - [ ] check Souza / Wagner implementation
