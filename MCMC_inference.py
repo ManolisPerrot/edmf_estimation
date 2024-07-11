@@ -6,6 +6,8 @@ import pymc as pm
 import pytensor
 import pytensor.tensor as pt
 from pytensor.graph import Apply, Op
+import arviz as az
+import matplotlib.pyplot as plt
 
 
 def log_likelihood(Cent, Cdet, delta_bkg):
@@ -76,7 +78,24 @@ with MC_model:
 with MC_model:
     start = time.time()
     step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
-    trace = pm.sample(10, step=step)  # samples
+    trace = pm.sample(1000, step=step, tune=200)  # samples
     end = time.time()
     print('Time taken: ', end - start)
 
+az.summary(trace)
+
+az.plot_trace(trace)
+plt.show()
+
+az.plot_forest(trace, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+az.plot_forest(trace, var_names=["Cdet"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+az.plot_forest(trace, var_names=["delta_bkg"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+# az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+
+plt.show()
+
+az.plot_autocorr(trace, var_names=["Cent", "Cdet", "delta_bkg", "likelihood"])
+plt.show()
+
+az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
+plt.show()
