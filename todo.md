@@ -10,9 +10,5 @@
 - [ ] check Souza / Wagner implementation
 
 # Benji
-<<<<<<< HEAD
 - [x] implement MCMC
 - [ ] methods to diagnose MCMC
-=======
-- [X] implement MCMC
->>>>>>> eb51be71e1e858d0a09a967b76b0e68a4c3be716
