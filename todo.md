@@ -5,6 +5,7 @@
 - [ ] Sobol
 - [ ] saving/plotting of MCMC
 - [ ] how to save MCMC - MAP
+- [ ] optimal number of samples?
 - [ ] check Souza / Wagner implementation
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
