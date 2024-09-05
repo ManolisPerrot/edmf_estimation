@@ -52,6 +52,22 @@ likelihood_broadcast([[0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [0.5, 0
 stop_l = time.time()
 print('duration of execution', stop_l-start_l)
 
+
+## NEW bounds fixing NaN bugs (+ need small_ap = True)
+# variables =  [
+#               ['Cent',[0., 0.99]],
+#               ['Cdet',[1., 1.99]],
+#               ['wp_a',[0.01, 1.]],
+#               ['wp_b',[0.01, 1.]],
+#               ['wp_bp',[0.25, 2.5]],
+#               ['up_c',[0., 0.9]],
+#               ['bc_ap',[0., 0.45]],
+#               ['delta_bkg',[0.25, 2.5]],
+#               ['wp0',[-1e-8,-1e-7]]
+#              ]
+
+
+
 # create everything needed for the model
 jl.seval("""
 # L = [0.1, 1.1,  0.1,  0.1,  210*0.005,   0.1,  0.1,    210*0.0025] # lower bounds of parameters
