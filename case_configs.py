@@ -29,22 +29,22 @@ default_params = {
     'mass_flux_dyn': True,
     'mass_flux_tke': True,
     'mass_flux_tke_trplCorr': True,
-    'mass_flux_small_ap': True,
+    'mass_flux_small_ap': True, ### WARNING: small_ap = False causes many divergent values (theta > 10^50) or NaNs
     'lin_eos': True,
     'extrap_ak_surf': True,
     'tke_sfc_dirichlet': False,
     'eddy_diff_tke_const': 'NEMO',
     'entr_scheme': 'R10',
     'Cent': 0.99,
-    'Cdet': 1.99,       
-    'wp_a': 1.,
-    'wp_b': 1.25,      
-    'wp_bp': 0.003,    
-    'up_c': 0.5,
+    'Cdet': 1.99,       # 'Cdet': 2.5,
+    'wp_a': 1.,   #1
+    'wp_b': 1.,     #1.
+    'wp_bp': 0.003*250,    
+    'up_c': 0.5, 
     'vp_c': 0.5,
-    'bc_ap': 0.2,    
-    'delta_bkg': 0.005,
-    'wp0'    : -1.e-08,
+    'bc_ap': 0.2,    #0.3,
+    'delta_bkg': 0.0045*250,   # 0.005,
+    'wp0' : -0.5e-08,
     'output_filename': 'run',
     'write_netcdf': False
 }

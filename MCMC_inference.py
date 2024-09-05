@@ -60,6 +60,23 @@ def custom_model_loglike(data, Cent, Cdet, delta_bkg):
 
 MC_model = pm.Model()
 
+
+
+## NEW bounds fixing NaN bugs (+ need small_ap = True)
+# variables =  [
+#               ['Cent',[0., 0.99]],
+#               ['Cdet',[1., 1.99]],
+#               ['wp_a',[0.01, 1.]],
+#               ['wp_b',[0.01, 1.]],
+#               ['wp_bp',[0.25, 2.5]],
+#               ['up_c',[0., 0.9]],
+#               ['bc_ap',[0., 0.45]],
+#               ['delta_bkg',[0.25, 2.5]],
+#               ['wp0',[-1e-8,-1e-7]]
+#              ]
+
+
+
 with MC_model:
     # Defining the prior
     Cent = pm.Uniform('Cent', lower=0, upper=1)

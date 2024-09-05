@@ -19,4 +19,4 @@ temporary.ipynb
 data
 *.cpython-311.pyc
 case_configs.cpython-311.pyc
-./sobol_analysis/outputs/*
+sobol_analysis/outputs/
