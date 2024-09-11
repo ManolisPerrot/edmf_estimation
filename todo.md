@@ -35,6 +35,8 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - [X] check default params comapred to paper
 - [X] test sentivity to nulber of samples, for FC500 only : OK, z indices are very well converged at N=4096 but...
 - [ ] (optional) do sensitivity to mean_u and mean_v outputs for WANG1
-- [ ] compute total sobol index ? Since 1st index can 
+- [X] compute total sobol index ? Since 1st index can 
 - [ ] check openturns library to look for explanations on SA.   
-- [ ] refactoring of the code: separate sample generation and saving from Sobol computation
+- [X] refactoring of the code: separate sample generation and saving from Sobol computation
+- [ ] do more samples since total z indices have not converged...
+

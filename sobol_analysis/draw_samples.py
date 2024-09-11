@@ -28,25 +28,25 @@ start = TIME.time() #monitor duration of execution
 ###########################################
 
 ### Choose physical cases on which to perform analysis
-# cases = ['FC500', 'W005_C500_NO_COR']
-cases = ['FC500']
+cases = ['W005_C500_NO_COR']
+# cases = ['FC500']
 ### Set number of samples 
-N = 1024
+N = 2048
 print(N)
-# saving_name = 'sobol_beta1_ap0_'+str(N)
-saving_name = 'samples_'+cases[0]+'_'+str(N)
+saving_name = 'samples_beta1_ap0_'+cases[0]+'_'+str(N)
+# saving_name = 'samples_'+cases[0]+'_'+str(N)
 print(saving_name)
 
 # cases = ['W005_C500_NO_COR']
 
 variables =  [
-              ['Cent',[0., 0.99]],
+            #   ['Cent',[0., 0.99]],
               ['Cdet',[1., 1.99]],
               ['wp_a',[0.01, 1.]],
               ['wp_b',[0.01, 1.]],
               ['wp_bp',[0.25, 2.5]],
               ['up_c',[0., 0.9]],
-              ['bc_ap',[0., 0.45]],
+            #   ['bc_ap',[0., 0.45]],
               ['delta_bkg',[0.25, 2.5]],
               ['wp0',[-1e-8,-1e-7]]
              ]
