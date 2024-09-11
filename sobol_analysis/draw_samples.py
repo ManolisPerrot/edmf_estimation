@@ -28,53 +28,35 @@ start = TIME.time() #monitor duration of execution
 ###########################################
 
 ### Choose physical cases on which to perform analysis
-# cases = ['FC500', 'W005_C500_NO_COR']
-cases = ['FC500']
+cases = ['W005_C500_NO_COR']
+# cases = ['FC500']
 ### Set number of samples 
-N = 2**8
+N = 2048
 print(N)
-saving_name = 'samples_FC500_'+str(N)
+saving_name = 'samples_beta1_ap0_'+cases[0]+'_'+str(N)
+# saving_name = 'samples_'+cases[0]+'_'+str(N)
 print(saving_name)
 
-variables =  [['Cent',[0., 0.99]],
+# cases = ['W005_C500_NO_COR']
+
+variables =  [
+            #   ['Cent',[0., 0.99]],
               ['Cdet',[1., 1.99]],
               ['wp_a',[0.01, 1.]],
               ['wp_b',[0.01, 1.]],
               ['wp_bp',[0.25, 2.5]],
               ['up_c',[0., 0.9]],
-            #   ['vp_c',[0., 0.9]],
-              ['bc_ap',[0., 0.45]],
+            #   ['bc_ap',[0., 0.45]],
               ['delta_bkg',[0.25, 2.5]],
-            #   ['delta_bkg',[0.003*250, 0.005*250]],
               ['wp0',[-1e-8,-1e-7]]
              ]
-# variables =  [['Cent',[0., 0.99]],
-#               ['Cdet',[1., 1.99]],
-#               ['wp_a',[0.01, 1.]],
-#               ['wp_b',[0.01, 1.]],
-#               ['wp_bp',[0.1, 3]],
-#               ['up_c',[0., 0.9]],
-#               ['bc_ap',[0., 0.9]],
-#               ['delta_bkg',[0.1, 3]],
-#             #   ['delta_bkg',[0.003*250, 0.005*250]],
-#               ['wp0',[-1e-8,-1e-7]]
-#              ]
+
 
 nvar = len(variables)
 time={ case: np.arange(start=0, stop=case_params[case]['nbhours'], step=default_params['outfreq']) for case in cases}
 
 
 #### SAMPLING twice the parameters and a copy (choose either Uniform or Latin Hyper Cube) 
-    
-    
-#Uniform Sampling
-#X_samples = np.zeros((nvar,N))       #('names' index, sample index)
-#X_prime_samples = np.zeros((nvar,N)) #('names' index, sample index)
-#    
-#
-#for i in range(nvar):  
-#    X_samples[i] = np.random.uniform(low=variables[i][1][0],high=variables[i][1][1],size=N)
-#    X_prime_samples[i] = np.random.uniform(low=variables[i][1][0],high=variables[i][1][1],size=N)    
 
 # Latin Hyper cube sampling
 print('Initial sampling of parameter space, number of samples:', N)
@@ -103,6 +85,9 @@ for order in range(1, nvar):
         for i in indices:
             P[str(order) + 'th'][key][i] = int(1)
 
+
+
+
 #=========================================
 #============= FUNCTIONS =================
 #=========================================
@@ -130,15 +115,22 @@ def scm_model(X, case, return_z_r = False, velocities=False):
         else:
             return scm.t_history
     
-### Define a L2 inner product because output of the model are functions    
-def product (T1,T2, z_r, time):
-    # T1 and T2 must be (z_r,time) arrays
-    return np.trapz( np.trapz( T1 * T2, z_r, axis=0) , time)  
+
 
 #============================ MAIN LOOP =========================================
 
 # initialize output
-output={'variables_range': variables, 'X_samples': X_samples,'X_prime_samples':X_prime_samples}
+output={'variables_range': variables, 'X_samples': X_samples,'X_prime_samples':X_prime_samples, 'X_tilde': {}}
+
+
+for key in P['1th']:
+    projector=P['1th'][key]
+    #compute Y_tilde = f(X_tilde)
+    # X_tilde = [0]*N, np.zeros((N,nvar))
+    # print(key)
+    output['X_tilde'][key] = [0]*N
+    for i in range(0,N):
+        output['X_tilde'][key][i] = projector * X_samples [:,i] + (1-projector) * X_prime_samples [:,i]
 
 
 for case in cases:
@@ -146,41 +138,78 @@ for case in cases:
     print('Drawing samples of the case '+case)
     ### Compute Y = f(X)    
     Y = [0]*N
+    Y_prime = [0]*N
+
 
     # Do a first evaluation to get z_r
-    Y[0], z_r = scm_model(X_samples[:,0], case, return_z_r=True)
-    # break
+    a,b,c, z_r = scm_model(X_samples[:,0], case, return_z_r=True,velocities=True)
+
     # wrap scm_model
     def scm_model_wrapped(X):
-        return scm_model(X,case,return_z_r=False)
+        return scm_model(X,case,return_z_r=False,velocities=True)
 
     # parrallel evaluation of the model
+    print('Computing Y...')
     if __name__ == '__main__':
         with Pool() as p:
-            Y[1:] = p.map(scm_model_wrapped, X_samples.T[1:])
+            Y = p.map(scm_model_wrapped, X_samples.T)
 
-    Y = np.array(Y)
+    # parrallel evaluation of the model
+    print('Computing Y prime...')
+    if __name__ == '__main__':
+        with Pool() as p:
+            Y_prime = p.map(scm_model_wrapped, X_prime_samples.T)
 
-    output[case] = {'Y': Y, 'z_r': z_r}
+
+    Y, Y_prime = np.array(Y), np.array(Y_prime)
+    output[case] = {'variables': {
+                                'temp':{'Y': Y[:,0,:,:],
+                                        'Y_prime': Y_prime[:,0,:,:],
+                                        'Y_tilde':{} },
+                                        
+                                'u':{'Y': Y[:,1,:,:],
+                                     'Y_prime': Y_prime[:,1,:,:],
+                                     'Y_tilde':{} }, 
+                                     
+                                'v':{'Y': Y[:,2,:,:],
+                                     'Y_prime': Y_prime[:,2,:,:],
+                                     'Y_tilde':{} },
+                                            },
+                    'coordinates': {'z_r': z_r, 'time':time}}
 
     for key in P['1th']:
-        projector=P['1th'][key]
-        #compute Y_prime = f(X_tilde)
-        Y_prime, X_tilde = [0]*N, np.zeros((N,nvar))
-        for i in range(0,N):
-            X_tilde[i] = projector * X_samples [:,i] + (1-projector) * X_prime_samples [:,i]
-
+        print('Computing Y tilde for '+key+' fixed...')
         if __name__ == '__main__':
             with Pool() as p:
-                Y_prime = p.map(scm_model_wrapped, X_tilde)
-        Y_prime = np.array(Y_prime)
-
-        output[case][key] = {'X_tilde': X_tilde, 'Y_prime': Y_prime}
+                Y_tilde = p.map(scm_model_wrapped, output['X_tilde'][key])
+        Y_tilde = np.array(Y_tilde)
+        for k,var in enumerate(output[case]['variables']):
+            output[case]['variables'][var]['Y_tilde'][key] = Y_tilde[:,k,:,:] 
 
 #==========================
 # Save output
+print('Saving')
 with open('outputs/'+saving_name, 'wb') as handle:
     pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 print('Done! Output saved at '+'outputs/'+saving_name)
 stop = TIME.time()
 print('duration of execution', stop-start)
+
+
+
+output[case]['variables']
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,8 +7,9 @@
 - [ ] optimal number of samples? --> open question with MCMC
 - [X] check Souza implementation (useless)
 - [ ] fix emdf_ocean for small ap = False (causes many divergent values)
-- [ ] check pelletier paper on Sobol
+- [X] check pelletier paper on Sobol: they don't do much 
 - [ ] check 2nd order sobol indices
+- [ ] 
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
@@ -32,5 +33,10 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - [X] plot results
 - [ ] check if WANG1 is working
 - [X] check default params comapred to paper
-- [X] test sentivity to nulber of samples, for FC500 only : 512 (40mn), 1024 (15mn BIZARRE), 2048 (30mn)
+- [X] test sentivity to nulber of samples, for FC500 only : OK, z indices are very well converged at N=4096 but...
 - [ ] (optional) do sensitivity to mean_u and mean_v outputs for WANG1
+- [X] compute total sobol index ? Since 1st index can 
+- [ ] check openturns library to look for explanations on SA.   
+- [X] refactoring of the code: separate sample generation and saving from Sobol computation
+- [ ] do more samples since total z indices have not converged...
+
