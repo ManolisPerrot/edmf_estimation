@@ -115,6 +115,7 @@ def likelihood_mesonh(
     sobolev=False,
     nan_file='nan_parameters.txt',
     trace=False,
+    ret_log_likelihood=False,
     ):
 
     # Load the case specific parameters
@@ -187,6 +188,7 @@ def likelihood_mesonh(
             print("metric_v", metric_v)
 
         likelihood = np.exp(-beta_t*metric_t - beta_u*metric_u - beta_v*metric_v)
+        log_likelihood = -beta_t*metric_t - beta_u*metric_u - beta_v*metric_v
         if trace:
             print(likelihood)
 
@@ -219,21 +221,39 @@ def likelihood_mesonh(
             metric_v_h1 = np.trapz( np.trapz( (dz_V_scm - dz_V_les[case])**2, z_w[case], axis=0) , time[case]) * 1/(z_w[case][-1] - z_w[case][0]) * 1 / (time[case][-1] - time[case][0])  
 
             likelihood = likelihood * np.exp(-beta_t_h1*metric_t_h1 - beta_u_h1*metric_u_h1 - beta_v_h1*metric_v_h1)
-        
-        return likelihood
+            log_likelihood = log_likelihood - beta_t_h1*metric_t_h1 - beta_u_h1*metric_u_h1 - beta_v_h1*metric_v_h1
+        return likelihood, log_likelihood
 
     likelihoods=np.zeros(len(cases))
+    log_likelihoods=np.zeros(len(cases))
     
     # parrallelized for-loop
     # with Pool() as p:
     #     likelihoods = p.map(likelihood_of_one_case, range(likelihoods.size))
     for case_index in range(len(cases)):
-        likelihoods[case_index] = likelihood_of_one_case(case_index)
+        _like, _log_like = likelihood_of_one_case(case_index)
+        likelihoods[case_index] = _like
+        log_likelihoods[case_index] = _log_like
+
 
     # total likelihood is the product of likelihood of each case
     tot_likelihood=np.prod(likelihoods)
+    tot_log_likelihood=np.sum(log_likelihoods)
     if trace:
         print('likelihood is', tot_likelihood)
+    
+    if ret_log_likelihood:
+        if np.isnan(tot_log_likelihood) or np.isnan(tot_likelihood):
+            return -10000.0
+            #write parameters leading to Nan is a file
+            with open(nan_file, "a") as file:
+                file.write("\n")
+                for key, value in params_to_estimate.items():
+                    file.write(f"{key}: {value}\n")
+                file.write("\n")
+            #fix estimation crash by putting 0. for NaN
+            return 0.
+        return tot_log_likelihood
     
     if np.isnan(tot_likelihood):
         #write parameters leading to Nan is a file
