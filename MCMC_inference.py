@@ -10,23 +10,28 @@ import arviz as az
 import matplotlib.pyplot as plt
 
 
-def log_likelihood(Cent, Cdet, delta_bkg):
+def log_likelihood(Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg):
     # print(Cent, Cdet, delta_bkg)
-    like = likelihood_mesonh(Cent=Cent, Cdet=Cdet, delta_bkg=delta_bkg)
+    like = likelihood_mesonh(Cent=Cent, Cdet=Cdet, wp_a=wp_a, wp_b=wp_b, wp_bp=wp_bp, bc_ap=bc_ap, delta_bkg=delta_bkg, ret_log_likelihood=True)
     # print(like)
-    return np.log(np.asarray(like))
+    return np.asarray(like)
 
-log_likelihood(0.5, 1.5, 1.0)
+# likelihood_mesonh(Cent=0.5, Cdet=1.5, delta_bkg=1.0, ret_log_likelihood=False, trace=True)
 
 class LogLike(Op):
-    def make_node(self, Cent, Cdet, delta_bkg, data) -> Apply:
+    def make_node(self, Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg, data) -> Apply:
         # Convert inputs to tensor variables
         Cent = pt.as_tensor(Cent)
         Cdet = pt.as_tensor(Cdet)
+        wp_a = pt.as_tensor(wp_a)
+        wp_b = pt.as_tensor(wp_b)
+        wp_bp = pt.as_tensor(wp_bp)
+        # up_c = pt.as_tensor(up_c)
+        bc_ap = pt.as_tensor(bc_ap)
         delta_bkg = pt.as_tensor(delta_bkg)
         data = pt.as_tensor(data)    #keep this empty
 
-        inputs = [Cent, Cdet, delta_bkg, data]
+        inputs = [Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg, data]
         # Define output type, in our case a vector of likelihoods
         # with the same dimensions and same data type as data
         # If data must always be a vector, we could have hard-coded
@@ -39,10 +44,10 @@ class LogLike(Op):
     def perform(self, node: Apply, inputs: list[np.ndarray], outputs: list[list[None]]) -> None:
         # This is the method that compute numerical output
         # given numerical inputs. Everything here is numpy arrays
-        Cent, Cdet, delta_bkg, data = inputs  # this will contain my variables
+        Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg, data = inputs  # this will contain my variables
 
         # call our numpy log-likelihood function
-        loglike_eval = log_likelihood(Cent, Cdet, delta_bkg)
+        loglike_eval = log_likelihood(Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg)
 
         # Save the result in the outputs list provided by PyTensor
         # There is one list per output, each containing another list
@@ -51,12 +56,12 @@ class LogLike(Op):
 
 loglike_op = LogLike()
 
-_test_like = loglike_op(0.5, 1.5, 1.0, 1.0)
+_test_like = loglike_op(0.5, 1.5, 0.5, 0.5, 0.3, 1.0, 1.0, 0.5)
 pytensor.dprint(_test_like, print_type=True)
 _test_like.eval()
 
-def custom_model_loglike(data, Cent, Cdet, delta_bkg):
-    return loglike_op(Cent, Cdet, delta_bkg, data)
+def custom_model_loglike(data, Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg):
+    return loglike_op(Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg, data)
 
 MC_model = pm.Model()
 
@@ -76,30 +81,35 @@ MC_model = pm.Model()
 #              ]
 
 
-
 with MC_model:
     # Defining the prior
-    Cent = pm.Uniform('Cent', lower=0, upper=1)
-    Cdet = pm.Uniform('Cdet', lower=1, upper=2)
-    # wp_a = pm.Uniform('wp_a', lower=0, upper=1)
-    # wp_b = pm.Uniform('wp_b', lower=0, upper=1)
-    # wp_bp = pm.Uniform('wp_bp', lower=0, upper=10)
-    # up_c = pm.Uniform('up_c', lower=0, upper=1)
-    # bc_ap = pm.Uniform('bc_ap', lower=0, upper=1)
-    delta_bkg = pm.Uniform('delta_bkg', lower=0, upper=10)
+    Cent = pm.Uniform('Cent', lower=0, upper=0.99)
+    Cdet = pm.Uniform('Cdet', lower=1, upper=1.99)
+    wp_a = pm.Uniform('wp_a', lower=0.01, upper=1.0)
+    wp_b = pm.Uniform('wp_b', lower=0.01, upper=1.0)
+    wp_bp = pm.Uniform('wp_bp', lower=0.25, upper=2.5)
+    # up_c = pm.Uniform('up_c', lower=0, upper=0.9)
+    bc_ap = pm.Uniform('bc_ap', lower=0, upper=0.45)
+    delta_bkg = pm.Uniform('delta_bkg', lower=0.25, upper=2.5)
+    # wp_0 = pm.Uniform('wp_0', lower=-1e-8, upper=-1e-7)
 
     ## Define the likelihood
-    pm.CustomDist('likelihood', Cent, Cdet, delta_bkg, logp=custom_model_loglike)
+    pm.CustomDist('likelihood', Cent, Cdet, wp_a, wp_b, wp_bp, bc_ap, delta_bkg, logp=custom_model_loglike)
 
 
 with MC_model:
     start = time.time()
-    step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
-    trace = pm.sample(1000, step=step, tune=200)  # samples
+    # vars_list = list(MC_model.values_to_rvs.keys())[:]
+    # step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
+    # step = pm.Slice()           # kind of MCMC random walk algorithm.
+    step = pm.DEMetropolisZ()    # kind of MCMC random walk algorithm.
+    trace = pm.sample(20000, step=step, tune=500)  # samples
     end = time.time()
     print('Time taken: ', end - start)
 
 az.summary(trace)
+az.InferenceData.to_dataframe(trace)
+az.InferenceData.to_netcdf(trace, 'trace.nc')
 
 az.plot_trace(trace)
 plt.show()
