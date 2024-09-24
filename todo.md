@@ -8,8 +8,10 @@
 - [X] check Souza implementation (useless)
 - [ ] fix emdf_ocean for small ap = False (causes many divergent values)
 - [X] check pelletier paper on Sobol: they don't do much 
-- [ ] check 2nd order sobol indices
-- [ ] 
+- [X] check 2nd order sobol indices
+- [ ] check sensitivity of L2 and H1 likelihood to model_error
+- [ ] infer data error from MNH/CROCO comparison 
+- [ ] ask Florian the access of Wagner's LES
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
@@ -20,6 +22,8 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
   
 - [ ] Implement Hightune ??
 
+- [ ] do andrew plots / check souza 
+- [ ]
 
 - [ ] redo the two inferences with NaN fixed (start with 3 parameters Cent, ap0, wp_bp)
 
@@ -27,6 +31,8 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - [X] implement MCMC
 - [ ] methods to diagnose MCMC (check how good the MCMC is): put it in appendix of paper
 - [ ] how to save MCMC - MAP
+- [ ] check leave one out etc for estimating beta
+- [ ] filter samples according to likelihood and only plot those with likelihood > beta
 
 
 # Sobol

@@ -56,7 +56,7 @@ class LogLike(Op):
 
 loglike_op = LogLike()
 
-_test_like = loglike_op(0.5, 1.5, 0.5, 0.5, 0.3, 1.0, 1.0, 0.5)
+_test_like = loglike_op(0.5, 1.5, 0.5, 0.5, 0.3, 0.1, 1.0, 0.5)
 pytensor.dprint(_test_like, print_type=True)
 _test_like.eval()
 
@@ -108,10 +108,12 @@ with MC_model:
     print('Time taken: ', end - start)
 
 az.summary(trace)
-az.InferenceData.to_dataframe(trace)
-az.InferenceData.to_netcdf(trace, 'trace.nc')
+# az.InferenceData.to_dataframe(trace)
+# az.InferenceData.to_netcdf(trace, 'trace.nc')
+trace = az.from_netcdf('trace.nc')
 
 az.plot_trace(trace)
+az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
 plt.show()
 
 az.plot_forest(trace, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
