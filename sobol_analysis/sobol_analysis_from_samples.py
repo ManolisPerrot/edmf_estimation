@@ -35,7 +35,9 @@ nsamples = [2048]
 
 
 cases=['W005_C500_NO_COR']
-additional_attribute='beta1_ap0_'
+# additional_attribute='beta1_ap0_'
+additional_attribute=''
+
 # cases=['FC500']
 case = cases[0] 
 fields = ['temp','u']

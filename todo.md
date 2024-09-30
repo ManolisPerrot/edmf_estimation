@@ -9,7 +9,7 @@
 - [ ] fix emdf_ocean for small ap = False (causes many divergent values)
 - [X] check pelletier paper on Sobol: they don't do much 
 - [ ] check 2nd order sobol indices
-- [ ] 
+- [ ] *VERIFY THAT interpolate les on scm IS CORRECT!!!*
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
@@ -36,7 +36,7 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - [X] test sentivity to nulber of samples, for FC500 only : OK, z indices are very well converged at N=4096 but...
 - [ ] (optional) do sensitivity to mean_u and mean_v outputs for WANG1
 - [X] compute total sobol index ? Since 1st index can 
-- [ ] check openturns library to look for explanations on SA.   
+- [X] check openturns library to look for explanations on SA.   
 - [X] refactoring of the code: separate sample generation and saving from Sobol computation
-- [ ] do more samples since total z indices have not converged...
+- [X] do more samples since total z indices have not converged...
 
