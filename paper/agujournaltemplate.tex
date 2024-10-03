@@ -375,6 +375,16 @@ Compared to the original version exposed in \cite{perrotEnergeticallyConsistentE
 
 
 \section{Bayesian estimation method}
+We estimate the optimal parameters using Bayesian inference method.
+Instead of a single estimation point, this gives us a distribution of possible parameter values together with the likelihood of them being optimal.
+We start with a prior distribution on the parameters, from the section above,
+\begin{equation*}
+	\pi_{\text{prior}}(\bm C).
+\end{equation*}
+Given our model, we introduce the Likelihood function
+\begin{equation}
+	\mathcal{L}(\bm y | \bm C)
+\end{equation}
 
 \section{Sobol' Indices}
 
@@ -390,7 +400,13 @@ Alternatives:
 To assess the quality of the estimation, we can also cross-validate with additional observations.
 
 \section{Numerical results}
-
+%
+\begin{itemize}
+    \item MAP
+    \item showing the panel with posterior distribution
+    \item uncertianty andrew plot (check souza)
+    \item compute confidence intervals and trsholded prameters range on the marginal posterior
+\end{itemize}
 \section{Discussion}
 
 \section{Conclusion}
@@ -558,8 +574,37 @@ It is also the appropriate place to thank colleagues and other contributors. AGU
 % \nocite is okay to use to add references from your Supporting Information
 %
 
+\appendix
 
+\section{Quality of MCMC}
+There are multiple qualitative and quantitative methods to evaluate the quality of MCMC results.
+First, visually, we compare the \emph{mixing of different chains}.
+To do so, we plot the sample density of different chains and see if they agree for all parameters.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{figures/Cent_trace.png}
+	\caption{Mixing of $4$ different MCMC chains. The densities for the given parameter (see left) agrees for all chains.}\label{fig:mixing_of_MCMC_chains}
+\end{figure}
+For an example, see Figure~\ref{fig:mixing_of_MCMC_chains}.
+If the densities of the different chains do not agree well, this is an indicator that MCMC has not yet converged and more samples are needed.
 
+Next, we look at more quantitative methods.
+A widely used one is $\hat{R}$, which compares the variance in a chain with the variance between all chains.
+Let $W_k$ be the variance and $E_k$ the expectation in the $k$-th chain.
+Define the average chain variance $W$ and the between chains variance $B$ as
+\begin{align}
+	W &= \frac{1}{m} \sum_{k=1}^{m} W_{k} \\
+	B &= \frac{1}{m-1} \sum_{k=1}^{m} \left(E_k - \frac{1}{m} \sum_{k=1}^{m} E_k\right)
+\end{align}
+and define
+\begin{equation}
+	\hat{R} = \sqrt{\frac{n-1}{n} + \frac{B}{W}}.
+\end{equation}
+Note that for $n \rightarrow \infty$, $B \rightarrow 0$, while this is not the case for $W$. Hence, a converged MCMC chain has a value close to $1$.
+
+Finally, let us talk about the \emph{effective sample size (ESS)}.
+This quantitative indicator has its origin in importance sampling, and loosely speaking, tells you how many samples the given MCMC samples would correspond to independent samples from the target distribution.
+The estimation of a linear estimator using the MCMC samples for the target distribution, converges approximately with $\sigma^2 / \mathrm{ESS}$.
 \end{document}
 
 

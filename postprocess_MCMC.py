@@ -9,7 +9,7 @@ data = az.from_netcdf('full_MCMC_run.nc')
 ## convert to xarray dataset
 ds = az.convert_to_dataset(data)
 
-
+az.summary(data)
 ## compute the MAP estimate
 max_index = int(ds.argmax()['likelihood'])
 
@@ -20,6 +20,15 @@ draw_nr = max_index % chain_length
 
 MAP = ds.isel(draw=draw_nr, chain=chain_nr)
 
+
+
+az.plot_trace(data, var_names=["Cent"])
+plt.tight_layout()
+plt.savefig('paper/figures/Cent_trace.png')
+plt.show()
+
+az.plot_autocorr(data, var_names=["Cent", "Cdet", "delta_bkg"])
+plt.show()
 
 
 

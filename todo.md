@@ -29,8 +29,8 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
 
 # Benji
 - [X] implement MCMC
-- [ ] methods to diagnose MCMC (check how good the MCMC is): put it in appendix of paper
-- [ ] how to save MCMC - MAP
+- [X] methods to diagnose MCMC (check how good the MCMC is): put it in appendix of paper
+- [X] how to save MCMC - MAP
 - [ ] check leave one out etc for estimating beta
 - [ ] filter samples according to likelihood and only plot those with likelihood > beta
 
