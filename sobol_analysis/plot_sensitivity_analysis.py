@@ -13,8 +13,10 @@ plt.rcParams.update({'lines.linewidth': 2.0})
 nsample = '2048'
 cases=['FC500','W005_C500_NO_COR']
 case = cases[1] # TODO: loop on cases
-additional_attribute='beta1_ap0_'
+# additional_attribute='beta1_ap0_'
+additional_attribute=''
 
+print('opening ','outputs/sobol_'+additional_attribute+case+'_'+nsample)
 with open('outputs/sobol_'+additional_attribute+case+'_'+nsample, 'rb') as handle:
 # with open('outputs/sobol_beta1_ap0_'+nsample, 'rb') as handle:
     output = pickle.load(handle)
@@ -33,6 +35,18 @@ true_name={'Cent': r'$\beta_1$',
             'delta_bkg': r'$\delta_0$',
             'wp0': r'$w_p^0$' }
 
+colors={    'Cent': 'tab:blue',
+            'Cdet': 'tab:orange',
+            'wp_a': 'tab:green',
+            'wp_b': 'tab:red',
+           'wp_bp': 'tab:purple',
+            'up_c': 'tab:brown',
+            'vp_c': 'tab:brown',
+           'bc_ap': 'tab:pink',
+       'delta_bkg': 'tab:gray',
+             'wp0': 'tab:olive',
+             }
+
 #=============== Plot only THETA =====================
 if case != 'W005_C500_NO_COR':
     # fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(12, 5), sharex=False)
@@ -47,15 +61,15 @@ if case != 'W005_C500_NO_COR':
     xmax = 0.00025
     zlim = -400
 
-    colors = []
+    # colors = []
 
     z_r = output[case]['z_r']
 
     for parameter in output[case]['sobol_indices']:
         variance=output[case]['sobol_indices'][parameter][field]['enumerator_z']
         # variance=output[case]['sobol_indices'][parameter][field]['z index']
-        p = ax.plot(variance, z_r, label=true_name[parameter]+' contribution' )
-        colors.append(p[0].get_color())
+        p = ax.plot(variance, z_r, color=colors[parameter], label=true_name[parameter]+' contribution' )
+        # colors.append(p[0].get_color())
     totVariance=output[case]['sobol_indices'][parameter][field]['denominator_z'] #same for all parameters
     ax.plot(totVariance, z_r,'--k',label='Total Variance')
 
@@ -71,7 +85,7 @@ if case != 'W005_C500_NO_COR':
     ax=axs.flat[i]
 
     for k,parameter in enumerate(output[case]['sobol_indices']):
-        color = colors[k]
+        color = colors[parameter]
         L2sobolindex=output[case]['sobol_indices'][parameter][field]['l2 index']
         ax.plot(parameter, L2sobolindex, 'o', color=color)
     ax.set_title(r'1st Sobol $L^2$ indices for $Y=\theta$')
@@ -147,14 +161,14 @@ else:
     xmax = 0.00025
     zlim = -400
 
-    colors = []
+    # colors = []
 
     z_r = output[case]['z_r']
 
     for parameter in output[case]['sobol_indices']:
         variance=output[case]['sobol_indices'][parameter][field]['enumerator_z']
-        p = ax.plot(variance, z_r, label=true_name[parameter]+' contribution' )
-        colors.append(p[0].get_color())
+        p = ax.plot(variance, z_r, color=colors[parameter], label=true_name[parameter]+' contribution' )
+        # colors.append(p[0].get_color())
     totVariance=output[case]['sobol_indices'][parameter][field]['denominator_z'] #same for all parameters
     ax.plot(totVariance, z_r,'--k',
                         label='Total Variance')
@@ -171,7 +185,7 @@ else:
     ax=axs.flat[i]
 
     for k,parameter in enumerate(output[case]['sobol_indices']):
-        color = colors[k]
+        color = colors[parameter]
         L2sobolindex=output[case]['sobol_indices'][parameter][field]['l2 index']
         ax.plot(parameter, L2sobolindex, 'o', color=color)
     ax.set_title(r'1st Sobol $L^2$ indices for $Y=\theta$')
@@ -236,7 +250,7 @@ else:
     xmax = 0.0002
     zlim = -400
     for k,parameter in enumerate(output[case]['sobol_indices']):
-        color = colors[k]
+        color = colors[parameter]
         variance=output[case]['sobol_indices'][parameter][field]['enumerator_z']
         ax.plot(variance, z_r, label=true_name[parameter]+' contribution', color=color )
 
@@ -255,7 +269,7 @@ else:
     ax=axs.flat[i]
 
     for k,parameter in enumerate(output[case]['sobol_indices']):
-        color = colors[k]
+        color = colors[parameter]
         L2sobolindex=output[case]['sobol_indices'][parameter][field]['l2 index']
         ax.plot(parameter, L2sobolindex, 'o', color=color, label=true_name[parameter]+' contribution')
     ax.set_title(r'1st Sobol $L^2$ indices for $Y=u$')
