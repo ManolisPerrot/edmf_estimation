@@ -29,13 +29,13 @@ from interpolate_LES_on_SCM_grids import regrid_and_save
 
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
-model_error_t,data_error_t=0.01,0.01 #°C
+model_error_t,data_error_t=0.005,0.005 #°C
 model_error_u,data_error_u=0.01,0.01 #ms-1 
 model_error_v,data_error_v=0.01,0.01 #ms-1
 # importance of each field in the cost function (non-dimensional)
 weight_t=1.
-weight_u=1.
-weight_v=1.
+weight_u=0.1
+weight_v=0.1
 # Bayesian beta hyperparameter
 beta_t = weight_t / (model_error_t**2 + data_error_t**2) 
 beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
@@ -166,11 +166,12 @@ def likelihood_mesonh(
         
         # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
         # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
-        # plt.plot(U_scm[:,-1] ,z_r[case])
+        plt.plot(TH_scm[:,-1] ,z_r[case])
         # plt.plot(U_scm[:,-20],z_r[case])
         # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
-        # plt.plot(U_les[case][:,-20],z_r[case],'k+')
-        # plt.show()
+        plt.plot(TH_les[case][:,-1],z_r[case],'k+')
+        plt.xlim(1.6,1.8)
+        plt.show()
 
         # print(TH_scm.shape)
 
@@ -267,7 +268,23 @@ def likelihood_mesonh(
     else:
         return tot_likelihood
 
-#likelihood_mesonh(sobolev=True)
+# likelihood_mesonh(sobolev=True,)
+
+likelihood_mesonh(    
+    Cent      = 0.99,
+    Cdet      = 1.99,
+    wp_a      = 1.,
+    wp_b      = 1.0,
+    wp_bp     = 0.003*250,
+    up_c      = 0.5, #we take up_c=vp_c
+    bc_ap     = 0.2,
+    delta_bkg = 0.0045*250,
+    wp0     = -1.e-08,
+    sobolev=False,
+    nan_file='nan_parameters.txt',
+    trace=True,
+    ret_log_likelihood=True,
+    )
 
 # if "__name__"=="__main__":
 #    likelihood_mesonh()
