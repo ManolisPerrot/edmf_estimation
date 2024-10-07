@@ -22,6 +22,8 @@ MAP = ds.isel(draw=draw_nr, chain=chain_nr)
 
 
 
+az.rhat(data)
+
 az.plot_trace(data, var_names=["Cent"])
 plt.tight_layout()
 plt.savefig('paper/figures/Cent_trace.png')
