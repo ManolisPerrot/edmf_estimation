@@ -9,9 +9,12 @@
 - [ ] fix emdf_ocean for small ap = False (causes many divergent values)
 - [X] check pelletier paper on Sobol: they don't do much 
 - [X] check 2nd order sobol indices
-- [ ] *VERIFY THAT interpolate les on scm IS CORRECT!!!*check sensitivity of L2 and H1 likelihood to model_error
+- [X] *VERIFY THAT interpolate les on scm IS CORRECT!!!*
+- [ ] check sensitivity of L2 and H1 likelihood to model_error
 - [ ] infer data error from MNH/CROCO comparison 
-- [ ] ask Florian the access of Wagner's LES
+- [X] ask Florian the access of Wagner's LES
+- [X] configure likelihood to use wagner's LES --> NO because they have Stokes Drift !!!
+- [ ] use Van Roekel cases
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
