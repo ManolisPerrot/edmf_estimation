@@ -1,0 +1,84 @@
+Readme pour les scripts "script.tar.gz"
+L'archive "script.tar.gz" du 02.02.2022 contient les scripts pour le
+post-traitement des simuls 3D sur le depot HighTune ici:
+HighTune/explorer/models/LMDZ
+
+tocsv.sh / merge_csv.sh :
+-------------------------
+
+crée un fichier de métriques 3D du type :
+SIM,glob.rt,glob.rlut,circAa.rsut,circAa.rlut,subs.rsut,weak...
+SCM_3-001,1.869,239.434,31.0417,-55.685,94.3896,80.3383,80.9...
+SCM_3-002,2.841,238.867,26.2022,-50.383,81.107,82.4628,97.25...
+SCM_3-003,2.3084,241.722,29.271,-49.713,93.4692,77.8103,74.9...
+Si certaines simulations ce sont plantées, on fait en sorte qu'elle
+n'apparaissent pas dans ce fichier.
+
+tocsv.sh utilise les métriques créées sur les multi-atltas sur
+ciclad, et on extrait avec ce script des métriques déjà calculées.
+On s'était dit avec Ionela que c'était sans doute aussi simple de faire un
+script qui calcule les métriques csv, et seulement celles dont on a
+besoin. Je pense que Maelle est parti là dessus également.
+
+Ca peut être intéressant de garder aussi la version multiatlas permettait
+d'avoir plein de métriques déjà calculées à disposition et de jouer avec.
+Mais c'est un peu coûteux parce qu'on précalcule beaucoup plus de
+métriques que ce dont on a besoin.
+
+merge_csv_othermet.sh :
+-----------------------
+merge des fichiers de metriques individuelles (pour simulations et references) 
+en un seul fichier (metrics_${nwave}.sh et obs.csv), pour toutes les métriques
+que vous voulez (sauf les métriques 1D gérées automatiquement bien sur)
+A faire avant combine_csv.sh
+
+combine_csv.sh :
+----------------
+
+(c'est le script principal dont je parlais ce matin)
+Va combiner ce fichier de métriques 3D avec les métriques 1D déjà
+calculées. Un élément important est de recréer des fichiers de paramètres
+et de métriques (aussi bien en csv qu'en .Rdata) avec seulement les
+simulations qui n'ont pas planté en 3D.
+
+Le script va directement travailler sur le répertoire HighTune/WORK
+avec un chemin d'accès contrôlé par
+wave=47
+ITUNE_D=/home/hourdin/ITUNE/R270/HighTune/WORK/LUDO2
+au début du script.
+
+La sélection des simulations OK se fait grâce à la boucle
+for sim in `awk ' { print $1 } ' WRKLR/metrics.csv | cut -d, -f1` ; do
+(on part du principe que le metrics.csv 3D est sur WRKLR ; ce sera bien
+aussi de paramétrer ça).
+On extrait les métriques 1D dans
+$ITUNE_D/metrics_WAVE${wave}_${wave}_1D.csv
+et les paramètres dans
+grep $sim $ITUNE_D/WAVE${wave}_1D/Par1D_Wave${wave}.asc
+
+On transforme tout ça en .Rdata avec
+Rscript --vanilla htune_reduce_param.R $wave
+Rscript --vanilla htune_csv2Rdata.R $wave
+
+
+get.sh :
+--------
+
+Pour aller chercher les métriques scalaires sur ciclad si on passe
+par le multiatlas.
+
+
+post_scores.sh :
+----------------
+
+Tri et tracé de simulations suivant les métriques.
+Il y a l'équivalent en 1D aussi.
+
+Il y a d'autres scripts de tracer (pp.sh, post.sh) mais qui datent sans
+doute de versions précédentes.
+Il faudra sans doute aussi que j'exume les scripts 3D des moyennes
+zonales.
+Mais ca c'est bien archivé, au moin dans le doi des codes en
+accompagnement du papier.
+
+Frédéric

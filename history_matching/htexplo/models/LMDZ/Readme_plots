@@ -1,0 +1,82 @@
+Readme pour le post traitement des SCM et les scripts de figures
+Maëlle Mars 2024
+
+##### plot commun 3D - 1D #####
+
+plot_NROY.py :
+    plot l'évolution du NROY au cours des vagues
+    à partir de NROY_fraction_w1to'+str(WAVEN)+'.txt
+    -> sort "plot_NROY_fraction_w1to"+str(WAVEN)+".png"
+
+scatter_score.py : 
+   (utilise mycolors.py)
+   plot les scores de toutes les simulations (+best)
+   et des toutes les métriques (+moyenne et max)
+   -> sort "score_metrics.pdf"
+
+scatter_metric_metric.py :
+  plot metric vs metric
+  pour les vagues allant de iwavemin à iwavemax
+  ou pour des ensembles a specifier en argument
+
+scatter_param_metric.py : 
+  plot metric vs param 
+  pour les vagues allant de iwavemin à iwavemax
+  ou pour des ensembles a specifier en argument
+
+scatter.sh : 
+  des exemples d'utilisation de lancement de ces scripts
+
+##### plot 1D uniquement  #####
+post_plots.sh :
+   C'est ce script qu'il faut lancer pour faire les figures (nottement les profils)
+   sur les simus 1D !!!!
+   1. Appelle post_processing_1D.sh (enfait cet appel ne me parait pas nécessaire)
+   2. Prépare tout ce qu'il faut (notemment écris simus.py) puis
+   3. lance post.sh 
+   4. stock les figures dans PROFILES_${nwave}/BEST?
+      -> profils verticaux avec enveloppe + 10 best (BEST0) ou une seule (BEST?)
+         profil_${cas}_${souscas}_${var}_${time}.png
+      -> série temporelle (a spécifier dans post.sh)
+         serie_${cas}_${souscas}_${var}.png 
+      
+post.sh :
+  1. Par défaut il trace les profils (avec trace_sens_LES.py)
+     pour les heures par défaut (dans param_${cas}.py)
+     -> On peut tracer les profils pour plusieurs heures en specifiant la liste dans time_cas
+        ATTENTION c'est codé pour changer que l'heure du cas 
+        donc on ne pas tracer sur plusieurs jours d'un coup en l'état
+     -> Pour ajouter des variables à tracer il faut changer vars
+  2. On peut aussi tracer des séries temporelles (avec trace_sens_LES.py aussi)
+     -> pour le faire il faut ajouter les variables dans list_serie
+        pour l'instant il n'y a que cc=max(rneb) et lwp qui sont dispo
+        mais on peut rajouter des sorties dans serie_LMDZ.sh
+     -> les valeurs min et max du graph devront probablement etre modifiées
+        dans param_${cas}.py
+  3. !!! pas super fiable !!! 
+     Si on a des métriques radiatives, on peut faire un scatter plot 
+     de la couverture nuageuse vue par ECRAD vs max(rneb) des SCM*.nc
+     (scatter_cc_ECRAD.py)
+  
+Note : trace_sens_LES.py utilise simu.py, util_hightune.py, dicocoul.py et param_${cas}.py 
+       scatter_cc_ECRAD.py utilise aussi simus.py, dicocoul.py et param*.py
+   
+
+oneplot.sh -> Encore utilisé ???
+
+
+##### post traitement SCM  #####
+
+post_processing_1D.sh :
+  Ce script est appelé dans le bench.sh après le calcul des métriques
+  Argument : le numéro de la vague que l'on souhaite post-traiter
+  1. Appelle post_score.sh qui va calculer les scores
+     en utilisant plots_score.py
+     -> sort comme figure Maximum.pdf Average.pdf Scores_per_metrics$wave.pdf
+  2. Calcule les statstiques d'ensemble pour la vague souhaitée
+     -> ensmin.nc ensmax.nc ensavg.nc
+  3. Calcule la couverture nuageuse comme max(rneb), leur statistique d'ensemble
+     et l'ajoute dans ens${stat}.nc ---> c est fait direcement dans serie_LMDZ.sh maintenant
+  4. Calcule les ensembles pour les simulations ECRAD
+     -> ens${stat}_RAD{time}.nc
+

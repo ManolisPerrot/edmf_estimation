@@ -1,0 +1,42 @@
+diff --git a/HistoryMatching/HistoryMatching.R b/HistoryMatching/HistoryMatching.R
+index f132d68..60dc338 100644
+--- a/HistoryMatching/HistoryMatching.R
++++ b/HistoryMatching/HistoryMatching.R
+@@ -151,11 +151,13 @@ ImpDensityPanelWaveM <- function(x1var, x2var, ImpData, nEms, Resolution=c(10,10
+ CreateImpList <- function(whichVars, VarNames, ImpData, nEms=1, Resolution=c(15,15), whichMax=3,Cutoff=3){
+   combGrid <- expand.grid(whichVars[-length(whichVars)],whichVars[-1])
+   badRows <- c()
+-  for(i in 1:length(combGrid[,1])){
+-    if(combGrid[i,1] >= combGrid[i,2])
+-      badRows <- c(badRows,i)
+-  }
+-  combGrid <- combGrid[-badRows,]
++  if (length(combGrid[,1])>1) {
++    for(i in 1:length(combGrid[,1])){
++      if(combGrid[i,1] >= combGrid[i,2])
++        badRows <- c(badRows,i)
++    }
++    combGrid <- combGrid[-badRows,]
++  } 
+   combGrid <- combGrid[do.call(order,combGrid),]
+   gridList <- lapply(whichVars[-length(whichVars)], function(k) combGrid[which(combGrid[,1]==k),])
+   lapply(gridList, function(e) lapply(1:length(e[,1]), function(k) 
+@@ -168,11 +170,13 @@ CreateImpListWaveM <- function(whichVars, VarNames, ImpData, nEms=1, Resolution=
+                                whichMax= 3){
+   combGrid <- expand.grid(whichVars[-length(whichVars)],whichVars[-1])
+   badRows <- c()
+-  for(i in 1:length(combGrid[,1])){
+-    if(combGrid[i,1] >= combGrid[i,2])
+-      badRows <- c(badRows,i)
+-  }
+-  combGrid <- combGrid[-badRows,]
++  if (length(combGrid[,1])>1) {
++    for(i in 1:length(combGrid[,1])){
++      if(combGrid[i,1] >= combGrid[i,2])
++        badRows <- c(badRows,i)
++    }
++    combGrid <- combGrid[-badRows,]
++  } 
+   combGrid <- combGrid[do.call(order,combGrid),]
+   gridList <- lapply(whichVars[-length(whichVars)], function(k) combGrid[which(combGrid[,1]==k),])
+   lapply(gridList, function(e) lapply(1:length(e[,1]), function(k) 

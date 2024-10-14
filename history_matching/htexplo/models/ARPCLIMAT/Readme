@@ -1,0 +1,129 @@
+                - content -
+
+htune_case_setup.R     htune_EmulatingSCM.R  htune_ncdf2Rdata.R  param2R.sh
+htune_convertDesign.R  htune_metric.R        htune_plot.R        Readme
+serie_LMDZ.sh          expe_setup.R
+
+
+               - Description -
+
+Main programs :
+===============
+
+Step 1 : Parameter definition and generation of parametric ensemble
+   param2R.sh : define list of parameters and their range
+             create the R script  ModelParam.R
+   Usage : ./param2R.sh LHCSIZE NLHC PARAM_FILE
+   Ex : ./param2R.sh 30 3 ARPCLIMAT_parameters.txt
+   NLHC should be >= 3
+   htune_convertDesign.R, Automatically run by param2R.sh from version 9
+   creates design for the emulator using ModelParam.R
+   outputs : Par1D_Wave1.asc containing the parameter values
+                for SCM simulations
+             Wave1.RData containing normalized parameter values for
+                the SCM
+   TBD : create a function that could be called from anywhere to
+         transform normalized to non normalized
+
+Step 2.0 : edit param_ARPCLIMAT to specify a few information about the model configuration, and where to find MUSC executables
+           adjust the output you want/need in $REP_MUSC/post/config_[CASE].py
+
+Step 2 : serie_ARPCLIMAT.sh
+   The only model-dependent script
+   Use : ./serie_ARPCLIMAT.sh case subcase
+   Run a series of the ARPCLIMAT SCM reading the parameters from Par1D_Wave1.asc
+   netcdf ouptut files should be put in
+   ./WAVE1/case/subcase 
+   with names SCM_1-101.nc given in Par1D_Wave1.asc
+   Also put the available LES 1D output files in WAVE1
+
+   TBD : Treat LES independently depending on the case consider ?
+
+Step 3: expe_setup.R         
+   i/ Specify case_name, subcase_name, targetvar and WAVEN for the experiment.
+   
+Step 4 : htune_ncdf2Rdata.R
+   i/ Reads results from WAVE1/*nc
+   ii/ Plots profiles for all the simulations with function "tout_tracer" from
+   htune_plot
+   iii/ computes metrics with function get_metric from htune_metric.R
+   output files
+   Wave1_LES.Rdata : metrics computed on LES
+   Wave1_SCM.Rdata : metrics computed on SCM
+   Assume that all the files are at an hourly time frequency
+   Metrics already available :
+     targetvar="theta500" theta 500hPa 
+     targetvar="zhneb"    average height of cloudiness (int z f dz / int f dz)
+   TBD : control case_name from outside
+   TBD : extend the "tout_tracer" to "tout"
+
+Step 5 : htune_EmulatingSCM.R
+    Emulator building reading Wave1_LES.Rdata and Wave1_SCM.Rdata
+    Definition and plots of ROY spaces
+    htune_EmulatingSCM_CS2.R is the version of Coding Sprint #2
+
+
+Step 6: param2Rwave.sh : use the RData file generated in htune_EmulatingSCM.R 
+	after history matching for previous waves.
+      	Usage : ./param2Rwave.sh WAVEN RDATA_FILE
+	Ex :  ./param2Rwave.sh 2 Wave2.RData
+	WAVEN should be >= 2
+
+Functions :
+===========
+htune_case_setup.R : some cases caracteristics for plots
+htune_metric.R : metrics computation
+htune_plot.R :  plots
+
+
+Imput from Exeter :
+===================
+StanEmulateCodeR.R which requires :
+AutoLMcode.R
+CustomPredict.R
+impLayoutplot.R
+JamesDevelopment.R
+DannyDevelopment.R
+MultiWaveHM.R
+MySpeed1const.stan
+PredictSpeed1const.stan
+PredictSpeed2DWconst.stan
+MySpeed1.stan
+PredictSpeed1.stan
+PredictSpeed2DW.stan
+kLHC.R : LHS clever sampling
+
+
+Discussion / conventions :
+==========================
+
+I propose to use hourly averaged outputs.
+Should work for all the available cases.
+
+
+
+Installation rstudio :
+======================
+
+Here is how to install RStudio on Ubuntu 16.04
+
+sudo apt-get install r-base
+wget https://download1.rstudio.org/rstudio-xenial-1.0.153-amd64.deb
+sudo apt-get install gdebi
+sudo gdebi rstudio-xenial-1.0.153-amd64.deb
+
+then, you should be able to open RStudio by simply using the command:
+rstudio
+
+when you install the supplementary libraries for RStudio on Ubuntu, you will need to install netcdf-bin et libnetcdf-dev, otherwise
+the ncdf4 library won't install correctly
+
+here is the complete list written on the white board for copy pasting:
+
+installed.packages(c("ncdf4","rstan","tensor","Hmisc","lhs","fields","rgl","shape","mco","far","dicekriging","GenSA","mvtnorm"))
+
+Evetuellement
+r-cran-rgl
+libx11-dev
+libglu1-mesa-dev
+

@@ -1,0 +1,163 @@
+# 13/03/2024
+# Naj : config tuning lw suite à une séance de travail avec Sophia
+
+Pour faire du tuning lw j'ai modifié extract_onemetric_csv.sh 
+entre autres...
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! ATTENTION  !!! !!! WARNING !!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+pour l'instant les fichiers de ref que j'ai pour le LW c'est pas la même grille
+verticale que pour les sorties d'ecRad donc je prends pas les premiers et
+derniers niveaux mais autre chose (en bas, le niveau -4 en fait vers 250 m, et
+en haut, le niveau 30 en fait vers 17 km) dans extract_onemetric_csv
+=> c'est un hack temporaire. En vrai il faut que je produise des fichiers de
+référence soit avec les bons niveaux (mais difficile avec htrdr), soit juste un
+point à la surface et un point au même "TOA" que ecRad.
+
+#14/10/2022 : recap travail Najda et Maëlle :
+
+- Mise en place de l'install ECRAD automatique (r315) :
+	- soit quand on précise l'option -model ECRAD dans le bench.sh
+	- soit quand on demande de calculer une métrique radiative
+
+- Actuellement, il y a deux manières de faire du rayonnement avec HighTune :
+	- soit en faisant tourner ecrad offline sur des profils de LES (option -model ECRAD)
+	- soit en faisant tourner ecrad offline sur les profils des SCM tournés précédement avec un modèle. Attention tout de même, certaines hypothèses de conversion de fichiers SCM vers le format d'entree d'ECRAD se basent sur des hypothèses de LMDZ (vérifier les interpolations faites dans ecrad/dephy2ecrad/tools/Interface.py si vous voulez tourner avec d'autres modèles que LMDZ). Dans ce cas, l'option -model doit contenir le nom du GCM utilisé. Implémentation dans les révisions 318, 319, 320, 321, 323
+
+Dans les deux cas, les métriques radiatives doivent commencer par le préfixe RAD, de même que les paramètres radiatifs
+La gestions de savoir quel cas SCM doit être tournés et quel ECRAD doit être tournés est géré automatiquement dans le bench (on peut avoir des métriques radiatives uniquement qui tournent sur des SCM). 
+
+Attention, la deuxième option n'est pas encore tout à fait opérationnelle car les SCM (de LMDZ en tout cas) n'ont pas d'atmosphère réaliste au dessus d'un certain niveau (hypothèse de température constante par exemple) alors que ces représentations sont importantes pour évaluer le rayonnement. Des tests sont en cours pour remplacer tout ou une partie des profils ciel clair du SCM (temperature, humidité, gaz, pression) par les profils utilisés pour calculer le rayonnement de reference. Ils ne sont pas encore commit.
+
+# 23/09/2022
+
+# Avec Maelle on va mettre en place 
+
+## install de ECRAD automatique
+=> R315, Maelle
+
+## scripts pour passer du format commun au format d'entrée ecrad
+- est ce qu'il faut mettre dephy2ecrad dans ecrad ou à côté ?
+  => dans ecrad
+- est ce qu'on utilise le script lmdz2dephy.sh dans serie_lmdz ?
+  => non pas pour l'instant
+- si oui, est ce qu'on prend aussi la modif du calendrier ?
+- vérifier le truc des positions des couches / milieux de couches
+
+## bench ECRAD opérationnel
+- version bench ecrad offline du papier htune3
+  => en cours 
+
+## tuning lmdz + ecrad offline
+- on fait tourner serie_lmdz et serie_ecrad indépendamment
+- le nom des paramètres ecrad et des métriques radiatives : préfixées par RAD_
+- dans le bench : si des métriques commencent par RAD_, faire tourner ecrad
+
+# offline
+# dans serie_ecrad.sh
+- boucler sur paramètres et changer les namelists 
+  => boucle externe 
+  => que si on a des paramètres avec préfixe RAD_
+  => dupliquer les namelists
+     => ${configbase}-NWAVE-NSIMUL.nam
+  => si non : on utilise la namelist de base
+
+- avoir des profils d'entrée (soit issus de LES soit de SCM)
+  => boucle interne
+  => est ce qu'on est en mode offline standalone ou offline LMDZ ?
+     => argument MODEL à la fin de serie_ecrad.sh
+  => si on est en mode offline LMDZ, 
+     dans la boucle sur les simuls, 
+     extraire le bon pas de temps,
+     appel dephy2ecrad sur SCM-$il
+  => dupliquer pour différents SZA
+
+- faire tourner ecrad offline et copier les sorties dans WORK/
+  => on fait tourner dans un répertoire ecrad/work/
+  => on copie les sorties et les fichiers de config dans WORK
+
+# On s'arrête la pour l'instant !
+
+- calculer les métriques sur les sorties d'ecrad
+- aller chercher les références dans RAD/CASE/SUBCASE/*.nc
+- calculer les métriques sur les fichiers de ref
+
+- c'est quoi les cas de figure ?
+  - ecrad offline tout seul sur des profils pré existants 
+    => ça existe déjà -model ecrad, serie_ecrad.sh 
+    => les métriques doivent s'appeler RAD_* 
+    => mission Naj retrouver pourquoi exactement
+  - ecrad offline sur des profils SCM-iii pour produire des métriques
+    radiatives mais sans tuner les paramètres d'ecrad
+  - ecrad offline sur des profils SCM-iii pour produire des métriques
+    radiatives en tunant les paramètres d'ecrad
+    => forcément des métriques radiatives
+
+  # pour la partie online, pas de questions, ça passera par 
+  - ecrad online pour produire des métriques radiatives sans tuner les
+    paramètres d'ecrad
+  - ecrad online pour produire des métriques radiatives en tunant les
+    paramètres d'ecrad
+
+# Summer 2018, Toulouse, France
+# High Tune project
+# Najda working on Monte Carlo vs ECRAD comparisons. Already have a case were the reference Monte Carlo computations have been done (ARMCu 8th hour : CASE=ARMCU, SUBCASE=REF).
+
+# The objective is to compute the NROY space of ECRAD parameters by comparing, for one cloud field:
+# -> the reference which is 3D Monte Carlo runs (at different solar angles) including atmospheric effects and standard atmosphere above, in the full LES cloud field
+# -> N ECRAD runs performed with perturbed namelists (from param2R.sh and serie_ECRAD.sh) 
+# The parameters are cloud inhomogeneity (fractional_std), overlap parameter and low clouds size
+# The metrics are net fluxes at TOA and surface, and direct / total flux at the surface, integrated over the solar spectrum
+
+# If ecrad is alreay installed and compiled, "./bench.sh ecrad" should work. First open models/ECRAD/serie_ECRAD.sh and modify the path to the ecrad folder (variable ECRAD)
+
+# Files in src have been modified to allow comparison between ECRAD and Monte Carlo outputs in particular 
+# -> htune_metric.R with a test on the existence of variables to decide which type of file (SCM output or ECRAD output or Monte Carlo output) + radiative metrics
+# -> htune_ncdf2Rdata.R : a new variable is sourced from expe_setup.R : REF it can be either "LES" or "RAD", to decide in which directory is the reference file 
+# 			 if REF==RAD, then the error is not computed from several profiles but read from variables in the netcdf file (through get_metric(std_metric))
+# -> htune_case_setup.R : added RADARMCU in case_setup() and zmax is now defined in case_setup() instead of plot_setup()
+
+# models/ECRAD contains 
+## tuning files 
+# -> param : list of tuning parameters
+# -> serie_ECRAD.sh : script to run multiple simulations from a list of parameters 
+# -> expe_setup.R   : will be sourced by the other R scripts
+## ECRAD files that should be copied in $ECRAD/test/htune/
+# -> ARMCU008_1D.nc : input profiles
+# -> change_namelist.sh : to change values of parameters in a given namelist (called in serie_ECRAD.sh)
+# -> duplicate_profiles.sh : to duplicate the input profiles with varying solar angle (called in serie_ECRAD.sh)
+# -> config_spartacus.nam  : configuration file
+
+# RAD contains CASE/SUBCASE/RADt.nc the Monte Carlo output for CASE/SUBCASE at timestep t. For now only ARMCU/REF/RAD8.nc exists.
+
+# TODO
+# Bullet code
+# -- : need interaction with someone 
+# -  : need doing
+# +  : is done and works
+# *  : is done and bugged
+
+-- save folder RAD somewhere accessible. Same status as folder LES : download once during setup then use as reference. Also case dependent so same structure as LES folder ? eg ARMCU/008/RAD0.nc contains Monte Carlo results computed in the ARMCu008.nc field. Reference runs should be defined beforehand... eg take atmospheric gases into account, ground albedo 0.2, use Mie phase function... then compute radiation at several SZA (a dimenson in the ncdf file).
+
+-- allow download and build of ecrad from a setup_ecrad.sh? Ask Robin because there could be a license problem? Should be protected anyway. Also the version 1.0.1 would not be enough: overlap_decorr_length is not recognized ; entrapment and cloud pdf shape name are not supported + known bugs in monochromatic mode and delta scaling with gas. I use v1.1.0.
+
++ define a new model in models : ECRAD 
+
++ define parameters, range, default value and variation law.
+
++ define metrics: surface and TOA net fluxes, direct to total surface ratio, (for now only SW in the MC). Procedure to compute metrics in the output of ecrad and in the RAD/CASE/SUBCASE/RADx.nc 
+
++ Script serie_ecrad.sh to run the N ecrad
++ Need a procedure to read ASCII file containing N sampled sets of parameters and create N config.nam files (inputs to ecrad).
+
++ adapt htune_ncdf2Rdata to MC and ECRAD outputs 
+	path to ref :  New var in setup_case.R : REF = RAD or LES: the path is now $REF/$case_name/$subcase_name/$REF0.nc. The error is computed from the variance estimated by MC  
+
+- plots at the beginning of ncdf2RData
+
++ change htune_metric so it doesn't need to call plot_setup (which is sourced only if the target var is in a given list) => zmax is defined with NLES et Time*, and passed as an argument to get_metric
+
++ Before commiting changes, need to transpose from WORK directory to src and run LMDZ bench
+
++ bench ecrad

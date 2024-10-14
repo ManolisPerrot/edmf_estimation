@@ -1,0 +1,14 @@
+XENTR 0.005 0.03 0.01 linear 
+RKFBTAU 3600 10800 7200 linear
+RPRTH 0 1 1 linear
+AKN 0.06 0.28 0.126 linear
+ALD 0.5 2.5 1.18 linear
+ALMAVE 0.0 20.0 0.0 linear
+ALPHAE 1.2 5.4 2.7 linear
+ALPHAT 0.5 2.3 1.13 linear
+TFVI  0 0.2 0.08 linear
+TFVL  0 0.2 0.02 linear
+RQLCR 5.E-5 1.E-3 2.E-4 log
+RQICRMIN 1.E-8 3.E-7 2.E-7 linear
+RQICRMAX 1.E-5 5.E-5 3.E-5 linear
+REVASX 2.E-8 1.E-6 2.E-7 log

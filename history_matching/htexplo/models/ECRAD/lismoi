@@ -1,0 +1,8 @@
+series/ contient différents serie_ECRAD.sh 
+params/ contient différents param_*
+
+serie_ECRAD.sh est l'ancien serie_ECRAD_paper_overwrite.sh
+param          est l'ancien param_papertuning_overwrite
+
+runECRAD/configs contient différentes configs
+runECRAD/config_spartacus.nam est l'ancien config_spartacus_mean_profiles_all_paper.nam

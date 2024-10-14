@@ -1,0 +1,72 @@
+! Configuration namelists for ECRAD radiation code
+!
+! The following namelist controls the behaviour of the driver routine,
+! including parallelization options and overriding numbers read from
+! the NetCDF input file
+!
+&radiation_driver
+ do_parallel             = true,   ! Use OpenMP parallelization?
+ nblocksize              = 8,      ! Number of columns to process per thread
+
+! Verbosity level: 0=none, 1=warning, 2=info, 3=progress, 4=detailed, 5=debug
+ iverbose = 5, 
+
+ fractional_std=1.,                 ! (-)    vertically constant fractional standard deviation of in-cloud liquid water [0, 3]    *0.75*
+ overlap_decorr_length=1000,          ! (m)    vertically constant overlap decorrelation length                           [0, 5000] *2000*
+                                      !        following Hogan and Illingworth 2000, if overlap_scheme_name=="Exp-Ran" 
+                                      !        Ctrue(i,j) = a*Cmax(i,j) + (1-a)*Crand(i,j) ; a = exp(DZ(i,j)/overlap_decorr_length)
+ high_inv_effective_size = 0.0001     ! (m-1)  override input profile      [e-6, e-3] *e-4*
+ middle_inv_effective_size = 0.0001   ! (m-1)  override input profile      [e-6, e-3] *e-4*
+ low_inv_effective_size = 0.005       ! (m-1)  override input profile      [e-5, e-2] *e-3*
+ effective_size_scaling = 1.0,        ! (-)    scale effective size
+
+ !sw_albedo              = 0.2,        ! (-)    override shortwave albedo, no default     [0,1]
+ !lw_emissivity          = 1.0,        ! (-)    override longwave emissivity, no default  [0,1]
+
+ q_liquid_scaling       = 1.,         ! (-)    scale liquid water content input profile
+ q_ice_scaling          = 1.,         ! (-)    scale ice water content input profile
+ cloud_fraction_scaling = 1.,         ! (-)    scale cloud fraction input profile
+
+ overlap_decorr_length_scaling=1.,    ! (-)    scale overlap decorrelation length
+
+ !skin_temperature       =  294.2,     ! (K)    override skin temperature from input file, no default
+ !cos_solar_zenith_angle =  .5,        ! (-)    override cos solar zenith angle from input file, no default
+
+ !solar_irradiance_override= 1368.143, ! (Wm-2) override total solar irradiance, default value is 1366.0
+/
+
+!
+! The following namelist controls the behaviour of the ECRAD
+! radiation code (default values in **)
+!
+&radiation
+do_lw = true,
+do_sw_direct = true,
+do_3d_effects		= true,           ! Represent 3D effects?
+do_lw_side_emissivity   = true,
+do_3d_lw_multilayer_effects = true,
+directory_name		= "ecrad_data",         ! Location of configuration files
+
+liquid_model_name = "SOCRATES",           ! Liquid droplet scattering model: "Monochromatic", "HuStamnes", *"SOCRATES"*, "Slingo"
+ice_model_name    = "Fu-IFS",             ! Ice particle scattering model: "Monochromatic", "Fu-PSRAD", "Fu-IFS", *"Baran"*, "Baran2016", "Baran2017", "Yi"
+cloud_pdf_shape_name    = "Gamma",        ! To describe liquid water horizontal distribution: *"Gamma"*, "Lognormal"
+
+sw_solver_name          = "Tripleclouds",    ! Solver: "Homogeneous", *"McICA"*, "SPARTACUS", "Tripleclouds"
+lw_solver_name          = "Tripleclouds",    ! enable 3D effects
+sw_encroachment_name    = "Computed",     ! "Maximum" = old behaviour (also "Minimum"/*"Computed"*)
+overlap_scheme_name     = "Exp-Ran",      ! Cloud overlap: *"Exp-Ran"*, "Max-Ran", "Exp-Exp"
+
+overhead_sun_factor = 0.06,
+do_lw_cloud_scattering 	= true,           ! Clouds scatter in the longwave?
+do_lw_aerosol_scattering= true,           ! Aerosols scatter in the longwave?
+cloud_inhom_decorr_scaling = 0.5,
+do_save_radiative_properties = false,     ! Save raw radiation properties in radiative_properties.nc?
+
+! Verbosity level: 0=none, 1=warning, 2=info, 3=progress, 4=detailed, 5=debug
+iverbose    	 	= 1, 
+use_aerosols		= false,          ! Include aerosols in radiation calculations?
+n_aerosol_types         = 12,             
+do_save_spectral_flux   = false,          ! Save spectral fluxes in output file?
+do_save_gpoint_flux     = false,          ! Save fluxes per g-point in output file?
+gas_model_name          = "RRTMG-IFS",    ! Gas model: "Monochromatic", *"RRTMG-IFS"*, "RRTMG-PSRAD"
+/

@@ -1,0 +1,14 @@
+XALP_PERT 0.1 0.5 0.3 linear 
+XABUO 0.7 1.5 1 linear
+XBENTR 0.5 1.1 1 linear
+XBDETR 0 1 0 linear
+XCMF 0. 0.1 0.065 linear
+XENTR_MF 0.001 0.070 0.035 log
+XCRAD_MF 10 100 50 linear
+XENTR_DRY 0.1 0.7 0.55 linear
+XDETR_DRY 1 50 10 log 
+XDETR_LUP 0.5 1.2 1 linear
+XKCF_MF 0.5 3.5 2.75 linear
+XPRES_UV 0.2 1 0.5 linear
+XFRAC_UP_MAX 0.10 0.5 0.33 linear
+XLINI 0. 0.1 0. linear

@@ -1,0 +1,7 @@
+f_ri_cd_min 0.01 0.4 0.1 linear
+yamada4_ric 0.1 0.3 0.18 linear
+lmixmin 0 10 1 linear
+ksta_ter 1e-09 1e-05 1e-07 log
+ksta 1e-12 1e-08 1e-10 log
+alb_vis_sno_lic 0 1 0.96 linear
+alb_nir_sno_lic 0 1 0.68 linear

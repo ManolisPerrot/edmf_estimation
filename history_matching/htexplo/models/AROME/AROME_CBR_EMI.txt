@@ -1,0 +1,6 @@
+XPHI_LIM 1.0   4.5   3     linear
+XCEP     0.225 1.055 2.11  linear
+XCED     0.4   2     0.85  linear
+XLINI    0.00  0.2   0.0   linear
+XCET     0.072 1.512 0.4   linear
+XCTP     1.035 22.22 4.65  linear

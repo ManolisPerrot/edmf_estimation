@@ -1,0 +1,12 @@
+RNALB    0          1     0.50   linear    facteur multiplicatif pour régler les 4 albédos en même temps
+RNCDN    0.10    0.50     0.31   linear    rn_cnd_s  (thermal conductivity of the snow over sea ice, W/m/K)
+RNCE     0.06    0.08     0.06   linear    rn_ce
+RNLC     0.05     0.5     0.15   linear    rn_lc 
+CLC      1e-4    1e-3   6.5e-4   linear    seuil d'autoconversion de l'eau nuageuse liquide
+FALLV    0.3       2.      0.8   linear    vitesse de chute des cristaux de glace
+OMEPMX   0.0003  0.02    0.001   log       1-epmax
+DZ       0.04    0.12     0.07   linear    parametre controlant le detrainement au sommet des thermiques
+EVAP     5e-5    5e-4     1e-4   log       coefficient sur la réévaporation des pluies
+GKDRAG   0.2        2      0.6   linear    sso_gkdrag
+PCENT    0.3        1      0.8   linear    PCent
+ASNOW    5         15       10   linear    tcst_snowa

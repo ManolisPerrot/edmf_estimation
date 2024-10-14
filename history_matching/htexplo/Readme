@@ -1,0 +1,239 @@
+
+Septembre 2020 : first open source version
+= = = = = = = = = = = = = = = = = = = = = 
+In link with the submission of two reference papers:
+Process-based climate model development harnessing machine learning: I. a calibration tool for parameterization improvement, Couvreux et al, in revision for JAMES
+Process-based climate model development harnessing machine learning: II. model calibration from single column to global, Hourdin et al, in revision for JAMES
+
+
+                          - svn -
+
+Maintained under subversion (svn)
+A .ignorelist file can be modified.
+Then run
+svn propset svn:ignore -F .ignorelist .
+svn commit . .ignorelist
+
+
+                         - content -
+
+Codes under src directory:
+= = = = = = = =  = = = = =
+.ignorelist :  list of files not handled by svn
+compute_metrics_csv.sh             htune_EOF.R
+expe_setup.R                       htune_metric.R
+extract_onemetric_csv.sh           htune_netcdf2csvMetrics.R
+htune_case_setup.R                 htune_plot.R
+htune_convertDesign.R              htune_test_plot.R
+htune_convert.R                    kLHC.R
+htune_csv2Rdata.R                  param2R.sh
+htune_EmulatingMultiMetric.R       param2Rwave.sh
+post_scores.sh  post_plots.sh scatter_plot.py
+
+               - Description -
+
+BEFORE STARTING: The LMDz model will be installed two levels higher in the tree.
+Make sure to be in a "subsubdirectory" before running the model setup.
+If you are in DIR1/DIR2/Hightune right now, the models will be installed in
+DIR1.
+This allows you to avoid reinstalling the model by staying in the DIR1
+directory.
+For running other models, need to have installed MUSC on your machine: http://confluence/pages/viewpage.action?pageId=248758682
+
+Main programs :
+===============
+
+bench.sh => This bench can be used with any models just run bench.sh MODEL[LMDZ AROME ARPCLIMAT] or you can specify some option [bench.sh -help]
+
+This bench runs the following steps:
+= = =  = = = = =  = = = =  = = = = =
+
+Step 1 : Parameter definition and generation of parametric ensemble
+-------------------------------------------------------------------
+   param2R.sh : define list of parameters and their range
+             create the R script  ModelParam.R
+   
+   Usage : ./param2R.sh LHCSIZE NLHC PARAM_FILE
+   Ex : ./param2R.sh 30 3 LMDZ/param_cld
+   (when using this step for a second wave needs to use param2Rwave.sh)
+   NLHC: if NLHC=1, then generate the maximinLHS of size LHCSIZE.
+
+   htune_convertDesign.R, Automatically run by param2R.sh from version 9
+   creates design for the emulator using ModelParam.R
+   outputs : Par1D_Wave1.asc containing the parameter values
+                for SCM simulations
+             Wave1.RData containing normalized parameter values for
+                the SCM
+   Calls kLHC.R and htune_convert.R
+   kLHC.R to produce the k-extended latin hyper cubes sampling
+   htune_convert.R contains the different functions to transform from normalized to non normalized and vice/versa the different values of the parameters
+
+Step 2 : serie_[MODEL].sh 
+-------------------------
+   the different scripts are available in the MODEL directory
+   This is the only model-dependent script
+   Use : ./serie_LMDZ.sh $cas $NWAVE
+   TBD homogeneise in the serie_AROME.sh to be called identically
+   Run a series of the model SCM reading the parameters from Par1D_Wave1.asc
+   netcdf ouptut files should be put in
+   ./WAVE1/[cas] 
+   with names SCM_1-101.nc given in Par1D_Wave1.asc
+   Also put the available LES 1D output files in WAVE1
+
+Step 3 : Compute Metrics and convert to Rdata
+---------------------------------------------
+  use compute_metrics_csv.sh (call extract_onemetric_csv.sh for both LES and SCM and compute metrics through htune_netcdf2csvMetrics.R)
+  Syntaxis: compute_metrics_csv.sh ARMCU_REF_Ay-theta_8_9 ARMCU_REF_zav-400-600-theta_9_9 ...
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!! Need to change manually the number of the wave in this script file!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  -> call extract_onemetric_csv.sh for both LES and the dir contains simulations
+       -either use cdo to compute metrics when averaging is asked
+       -either call htune_netcdf2csvMetrics.R (that call htune_metric.R) to compute other metrics ex lwp, neb metrics, Ayotte metrics)
+       Exemple : src/extract_onemetric_csv.sh ARMCU_REF_nebmax_7_9 LES/
+       Will compute the cloud fraction for the simulations in LES/ARMCU/REF between time 7 and 9
+
+  -> call htune_csv2Rdata.R=> to convert to Rdata
+           Wave1_LES.Rdata : metrics computed on LES
+           Wave1_SCM.Rdata : metrics computed on SCM
+           Assume that all the files are at an hourly time frequency
+
+   Metrics already available :
+     targetvar=averaging of any variables between two different vertical levels [zav]
+     targetvar=lwp, zhneb, Ay-theta (or any integral of positive/negative (theta) differences to the 1st time 
+     TBD: averaging in time  relevant for stationary cases
+     TBD: change 1st hour by initial time
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Available tools to draw the simulations in vertical profiles and compare them to LES:
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+=> Preliminary steps (if you want to draw the envelope of the SCM runs you need to compute the avg, min and max through cdo):
+So under the WAVE/CASE/SUBCASE directory you need to run:
+    cdo ensmin SCM_1-*.nc ensmin_SCM.nc
+    cdo ensmax SCM_1-*.nc ensmax_SCM.nc
+    cdo ensavg SCM_1-*.nc ensavg_SCM.nc     
+For CNRM SCM need to before suppress the NaN values using script_modif_fillvalue.sh (then you should run the previous cdo command with new_SCM_1*nc instead of SCM_1*nc)
+For LMDZ, need to run script_LMDZ.sh that do the cdo command and change the name of the variable for it to work (time_counter should be time and presnivs should at least ends with a 'f')
+
+Then need to modify the param_CASE_SUBCASE.py:
+    -need to change the list of the files you want to draw under "listfic"
+    normaly you just need to change the directory for the default runs of your model
+    -you can also change the type/color of lines by changing the dictionnary 'dicostyl' or 'dicocoul'
+    - you can change the time at which you want to draw the vertical profile in 'dateprof'
+    this file also contains the range xmin/xmax of the variable you want to draw as a dictionnary function of the name of the variable ('vmintab' and 'vmaxtab')
+then run the python command:
+python trace_sens_LES.py nom_variable[nom_variable=theta,u,v,rneb,qv,ql,...] $CASE $SUBCASE 
+=> create a figure called 'profil_'case'_'subcase'_'nom_variable'_'time'.png
+
+TBD : could be included in the script compute_metrics_csv.sh with an automatic drawing of the profile for the variables used to compute the metrics at the given time
+
+
+Step 4 : htune_EmulatingMultiMetric.R
+-------------------------------------
+    Emulator building reading Wave1_LES.Rdata and Wave1_SCM.Rdata
+    Definition and plots of NROY spaces
+
+
+Step 6: Run a second Wave: 
+------------------------
+param2Rwave.sh :use the RData file generated in htune_EmulatingMultiMetric.R 
+	after history matching for previous waves.
+      	Usage : ./param2Rwave.sh WAVEN RDATA_FILE
+	Ex :  ./param2Rwave.sh 2 Wave2.RData
+	WAVEN should be >= 2
+or use bench.sh -wave 2 -model MODEL
+
+Post-processing :
+-----------------
+ post_scores.py : computes the score (error/tolerance) for all metrics and waves and makes some graphs
+ post_plots.sh :  calls plot_scores.py and plots 1D profiles for best sims and waves envelopes
+ scatter_plot.py : a summary of the the scores for all waves and best simus.
+
+Functions :
+===========
+htune_case_setup.R : some cases caracteristics for plots
+htune_metric.R : metrics computation
+htune_plot.R :  plots
+
+
+Imput from Exeter :
+===================
+StanEmulateCodeR.R which requires :
+AutoLMcode.R
+CustomPredict.R
+impLayoutplot.R
+JamesDevelopment.R
+DannyDevelopment.R
+MultiWaveHM.R
+MySpeed1const.stan
+PredictSpeed1const.stan
+PredictSpeed2DWconst.stan
+MySpeed1.stan
+PredictSpeed1.stan
+PredictSpeed2DW.stan
+kLHC.R : LHS clever sampling
+
+
+Discussion / conventions :
+==========================
+I propose to use hourly averaged outputs.
+Should work for all the available cases.
+
+
+
+Installation rstudio :
+======================
+
+Here is how to install RStudio on Ubuntu 16.04
+
+sudo apt-get install r-base
+wget https://download1.rstudio.org/rstudio-xenial-1.0.153-amd64.deb
+sudo apt-get install gdebi
+sudo gdebi rstudio-xenial-1.0.153-amd64.deb
+
+then, you should be able to open RStudio by simply using the command:
+rstudio
+
+when you install the supplementary libraries for RStudio on Ubuntu, you will need to install netcdf-bin et libnetcdf-dev, otherwise
+the ncdf4 library won't install correctly
+
+You will also need to install these packages in RStudio:
+
+# Two packages were not available : "dicekriging" and "mvtnorm"
+#install.packages(c("ncdf4","rstan","tensor","Hmisc","lhs","fields","rgl","shape","mco","far","dicekriging","GenSA","mvtnorm","loo"))
+install.packages(c("ncdf4","tensor","Hmisc","lhs","fields","rgl","shape","mco","far","GenSA","loo"))
+For the ExeterUQ :
+install.packages("rstan")
+For the ExeterUQ_MOGP
+install.packages("bayesplot","pracma","invgamma")
+pracma’ n'est trouvé
+2: In library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE,  :
+  aucun package nommé ‘invgamma’
+
+# Problem with rstan install
+Found on https://github.com/stan-dev/rstan/issues/566 :
+packageurl <- "http://cran.r-project.org/src/contrib/Archive/StanHeaders/StanHeaders_2.19.0.tar.gz"
+install.packages(packageurl, repos=NULL, type="source")
+
+Plantage fenetrage avec rstudio sur ubuntu 18.04.3 :
+export RSTUDIO_CHROMIUM_ARGUMENTS="--disable-gpu"
+avant de lancer rstudio ...
+
+
+You might also need:
+r-cran-rgl
+libx11-dev
+libglu1-mesa-dev
+
+Installing mogp_emulator
+========================
+pip3 required
+
+Cleaning of the tool:
+= = = = = = = = = = = 
+- expe_setup.sh
+bench2waves.sh
+bench2wavesmMetric.sh
+
+=> modif of bench and htune_EmulatingMultiMetric.R to get the n° of wave, tau and cutoff as optional arguments: default= 1,0,3
+=> modif of extract_onemetric.sh to maximise ref erro (this is the way the tolerance to error is included right now)

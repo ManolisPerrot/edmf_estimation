@@ -1,0 +1,55 @@
+! Configuration namelists for ECRAD radiation code
+!
+! The following namelist controls the behaviour of the driver routine,
+! including parallelization options and overriding numbers read from
+! the NetCDF input file
+!
+&radiation_driver
+do_parallel             = true,   ! Use OpenMP parallelization?
+nblocksize              = 8,      ! Number of columns to process per thread
+sw_albedo               = 0.08,    ! Override shortwave albedo
+!lw_emissivity          = 1.0,     ! Override longwave emissivity
+! Verbosity level: 0=none, 1=warning, 2=info, 3=progress, 4=detailed, 5=debug
+iverbose    	   	= 1, 
+solar_irradiance_override= 1368.143952,! Total solar irradiance (W m-2)
+
+fractional_std = 1.079,
+! overlap param = exp(- dz / overlap_decorr_length)
+! overlap_param = 0.875  ; dz = 25
+! ln(0.875) = - 25 / overlap_decorr_length
+! overlap_decorr_length = -25 / ln(0.875) = 187.221892235
+
+overlap_decorr_length = 436,
+
+low_inv_effective_size = 0.00645
+middle_inv_effective_size = .0001,
+high_inv_effective_size = .0001,
+
+/
+
+!
+! The following namelist controls the behaviour of the ECRAD
+! radiation code
+!
+&radiation
+do_3d_effects=true,
+do_lw = true,
+n_regions=3,
+min_cloud_effective_size= 1.0e-6,         ! Minimum cloud effective size, for stability (m)
+sw_entrapment_name      = "Explicit",      ! "Maximum" = old behaviour ("Explicit" is the best)
+overhang_factor         = 1.0,
+directory_name		= "../../data",   ! Location of configuration files
+sw_solver_name          = "Tripleclouds",
+lw_solver_name          = "Tripleclouds",
+cloud_pdf_shape_name    = "Gamma",
+overhead_sun_factor = 0.06,
+do_lw_cloud_scattering 	= true,          ! Clouds scatter in the longwave?
+cloud_inhom_decorr_scaling = 0.5,
+do_save_radiative_properties = false,     ! Save raw radiation properties in radiative_properties.nc?
+! Verbosity level: 0=none, 1=warning, 2=info, 3=progress, 4=detailed, 5=debug
+iverbose    	   	= 1, 
+use_aerosols		= false,           ! Include aerosols in radiation calculations?
+do_save_spectral_flux   = false,           ! Save spectral fluxes in output file?
+do_save_gpoint_flux     = false,           ! Save fluxes per g-point in output file?
+gas_model_name          = "RRTMG-IFS",     ! Gas model
+/

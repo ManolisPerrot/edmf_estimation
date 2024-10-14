@@ -1,0 +1,7 @@
+thermals_fact_epsilon 5.e-4 4.e-3 2.e-3 log
+thermals_ed_dz 0.0 0.2 0.07 linear
+cld_lc_lsc 1e-4 1e-3 5e-4 linear
+cld_tau_lsc 90 5700 900 linear
+RAD_FSD 0.1 2.0 0.705 linear
+RAD_DZ_OVP 50 500 187.22 linear
+RAD_CS 50 1000 247.47 linear

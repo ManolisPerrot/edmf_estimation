@@ -1,0 +1,16 @@
+Travail en cours, Fredho
+========================
+
+./bench.sh -wdir EJEC -waves "`seq 1 20`" -param param_LOUIS2 -metrics "ARMCU_REF_zav-400-600-theta_7_9,ARMCU_REF_zav-400-600-qv_7_9,ARMCU_REF_nebmax_7_9,RICO_REF_nebmax_19_25,SANDU_SLOW_neb4zave_50_60,SANDU_REF_neb4zave_50_60,SANDU_REF_nebzave_50_60,SANDU_FAST_neb4zave_50_60,CINDY_REF_zav-2000-4000-hur_15_35,CINDY_REF_zav-2000-4000-hur_36_48,RCEOCE_REF_zav-2000-4000-hur_5_19" -sample_size 1000000 -sample_size_next_design 200
+
+./bench.sh -wdir LOUIS2 -waves "`seq 1 10`" -param param_LOUIS2 -metrics "ARMCU_REF_zav-400-600-theta_7_9,ARMCU_REF_zav-400-600-qv_7_9,ARMCU_REF_nebmax_7_9,RICO_REF_nebmax_19_25,SANDU_SLOW_neb4zave_50_60,SANDU_REF_neb4zave_50_60,SANDU_REF_nebzave_50_60,SANDU_FAST_neb4zave_50_60,CINDY_REF_zav-2000-4000-hur_15_35,CINDY_REF_zav-2000-4000-hur_36_48,RCEOCE_REF_zav-2000-4000-hur_5_19" -sample_size 1000000 -sample_size_next_design 200
+
+
+./bench.sh -wdir LULO -waves "`seq 1 1`" -param param_LOUIS -metrics "ARMCU_REF_zav-400-600-theta_7_9,ARMCU_REF_zav-400-600-qv_7_9,ARMCU_REF_nebmax_7_9,RICO_REF_nebmax_19_25,SANDU_REF_neb4zave_50_60,CINDY_REF_zav-2000-4000-hur_15_35,CINDY_REF_zav-2000-4000-hur_36_48,RCEOCE_REF_zav-2000-4000-hur_5_19" -sample_size 1000000 -sample_size_next_design 40
+
+
+
+
+./bench.sh -wdir CINDYL95 -waves "1 2 3" -param param_LOUIS -metrics "ARMCU_REF_zav-400-600-theta_7_9,ARMCU_REF_zav-400-600-qv_7_9,ARMCU_REF_nebmax_7_9,RICO_REF_nebmax_19_25,SANDU_REF_neb4zave_50_60,CINDY_REF_zav-2000-4000-hur_15_35,CINDY_REF_zav-2000-4000-hur_36_48,RCEOCE_REF_zav-2000-4000-hur_5_19,RCEOCE_REF_zav-0-1000-rneb_5_19,RCEOCE_REF_zav-2000-4000-rneb_5_19,RCEOCE_REF_zav-10000-14000-rneb_5_19" -sample_size 100000 -sample_size_next_design 40
+./bench.sh -wdir CINDYL95 -waves "4 5 6" -param param_LOUIS -metrics "ARMCU_REF_zav-400-600-theta_7_9,ARMCU_REF_zav-400-600-qv_7_9,ARMCU_REF_nebmax_7_9,RICO_REF_nebmax_19_25,SANDU_REF_neb4zave_50_60,CINDY_REF_zav-2000-4000-hur_15_35,CINDY_REF_zav-2000-4000-hur_36_48,RCEOCE_REF_zav-2000-4000-hur_5_19,RCEOCE_REF_zav-0-1000-rneb_5_19,RCEOCE_REF_zav-2000-4000-rneb_5_19,RCEOCE_REF_zav-10000-14000-rneb_5_19" -sample_size 100000 -sample_size_next_design 40
+

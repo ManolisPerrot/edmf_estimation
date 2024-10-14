@@ -1,0 +1,6 @@
+DZ 0.03 0.2 0.07 linear
+EVAP 1e-5 2.2e-4 1e-4 log
+CLC 1e-4 1e-3 6.5e-4 linear
+RAD_FSD 0.1 2.0 0.705 linear
+RAD_DZ_OVP 50 500 187.22 linear
+RAD_CS 50 1000 247.47 linear

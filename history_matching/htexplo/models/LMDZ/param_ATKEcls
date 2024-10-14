@@ -1,0 +1,8 @@
+PRN 0.7 1.0 0.8 linear
+CL 0.1 1.0 0.5 linear
+LINF 15. 75. 40. linear
+ALPHAPR 3. 5. 4.5 linear 
+RIC 0.18 0.25 0.2 linear
+CEPSILON 1.2 10. 5.9 linear
+SMIN 0.025 0.1 0.05 linear
+CE 1. 5. 2. linear

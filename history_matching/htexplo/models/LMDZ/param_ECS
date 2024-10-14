@@ -1,0 +1,17 @@
+WDENSO 1.e-11 1.e-8 1.e-9 log
+ALPBLK 0.2 0.8 0.5 linear
+ALPWKK 0.01 0.5 0.25 linear
+CLDLC 0.0001 0.001 0.00065 linear
+FALLV 0.3 2. 0.8 linear
+RQSP0 30000 60000 45000 linear
+RQSDP 5000 30000 10000 linear
+RQSTOP 0.05 0.6 0.4 linear
+AERIE  0.5 2. 1.3 linear
+OMEPMX 0.0001 0.1 0.001 log
+SIGDZ 0.001 0.02 0.003 linear
+WBSRF 0.05 2. 0.5 linear
+WBTOP 1.5 6 2.8 linear
+ELCV 0.0001 0.002 0.0003 linear
+TLCV -65 -35 -55 linear
+REI 0.5 1.3 1 linear
+DZTH 0.05 0.15 0.07 linear

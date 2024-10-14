@@ -1,0 +1,11 @@
+nlev=90
+timestep=50
+cycle=41t1_op1.11_MUSC
+simuREF=AROME_OPER
+namref=$REP_MUSC/namelist/AROME/namarp_41t1_AROME_HTUNE
+
+namsfx=$REP_MUSC/namelist/SURFEX/nam.sfx.tl126.CMIP6.v631
+
+MASTER=/home/honnert/pack/41t1_op1.11_MUSC/bin/MASTERODB
+PGD=/home/honnert/pack/41t1_op1.11_MUSC/bin/PGD
+PREP=/home/honnert/pack/41t1_op1.11_MUSC/bin/PREP

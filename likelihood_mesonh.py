@@ -166,12 +166,12 @@ def likelihood_mesonh(
         
         # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
         # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
-        plt.plot(TH_scm[:,-1] ,z_r[case])
+        # plt.plot(TH_scm[:,-1] ,z_r[case])
         # plt.plot(U_scm[:,-20],z_r[case])
         # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
-        plt.plot(TH_les[case][:,-1],z_r[case],'k+')
-        plt.xlim(1.6,1.8)
-        plt.show()
+        # plt.plot(TH_les[case][:,-1],z_r[case],'k+')
+        # plt.xlim(1.6,1.8)
+        # plt.show()
 
         # print(TH_scm.shape)
 
@@ -282,7 +282,7 @@ likelihood_mesonh(
     wp0     = -1.e-08,
     sobolev=False,
     nan_file='nan_parameters.txt',
-    trace=True,
+    trace=False,
     ret_log_likelihood=True,
     )
 
