@@ -82,18 +82,23 @@ MC_model = pm.Model()
 #               ['wp0',[-1e-8,-1e-7]]
 #              ]
 
-
+## !!!!!!!!!!!!!!!!!!! WARNING cahnge the saving name before overridding previous inference !!!!!!!
 with MC_model:
     # Defining the prior
-    Cent = pm.Uniform('Cent', lower=0, upper=0.99)
-    Cdet = pm.Uniform('Cdet', lower=1, upper=1.99)
-    wp_a = pm.Uniform('wp_a', lower=0.01, upper=1.0)
-    wp_b = pm.Uniform('wp_b', lower=0.01, upper=1.0)
-    wp_bp = pm.Uniform('wp_bp', lower=0.25, upper=2.5)
-    up_c = pm.Uniform('up_c', lower=0, upper=0.9)
-    bc_ap = pm.Uniform('bc_ap', lower=0, upper=0.45)
-    delta_bkg = pm.Uniform('delta_bkg', lower=0.25, upper=2.5)
-    wp_0 = pm.Uniform('wp_0', lower=-1e-7, upper=-1e-8)
+    Cent = pm.Uniform('Cent', lower=0., upper=1.)#pm.Uniform('Cent', lower=0, upper=0.99)
+    Cdet = pm.Uniform('Cdet', lower=1., upper=2.)#pm.Uniform('Cdet', lower=1, upper=1.99)
+    wp_a = pm.Uniform('wp_a', lower=0.0, upper=1.0)#pm.Uniform('wp_a', lower=0.01, upper=1.0)
+    wp_b = pm.Uniform('wp_b', lower=0.0, upper=1.0)#pm.Uniform('wp_b', lower=0.01, upper=1.0)
+    wp_bp     = pm.Uniform('wp_bp', lower=0., upper=3.) #pm.Uniform('wp_bp', lower=0., upper=2.5)
+    up_c      = pm.Uniform('up_c', lower=0, upper=1.) #pm.Uniform('up_c', lower=0, upper=0.9)
+    bc_ap     = pm.Uniform('bc_ap', lower=0, upper=0.45) #pm.Uniform('bc_ap', lower=0, upper=0.45)
+    delta_bkg = pm.Uniform('delta_bkg', lower=0., upper=3.) #pm.Uniform('delta_bkg', lower=0.25, upper=2.5)
+    #wp_0      = pm.Uniform('wp_0', lower=-1e-7, upper=-1e-8) #pm.Uniform('wp_0', lower=-1e-7, upper=-1e-8)
+    # Sample uniformly in log space (log10)
+    log_wp_0 = pm.Uniform('log_wp_0', lower=np.log10(1e-8), upper=np.log10(1e-1))
+    # Convert back to the original scale and make it negative
+    wp_0 = pm.Deterministic('wp_0', -10**log_wp_0)
+
 
     ## Define the likelihood
     pm.CustomDist('likelihood', Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, wp_0, logp=custom_model_loglike)
@@ -104,14 +109,19 @@ with MC_model:
     # vars_list = list(MC_model.values_to_rvs.keys())[:]
     # step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
     # step = pm.Slice()           # kind of MCMC random walk algorithm.
-    step = pm.DEMetropolisZ()    # kind of MCMC random walk algorithm.
-    trace = pm.sample(50000, step=step, tune=2000)  # samples
+    step = pm.DEMetropolisZ()     # kind of MCMC random walk algorithm.
+    trace = pm.sample(50000, step=step, tune=2000)  # samples #50 000 takes ~20h
     end = time.time()
     print('Time taken: ', end - start)
 
 az.summary(trace)
 # az.InferenceData.to_dataframe(trace)
-# az.InferenceData.to_netcdf(trace, 'full_MCMC_run.nc')
+
+## To save to netcdf
+## !!!!!!!!!!!!!!!!!!! WARNING cahnge the name before overridding previous inference !!!!!!!
+saving_name = 'full_MCMC_run_test.nc'
+az.InferenceData.to_netcdf(trace, saving_name)
+
 # trace = az.from_netcdf('trace.nc')
 
 az.plot_trace(trace)
