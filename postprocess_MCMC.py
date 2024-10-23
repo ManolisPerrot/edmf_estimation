@@ -1,7 +1,7 @@
 import numpy as np
 import arviz as az
 import matplotlib.pyplot as plt
-
+from likelihood_mesonh import likelihood_mesonh
 
 ## Load the data
 data = az.from_netcdf('full_MCMC_run.nc')
@@ -19,6 +19,25 @@ chain_nr = max_index // chain_length
 draw_nr = max_index % chain_length
 
 MAP = ds.isel(draw=draw_nr, chain=chain_nr)
+
+
+
+likelihood_mesonh(    
+    Cent      = 0.8985,
+    Cdet      =  1.827,
+    wp_a      = 0.9458,
+    wp_b      = 0.9488,
+    wp_bp     = 1.951,
+    up_c      = 0.2711, #we take up_c=vp_c
+    bc_ap     = 0.3673,
+    delta_bkg = 2.253,
+    wp0       = -7.874e-08,
+    sobolev=False,
+    nan_file='nan_parameters.txt',
+    trace=True,
+    ret_log_likelihood=False,
+    )
+
 
 
 

@@ -24,22 +24,25 @@ from test_version_edmf_ocean import check_edmf_ocean_version
 check_edmf_ocean_version()
 from interpolate_LES_on_SCM_grids import regrid_and_save
 
-
-
-
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
-model_error_t,data_error_t=0.005,0.005 #°C
-model_error_u,data_error_u=0.01,0.01 #ms-1 
-model_error_v,data_error_v=0.01,0.01 #ms-1
+model_error_t,data_error_t= 0.5*(np.sqrt(1.672455728497919e-05) +np.sqrt(4.404447965215477e-06 )),0. #0.005,0.005 #°C
+model_error_u,data_error_u= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(8.485927186142573e-06 )),0. #0.01,0.01 #ms-1 
+model_error_v,data_error_v= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(0.00015887687395225203)),0. #0.01,0.01 #ms-1
 # importance of each field in the cost function (non-dimensional)
 weight_t=1.
-weight_u=0.1
-weight_v=0.1
+weight_u=1.
+weight_v=1.
 # Bayesian beta hyperparameter
-beta_t = weight_t / (model_error_t**2 + data_error_t**2) 
-beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
-beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
+# beta_t = weight_t / (model_error_t**2 + data_error_t**2) 
+# beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
+# beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
+
+beta_t = weight_t / (0.5*(1.672455728497919e-05) +(4.404447965215477e-06 ))
+beta_u = weight_u / (0.5*(3.4161232221017545e-09)+(8.485927186142573e-06 ))
+beta_v = weight_v / (0.5*(3.4161232221017545e-09)+(0.00015887687395225203))
+
+
 
 # use H1 Sobolev norm
 sobolev=False
@@ -56,6 +59,9 @@ weight_dzv=1.
 beta_t_h1 = weight_dzt / (model_error_dz_t**2 + data_error_dz_t**2) 
 beta_u_h1 = weight_dzu / (model_error_dz_u**2 + data_error_dz_u**2) 
 beta_v_h1 = weight_dzv / (model_error_dz_v**2 + data_error_dz_v**2) 
+
+
+
 # ===================================Choose cases/datasets========================================
 #cases = ['FC500', 'W005_C500_NO_COR','WANG1_FR']
 cases = ['FC500', 'W005_C500_NO_COR']
@@ -116,7 +122,11 @@ def likelihood_mesonh(
     nan_file='nan_parameters.txt',
     trace=False,
     ret_log_likelihood=False,
-    ):
+    beta_t=beta_t,
+    beta_u=beta_u,
+    beta_v=beta_v,):
+
+
 
     # Load the case specific parameters
     # ATTENTION, any parameter entered in case params will 
@@ -164,16 +174,20 @@ def likelihood_mesonh(
         U_scm  = scm[case].u_history[z_r_boolean_filter[case]]
         V_scm  = scm[case].v_history[z_r_boolean_filter[case]]
         
-        # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
-        # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
-        # plt.plot(TH_scm[:,-1] ,z_r[case])
-        # plt.plot(U_scm[:,-20],z_r[case])
-        # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
-        # plt.plot(TH_les[case][:,-1],z_r[case],'k+')
-        # plt.xlim(1.6,1.8)
-        # plt.show()
+        if trace:
+            # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
+            # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
+            instant=-1
+            # plt.plot(TH_scm[:,instant] ,z_r[case])
+            # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            plt.plot(TH_scm[:,instant] ,z_r[case])
+            plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            # plt.plot(U_scm[:,-20],z_r[case])
+            # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
+            plt.xlim(1.6,1.8)
+            plt.show()
 
-        # print(TH_scm.shape)
+            # print(TH_scm.shape)
 
 
         # compute the space-time L2 average,
@@ -270,22 +284,37 @@ def likelihood_mesonh(
 
 # likelihood_mesonh(sobolev=True,)
 
-likelihood_mesonh(    
-    Cent      = 0.99,
-    Cdet      = 1.99,
-    wp_a      = 1.,
-    wp_b      = 1.0,
-    wp_bp     = 0.003*250,
-    up_c      = 0.5, #we take up_c=vp_c
-    bc_ap     = 0.2,
-    delta_bkg = 0.0045*250,
-    wp0     = -1.e-08,
-    sobolev=False,
-    nan_file='nan_parameters.txt',
-    trace=False,
-    ret_log_likelihood=True,
-    )
+# likelihood_mesonh(    
+#     Cent      = 0.99,
+#     Cdet      = 1.99,
+#     wp_a      = 1.,
+#     wp_b      = 1.0,
+#     wp_bp     = 0.003*250,
+#     up_c      = 0.5, #we take up_c=vp_c
+#     bc_ap     = 0.2,
+#     delta_bkg = 0.0045*250,
+#     wp0     = -1.e-08,
+#     sobolev=False,
+#     nan_file='nan_parameters.txt',
+#     trace=True,
+#     ret_log_likelihood=True,
+#     )
 
+# likelihood_mesonh(    
+#      Cent      = 0.8985,
+#      Cdet      =  1.827,
+#      wp_a      = 0.9458,
+#      wp_b      = 0.9488,
+#      wp_bp     = 1.951,
+#      up_c      = 0.2711, #we take up_c=vp_c
+#      bc_ap     = 0.3673,
+#      delta_bkg = 2.253,
+#      wp0       = -7.874e-08,
+#      sobolev=False,
+#      nan_file='nan_parameters.txt',
+#      trace=True,
+#      ret_log_likelihood=False,
+#      )
 # if "__name__"=="__main__":
 #    likelihood_mesonh()
 #     # print(likelihood)

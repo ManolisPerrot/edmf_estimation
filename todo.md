@@ -15,6 +15,9 @@
 - [X] ask Florian the access of Wagner's LES
 - [X] configure likelihood to use wagner's LES --> NO because they have Stokes Drift !!!
 - [ ] use Van Roekel cases
+- [X] compute beta from loss between MAP and LES
+- [ ] refaire tourner les cas pour être sûr des params thermo? (en vérifiant bien le grad de temp...)
+- [ ] PB with FC500, MAP is not really matching (offset of temp, already found before... Pb of thermo cst?)
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
