@@ -1,0 +1,11 @@
+Simulations du cas GABLS4 (ref: Bazile et al, 2019; Couvreux et al, 2019)
+sur 24h, Dx=Dy=5m, Dz=2m; LX=Ly=1km, Lz=1km (couche de rappel au-dessus de 700m)
+initialisé a 00UTC:
+zo=10-3m ; zoh=10-4m
+evolution de la Ts=prescrite; pas d'advection horizontale; pas de rayonnement; pas d'humidité
+= = = = =  = = = = = = =  = = = 
+gabls4_meanprofile_les_MESONH_stage3_zo3.nc : runs de Méso-NH
+new_gabls4_CSIRO_stage3_v02.nc: runs du modèle de Bou-Zeid (réalisé par CSIRO, Australia)
+new_gabls4_meanprofile_les_JP_JPLLES_base_stage3_v02.nc: modèle UCONN, réalisé par G MAtheou)
+new_gabls4_meanprofile_les_UKMO_stage3_v03.nc : modèle UKMO, réalisé par J Edwards
+new_gabls4_newz0_meanprofile_les_imuk_palm_stage3_v01.nc: modèle PALM , réalisé par B Maronga

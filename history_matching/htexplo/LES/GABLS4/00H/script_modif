@@ -1,0 +1,12 @@
+batch=1 ; export batch
+cp $1.nc toto.nc
+ncrename -h -v th,theta -v t,temp toto.nc totob.nc
+ncap2 -O -s "uw= uw_res+uw_sbg" totob.nc toto.nc
+ncap2 -O -s "vw= vw_res+vw_sbg" toto.nc totob.nc
+ncap2 -O -s "th2= th2_res" totob.nc toto.nc
+ncap2 -O -s "wth= wth_res+wthl_sbg" toto.nc totob.nc
+ncap2 -O -s "uu= uu_res+uu_sbg" totob.nc toto.nc
+ncap2 -O -s "vv= vv_res+vv_sbg" toto.nc totob.nc
+ncap2 -O -s "ww= ww_res+ww_sbg" totob.nc toto.nc
+ncap2 -O -s "tke= TKE_res+TKE_sbg" toto.nc totob.nc
+cdo houravf totob.nc new_$1.nc

@@ -1,0 +1,16 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.43 (optimized)
+ ! Linux 3.10.0-862.11.6.el7.x86_64 64-bit - 09/14/18
+ ! 11-Apr-19 15:43     
+
+use HTUNE_CERK4.1.ARMCU.000KCL_4D.nc
+plot/l=10 ql
+use HTUNE_DZ40m.1.ARMCu.000KCL_4D.nc
+plot/l=10/OV ql
+use HTUNE_L25km.1.ARMCu.000KCL.nc
+use HTUNE_L51km.1.ARMCu.000KCL.nc
+plot/l=10/OV ql
+use T1_HTUNE_L25km.1.ARMCu.000KCL.nc
+plot/l=10/OV ql
+plot/l=11/OV ql
+quit

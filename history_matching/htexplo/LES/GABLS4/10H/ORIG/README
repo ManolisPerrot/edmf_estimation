@@ -1,0 +1,13 @@
+Simulations du cas GABLS4, focus sur la partie stable: initiation a 10UTC
+Dx=Dy=1m=Dz (sauf précisé autrement); Lx=Ly=500m Lz=150m
+
+new_gabls4_exp6_meanprofile_les_imuk_palm_stage3.nc : modèle PALM, 
+new_gabls4_meanprofile_les_CSIRO_LASD_oper_stage3_10h_v01.nc : modèle de Bou-Zeid (de Princeton, tourné au CSIRO, Australia)
+new_gabls4_meanprofile_les_CT_UCONN_sv21_stage3n_v01.nc : modèle UCONN de G Matheou
+new_gabls4_meanprofile_les_MESONH_DIFU_1m_D1.nc : modèle Méso-NH
+new_gabls4_meanprofile_les_MESONH_DIFU_1m_D2.nc : modèle Méso-NH Lx=Ly=250m
+new_gabls4_meanprofile_les_MESONH_DIFU_50cm_D2.nc : modèle Méso-NH Lx=Ly=250m; Dx=Dy=Dz=50cm
+new_gabls4_meanprofile_les_MESONH_DIFU_Dz50cm_D2.nc : modèle Méso-NH Lx=Ly=250m; Dx=Dy=1m ; Dz=50cm
+new_gabls4_meanprofile_les_mp_MicroHH_exp1_stage3_v01.nc: modèle MicroHH de C Van Heerwaarden
+new_gabls4_meanprofile_les_UKMO_stage4_v02.nc : modèle UKMO LES de J Edwards
+new_gabls4_meanprofile_les_WU_DALES_ref_stage3_v02.nc : modèle DALES de University of Wageningen 

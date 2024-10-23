@@ -1,0 +1,12 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.43 (optimized)
+ ! Linux 3.10.0-862.11.6.el7.x86_64 64-bit - 09/14/18
+ ! 21-Feb-19 11:59     
+
+use HTUNE_houravg_FIRE_REFERB.000.nc
+show data
+shade theta
+shade trneb
+shade rneb
+shade qv
+quit

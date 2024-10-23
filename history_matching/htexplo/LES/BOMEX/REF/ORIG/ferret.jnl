@@ -1,0 +1,16 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.1 (optimized)
+ ! Linux 2.6.32-642.13.1.el6.x86_64 64-bit - 02/15/17
+ !  6-Nov-18 15:45     
+
+use HTUNE_MREVE.1.BOMEX.000KCL.nc
+shade RNEB
+us HTUNE_VMFTH.1.BOMEX.000KCL.nc
+shade RNEB
+shade ql[d=1]
+shade ql[d=2]
+shade ql[d=1]
+shade/lev=(0.,0.00001,0.000001) ql[d=1]
+shade/lev=(0.,0.00001,0.000001) ql[d=2]
+shade/lev=(0.,0.00001,0.000001) ql[d=1]
+quit

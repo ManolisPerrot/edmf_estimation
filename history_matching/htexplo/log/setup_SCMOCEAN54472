@@ -1,0 +1,711 @@
+airsea-XPS-13-9370
+/home/manolis/anaconda3/envs/3.8env/bin/python3
+3.8 3.8
+HEAD is now at ecec9ea V0.4.0 (#148)
+M	setup.py
+Requirement already satisfied: numpy==1.17.4 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 1)) (1.17.4)
+Requirement already satisfied: scipy==1.7.1 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 2)) (1.7.1)
+Requirement already satisfied: netcdf4 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 3)) (1.7.1.post2)
+Requirement already satisfied: matplotlib==3.2.2 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 4)) (3.2.2)
+Requirement already satisfied: pandas==1.2.3 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 5)) (1.2.3)
+Requirement already satisfied: patsy==0.5.1 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 6)) (0.5.1)
+Requirement already satisfied: cycler>=0.10 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (0.12.1)
+Requirement already satisfied: kiwisolver>=1.0.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (1.4.7)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (3.1.4)
+Requirement already satisfied: python-dateutil>=2.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (2.9.0.post0)
+Requirement already satisfied: pytz>=2017.3 in /home/manolis/.local/lib/python3.8/site-packages (from pandas==1.2.3->-r requirements_ecec9 (line 5)) (2024.2)
+Requirement already satisfied: six in /home/manolis/.local/lib/python3.8/site-packages (from patsy==0.5.1->-r requirements_ecec9 (line 6)) (1.16.0)
+Requirement already satisfied: cftime in /home/manolis/.local/lib/python3.8/site-packages (from netcdf4->-r requirements_ecec9 (line 3)) (1.6.4)
+Requirement already satisfied: certifi in /home/manolis/.local/lib/python3.8/site-packages (from netcdf4->-r requirements_ecec9 (line 3)) (2024.8.30)
+running install
+running bdist_egg
+running egg_info
+writing mogp_emulator.egg-info/PKG-INFO
+writing dependency_links to mogp_emulator.egg-info/dependency_links.txt
+writing requirements to mogp_emulator.egg-info/requires.txt
+writing top-level names to mogp_emulator.egg-info/top_level.txt
+reading manifest file 'mogp_emulator.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'mogp_emulator.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+copying mogp_emulator/formula.py -> build/lib/mogp_emulator
+copying mogp_emulator/MeanFunction.py -> build/lib/mogp_emulator
+copying mogp_emulator/version.py -> build/lib/mogp_emulator
+copying mogp_emulator/__init__.py -> build/lib/mogp_emulator
+copying mogp_emulator/DimensionReduction.py -> build/lib/mogp_emulator
+copying mogp_emulator/HistoryMatching.py -> build/lib/mogp_emulator
+copying mogp_emulator/ExperimentalDesign.py -> build/lib/mogp_emulator
+copying mogp_emulator/SequentialDesign.py -> build/lib/mogp_emulator
+copying mogp_emulator/Priors.py -> build/lib/mogp_emulator
+copying mogp_emulator/MultiOutputGP.py -> build/lib/mogp_emulator
+copying mogp_emulator/Kernel.py -> build/lib/mogp_emulator
+copying mogp_emulator/utils.py -> build/lib/mogp_emulator
+copying mogp_emulator/GaussianProcess.py -> build/lib/mogp_emulator
+copying mogp_emulator/fitting.py -> build/lib/mogp_emulator
+copying mogp_emulator/MCMC.py -> build/lib/mogp_emulator
+copying mogp_emulator/tests/benchmark_rosenbrock.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_kdr_GP.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_DimensionReduction.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_HistoryMatching.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/__init__.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_Kernel.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MeanFunction.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_Priors.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_SequentialDesign.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_formula.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MCMC.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_GaussianProcess.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_fitting.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_ExperimentalDesign.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_tsunami.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MultiOutputGP.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_MICE.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_historymatching.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_branin.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/demos/mice_demos.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/excalibur_workshop_demo.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/__init__.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/tutorial.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/projectile.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/gp_demos.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/benchmarks/benchmark_rosenbrock.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_kdr_GP.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/__init__.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_tsunami.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_MICE.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_historymatching.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_branin.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/linalg/__init__.py -> build/lib/mogp_emulator/linalg
+copying mogp_emulator/linalg/cholesky.py -> build/lib/mogp_emulator/linalg
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/formula.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/MeanFunction.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/version.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/DimensionReduction.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/HistoryMatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_rosenbrock.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_kdr_GP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_DimensionReduction.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_HistoryMatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_Kernel.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MeanFunction.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_Priors.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_SequentialDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_formula.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MCMC.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_GaussianProcess.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_fitting.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_ExperimentalDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_tsunami.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MultiOutputGP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_MICE.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_historymatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_branin.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/ExperimentalDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/SequentialDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/Priors.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/mice_demos.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/excalibur_workshop_demo.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/tutorial.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/projectile.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/gp_demos.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/MultiOutputGP.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/Kernel.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/utils.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/GaussianProcess.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_rosenbrock.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_kdr_GP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_tsunami.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_MICE.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_historymatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_branin.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/fitting.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/MCMC.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+copying build/lib/mogp_emulator/linalg/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+copying build/lib/mogp_emulator/linalg/cholesky.py -> build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/formula.py to formula.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MeanFunction.py to MeanFunction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/version.py to version.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/DimensionReduction.py to DimensionReduction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/HistoryMatching.py to HistoryMatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_rosenbrock.py to benchmark_rosenbrock.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_kdr_GP.py to benchmark_kdr_GP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_DimensionReduction.py to test_DimensionReduction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_HistoryMatching.py to test_HistoryMatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_Kernel.py to test_Kernel.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MeanFunction.py to test_MeanFunction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_Priors.py to test_Priors.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_SequentialDesign.py to test_SequentialDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_formula.py to test_formula.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MCMC.py to test_MCMC.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_GaussianProcess.py to test_GaussianProcess.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_fitting.py to test_fitting.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_ExperimentalDesign.py to test_ExperimentalDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_tsunami.py to benchmark_tsunami.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MultiOutputGP.py to test_MultiOutputGP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_MICE.py to benchmark_MICE.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_historymatching.py to benchmark_historymatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_branin.py to benchmark_branin.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/ExperimentalDesign.py to ExperimentalDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/SequentialDesign.py to SequentialDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/Priors.py to Priors.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/mice_demos.py to mice_demos.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/excalibur_workshop_demo.py to excalibur_workshop_demo.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/tutorial.py to tutorial.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/projectile.py to projectile.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/gp_demos.py to gp_demos.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MultiOutputGP.py to MultiOutputGP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/Kernel.py to Kernel.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/utils.py to utils.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/GaussianProcess.py to GaussianProcess.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_rosenbrock.py to benchmark_rosenbrock.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_kdr_GP.py to benchmark_kdr_GP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_tsunami.py to benchmark_tsunami.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_MICE.py to benchmark_MICE.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_historymatching.py to benchmark_historymatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_branin.py to benchmark_branin.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/fitting.py to fitting.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MCMC.py to MCMC.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/linalg/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/linalg/cholesky.py to cholesky.cpython-38.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+/home/manolis/anaconda3/envs/3.8env/lib/python3.8/site-packages/setuptools/_distutils/cmd.py:66: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/home/manolis/anaconda3/envs/3.8env/lib/python3.8/site-packages/setuptools/_distutils/cmd.py:66: EasyInstallDeprecationWarning: easy_install command is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` and ``easy_install``.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://github.com/pypa/setuptools/issues/917 for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+zip_safe flag not set; analyzing archive contents...
+creating 'dist/mogp_emulator-0.4.0-py3.8.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing mogp_emulator-0.4.0-py3.8.egg
+Removing /home/manolis/.local/lib/python3.8/site-packages/mogp_emulator-0.4.0-py3.8.egg
+Copying mogp_emulator-0.4.0-py3.8.egg to /home/manolis/.local/lib/python3.8/site-packages
+Adding mogp-emulator 0.4.0 to easy-install.pth file
+
+Installed /home/manolis/.local/lib/python3.8/site-packages/mogp_emulator-0.4.0-py3.8.egg
+Processing dependencies for mogp-emulator==0.4.0
+Searching for scipy==1.7.1
+Best match: scipy 1.7.1
+Adding scipy 1.7.1 to easy-install.pth file
+
+Using /home/manolis/.local/lib/python3.8/site-packages
+Searching for numpy==1.17.4
+Best match: numpy 1.17.4
+Adding numpy 1.17.4 to easy-install.pth file
+Installing f2py script to /home/manolis/.local/bin
+Installing f2py3 script to /home/manolis/.local/bin
+Installing f2py3.8 script to /home/manolis/.local/bin
+
+Using /home/manolis/.local/lib/python3.8/site-packages
+Finished processing dependencies for mogp-emulator==0.4.0
+/home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3
+Warning: dependency 'Matrix' is not available
+also installing the dependencies 'rprojroot', 'Rcpp', 'RcppTOML', 'here', 'jsonlite', 'png', 'rappdirs', 'rlang', 'withr'
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/rprojroot_2.0.4.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 59946 (59K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/rprojroot_2.0.4.tar.gz'
+
+     0K .......... .......... .......... .......... .......... 85% 7,34M 0s
+    50K ........                                              100%  125M=0,007s
+
+2024-10-14 14:59:49 (8,51 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/rprojroot_2.0.4.tar.gz' saved [59946/59946]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/Rcpp_1.0.13.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 3435344 (3,3M) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/Rcpp_1.0.13.tar.gz'
+
+     0K .......... .......... .......... .......... ..........  1% 7,35M 0s
+    50K .......... .......... .......... .......... ..........  2% 7,69M 0s
+   100K .......... .......... .......... .......... ..........  4% 8,46M 0s
+   150K .......... .......... .......... .......... ..........  5% 22,3M 0s
+   200K .......... .......... .......... .......... ..........  7% 19,3M 0s
+   250K .......... .......... .......... .......... ..........  8% 14,9M 0s
+   300K .......... .......... .......... .......... .......... 10% 30,7M 0s
+   350K .......... .......... .......... .......... .......... 11% 25,9M 0s
+   400K .......... .......... .......... .......... .......... 13% 45,8M 0s
+   450K .......... .......... .......... .......... .......... 14% 33,5M 0s
+   500K .......... .......... .......... .......... .......... 16% 32,2M 0s
+   550K .......... .......... .......... .......... .......... 17% 55,1M 0s
+   600K .......... .......... .......... .......... .......... 19% 52,5M 0s
+   650K .......... .......... .......... .......... .......... 20% 91,7M 0s
+   700K .......... .......... .......... .......... .......... 22% 50,5M 0s
+   750K .......... .......... .......... .......... .......... 23% 62,6M 0s
+   800K .......... .......... .......... .......... .......... 25% 92,2M 0s
+   850K .......... .......... .......... .......... .......... 26% 63,9M 0s
+   900K .......... .......... .......... .......... .......... 28% 62,6M 0s
+   950K .......... .......... .......... .......... .......... 29%  155M 0s
+  1000K .......... .......... .......... .......... .......... 31% 60,0M 0s
+  1050K .......... .......... .......... .......... .......... 32% 89,6M 0s
+  1100K .......... .......... .......... .......... .......... 34% 68,0M 0s
+  1150K .......... .......... .......... .......... .......... 35%  101M 0s
+  1200K .......... .......... .......... .......... .......... 37% 84,0M 0s
+  1250K .......... .......... .......... .......... .......... 38% 94,8M 0s
+  1300K .......... .......... .......... .......... .......... 40%  107M 0s
+  1350K .......... .......... .......... .......... .......... 41%  122M 0s
+  1400K .......... .......... .......... .......... .......... 43%  110M 0s
+  1450K .......... .......... .......... .......... .......... 44%  122M 0s
+  1500K .......... .......... .......... .......... .......... 46%  113M 0s
+  1550K .......... .......... .......... .......... .......... 47%  125M 0s
+  1600K .......... .......... .......... .......... .......... 49% 96,6M 0s
+  1650K .......... .......... .......... .......... .......... 50%  124M 0s
+  1700K .......... .......... .......... .......... .......... 52% 3,13M 0s
+  1750K .......... .......... .......... .......... .......... 53% 98,7M 0s
+  1800K .......... .......... .......... .......... .......... 55%  114M 0s
+  1850K .......... .......... .......... .......... .......... 56%  113M 0s
+  1900K .......... .......... .......... .......... .......... 58%  120M 0s
+  1950K .......... .......... .......... .......... .......... 59%  102M 0s
+  2000K .......... .......... .......... .......... .......... 61%  120M 0s
+  2050K .......... .......... .......... .......... .......... 62%  121M 0s
+  2100K .......... .......... .......... .......... .......... 64%  120M 0s
+  2150K .......... .......... .......... .......... .......... 65%  102M 0s
+  2200K .......... .......... .......... .......... .......... 67%  122M 0s
+  2250K .......... .......... .......... .......... .......... 68%  115M 0s
+  2300K .......... .......... .......... .......... .......... 70%  121M 0s
+  2350K .......... .......... .......... .......... .......... 71%  107M 0s
+  2400K .......... .......... .......... .......... .......... 73%  119M 0s
+  2450K .......... .......... .......... .......... .......... 74%  121M 0s
+  2500K .......... .......... .......... .......... .......... 76%  121M 0s
+  2550K .......... .......... .......... .......... .......... 77%  115M 0s
+  2600K .......... .......... .......... .......... .......... 78%  107M 0s
+  2650K .......... .......... .......... .......... .......... 80%  126M 0s
+  2700K .......... .......... .......... .......... .......... 81% 96,5M 0s
+  2750K .......... .......... .......... .......... .......... 83%  110M 0s
+  2800K .......... .......... .......... .......... .......... 84%  106M 0s
+  2850K .......... .......... .......... .......... .......... 86%  101M 0s
+  2900K .......... .......... .......... .......... .......... 87%  117M 0s
+  2950K .......... .......... .......... .......... .......... 89%  110M 0s
+  3000K .......... .......... .......... .......... .......... 90%  102M 0s
+  3050K .......... .......... .......... .......... .......... 92%  112M 0s
+  3100K .......... .......... .......... .......... .......... 93%  110M 0s
+  3150K .......... .......... .......... .......... .......... 95%  116M 0s
+  3200K .......... .......... .......... .......... .......... 96%  114M 0s
+  3250K .......... .......... .......... .......... .......... 98% 99,5M 0s
+  3300K .......... .......... .......... .......... .......... 99%  111M 0s
+  3350K ....                                                  100% 9209G=0,08s
+
+2024-10-14 14:59:49 (42,3 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/Rcpp_1.0.13.tar.gz' saved [3435344/3435344]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/RcppTOML_0.2.2.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 141195 (138K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/RcppTOML_0.2.2.tar.gz'
+
+     0K .......... .......... .......... .......... .......... 36% 6,69M 0s
+    50K .......... .......... .......... .......... .......... 72% 8,66M 0s
+   100K .......... .......... .......... .......              100% 31,2M=0,01s
+
+2024-10-14 14:59:49 (9,54 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/RcppTOML_0.2.2.tar.gz' saved [141195/141195]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/here_1.0.1.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 32954 (32K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/here_1.0.1.tar.gz'
+
+     0K .......... .......... .......... ..                   100% 32,3M=0,001s
+
+2024-10-14 14:59:49 (32,3 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/here_1.0.1.tar.gz' saved [32954/32954]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/jsonlite_1.8.9.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1055633 (1,0M) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/jsonlite_1.8.9.tar.gz'
+
+     0K .......... .......... .......... .......... ..........  4% 7,32M 0s
+    50K .......... .......... .......... .......... ..........  9% 7,67M 0s
+   100K .......... .......... .......... .......... .......... 14% 8,45M 0s
+   150K .......... .......... .......... .......... .......... 19% 21,4M 0s
+   200K .......... .......... .......... .......... .......... 24% 19,9M 0s
+   250K .......... .......... .......... .......... .......... 29% 15,5M 0s
+   300K .......... .......... .......... .......... .......... 33% 31,7M 0s
+   350K .......... .......... .......... .......... .......... 38% 25,0M 0s
+   400K .......... .......... .......... .......... .......... 43% 48,0M 0s
+   450K .......... .......... .......... .......... .......... 48% 32,8M 0s
+   500K .......... .......... .......... .......... .......... 53% 31,2M 0s
+   550K .......... .......... .......... .......... .......... 58% 55,1M 0s
+   600K .......... .......... .......... .......... .......... 63% 56,8M 0s
+   650K .......... .......... .......... .......... .......... 67% 86,4M 0s
+   700K .......... .......... .......... .......... .......... 72% 59,3M 0s
+   750K .......... .......... .......... .......... .......... 77% 64,5M 0s
+   800K .......... .......... .......... .......... .......... 82% 89,9M 0s
+   850K .......... .......... .......... .......... .......... 87% 58,8M 0s
+   900K .......... .......... .......... .......... .......... 92% 65,9M 0s
+   950K .......... .......... .......... .......... .......... 97%  126M 0s
+  1000K .......... .......... ..........                      100% 73,7M=0,04s
+
+2024-10-14 14:59:49 (24,5 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/jsonlite_1.8.9.tar.gz' saved [1055633/1055633]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/png_0.1-8.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 24880 (24K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/png_0.1-8.tar.gz'
+
+     0K .......... .......... ....                            100% 27,7M=0,001s
+
+2024-10-14 14:59:49 (27,7 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/png_0.1-8.tar.gz' saved [24880/24880]
+
+--2024-10-14 14:59:49--  https://cran.rstudio.com/src/contrib/rappdirs_0.3.3.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 12288 (12K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/rappdirs_0.3.3.tar.gz'
+
+     0K .......... ..                                         100%  191M=0s
+
+2024-10-14 14:59:50 (191 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/rappdirs_0.3.3.tar.gz' saved [12288/12288]
+
+--2024-10-14 14:59:50--  https://cran.rstudio.com/src/contrib/rlang_1.1.4.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 767041 (749K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/rlang_1.1.4.tar.gz'
+
+     0K .......... .......... .......... .......... ..........  6% 6,74M 0s
+    50K .......... .......... .......... .......... .......... 13% 8,54M 0s
+   100K .......... .......... .......... .......... .......... 20% 23,0M 0s
+   150K .......... .......... .......... .......... .......... 26% 23,3M 0s
+   200K .......... .......... .......... .......... .......... 33% 18,7M 0s
+   250K .......... .......... .......... .......... .......... 40% 31,0M 0s
+   300K .......... .......... .......... .......... .......... 46% 29,1M 0s
+   350K .......... .......... .......... .......... .......... 53% 32,6M 0s
+   400K .......... .......... .......... .......... .......... 60% 55,8M 0s
+   450K .......... .......... .......... .......... .......... 66% 41,3M 0s
+   500K .......... .......... .......... .......... .......... 73% 74,5M 0s
+   550K .......... .......... .......... .......... .......... 80% 56,2M 0s
+   600K .......... .......... .......... .......... .......... 86% 53,8M 0s
+   650K .......... .......... .......... .......... .......... 93% 86,4M 0s
+   700K .......... .......... .......... .......... ......... 100% 81,3M=0,03s
+
+2024-10-14 14:59:50 (24,2 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/rlang_1.1.4.tar.gz' saved [767041/767041]
+
+--2024-10-14 14:59:50--  https://cran.rstudio.com/src/contrib/withr_3.0.1.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 103375 (101K) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/withr_3.0.1.tar.gz'
+
+     0K .......... .......... .......... .......... .......... 49% 6,70M 0s
+    50K .......... .......... .......... .......... .......... 99% 8,97M 0s
+   100K                                                       100% 1816G=0,01s
+
+2024-10-14 14:59:50 (7,74 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/withr_3.0.1.tar.gz' saved [103375/103375]
+
+--2024-10-14 14:59:50--  https://cran.rstudio.com/src/contrib/reticulate_1.39.0.tar.gz
+Resolving cran.rstudio.com (cran.rstudio.com)... 18.161.111.122, 18.161.111.96, 18.161.111.103, ...
+Connecting to cran.rstudio.com (cran.rstudio.com)|18.161.111.122|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1650130 (1,6M) [application/x-gzip]
+Saving to: '/tmp/Rtmp6nA9eK/downloaded_packages/reticulate_1.39.0.tar.gz'
+
+     0K .......... .......... .......... .......... ..........  3% 6,67M 0s
+    50K .......... .......... .......... .......... ..........  6% 8,86M 0s
+   100K .......... .......... .......... .......... ..........  9% 18,3M 0s
+   150K .......... .......... .......... .......... .......... 12% 32,5M 0s
+   200K .......... .......... .......... .......... .......... 15% 18,7M 0s
+   250K .......... .......... .......... .......... .......... 18% 41,6M 0s
+   300K .......... .......... .......... .......... .......... 21% 29,4M 0s
+   350K .......... .......... .......... .......... .......... 24% 52,5M 0s
+   400K .......... .......... .......... .......... .......... 27% 31,5M 0s
+   450K .......... .......... .......... .......... .......... 31% 40,0M 0s
+   500K .......... .......... .......... .......... .......... 34% 57,9M 0s
+   550K .......... .......... .......... .......... .......... 37% 77,3M 0s
+   600K .......... .......... .......... .......... .......... 40% 67,5M 0s
+   650K .......... .......... .......... .......... .......... 43% 92,2M 0s
+   700K .......... .......... .......... .......... .......... 46% 76,6M 0s
+   750K .......... .......... .......... .......... .......... 49% 91,9M 0s
+   800K .......... .......... .......... .......... .......... 52% 72,1M 0s
+   850K .......... .......... .......... .......... .......... 55% 77,9M 0s
+   900K .......... .......... .......... .......... .......... 58% 82,2M 0s
+   950K .......... .......... .......... .......... .......... 62%  111M 0s
+  1000K .......... .......... .......... .......... .......... 65%  110M 0s
+  1050K .......... .......... .......... .......... .......... 68% 98,7M 0s
+  1100K .......... .......... .......... .......... .......... 71%  111M 0s
+  1150K .......... .......... .......... .......... .......... 74%  118M 0s
+  1200K .......... .......... .......... .......... .......... 77%  116M 0s
+  1250K .......... .......... .......... .......... .......... 80% 98,3M 0s
+  1300K .......... .......... .......... .......... .......... 83%  116M 0s
+  1350K .......... .......... .......... .......... .......... 86%  116M 0s
+  1400K .......... .......... .......... .......... .......... 89%  115M 0s
+  1450K .......... .......... .......... .......... .......... 93%  104M 0s
+  1500K .......... .......... .......... .......... .......... 96%  116M 0s
+  1550K .......... .......... .......... .......... .......... 99%  886K 0s
+  1600K .......... .                                          100% 1,80M=0,1s
+
+2024-10-14 14:59:50 (15,8 MB/s) - '/tmp/Rtmp6nA9eK/downloaded_packages/reticulate_1.39.0.tar.gz' saved [1650130/1650130]
+
+* installing *source* package 'rprojroot' ...
+** package 'rprojroot' successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (rprojroot)
+* installing *source* package 'Rcpp' ...
+** package 'Rcpp' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c api.cpp -o api.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c attributes.cpp -o attributes.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c barrier.cpp -o barrier.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c date.cpp -o date.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c module.cpp -o module.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c rcpp_init.cpp -o rcpp_init.o
+x86_64-conda-linux-gnu-c++ -std=gnu++14 -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o Rcpp.so api.o attributes.o barrier.o date.o module.o rcpp_init.o -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-Rcpp/00new/Rcpp/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+code for methods in class "C++OverloadedMethods" was not checked for suspicious field assignments (recommended package 'codetools' not available?)
+code for methods in class "RcppClass" was not checked for suspicious field assignments (recommended package 'codetools' not available?)
+code for methods in class "RcppClass" was not checked for suspicious field assignments (recommended package 'codetools' not available?)
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (Rcpp)
+* installing *source* package 'jsonlite' ...
+** package 'jsonlite' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c base64.c -o base64.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c collapse_array.c -o collapse_array.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c collapse_object.c -o collapse_object.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c collapse_pretty.c -o collapse_pretty.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c escape_chars.c -o escape_chars.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c integer64_to_na.c -o integer64_to_na.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c is_datelist.c -o is_datelist.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c is_recordlist.c -o is_recordlist.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c is_scalarlist.c -o is_scalarlist.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c modp_numtoa.c -o modp_numtoa.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c null_to_na.c -o null_to_na.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c num_to_char.c -o num_to_char.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c parse.c -o parse.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c prettify.c -o prettify.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c push_parser.c -o push_parser.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c r-base64.c -o r-base64.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c register.c -o register.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c row_collapse.c -o row_collapse.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c transpose_list.c -o transpose_list.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c validate.c -o validate.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl.c -o yajl/yajl.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_alloc.c -o yajl/yajl_alloc.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_buf.c -o yajl/yajl_buf.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_encode.c -o yajl/yajl_encode.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_gen.c -o yajl/yajl_gen.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_lex.c -o yajl/yajl_lex.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_parser.c -o yajl/yajl_parser.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -Iyajl/api  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden  -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c yajl/yajl_tree.c -o yajl/yajl_tree.o
+x86_64-conda-linux-gnu-ar rcs yajl/libstatyajl.a yajl/yajl.o yajl/yajl_alloc.o yajl/yajl_buf.o yajl/yajl_encode.o yajl/yajl_gen.o yajl/yajl_lex.o yajl/yajl_parser.o yajl/yajl_tree.o
+x86_64-conda-linux-gnu-cc -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o jsonlite.so base64.o collapse_array.o collapse_object.o collapse_pretty.o escape_chars.o integer64_to_na.o is_datelist.o is_recordlist.o is_scalarlist.o modp_numtoa.o null_to_na.o num_to_char.o parse.o prettify.o push_parser.o r-base64.o register.o row_collapse.o transpose_list.o validate.o -Lyajl -lstatyajl -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-jsonlite/00new/jsonlite/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+in method for 'asJSON' with signature '"AsIs"': no definition for class "AsIs"
+in method for 'asJSON' with signature '"ITime"': no definition for class "ITime"
+in method for 'asJSON' with signature '"hms"': no definition for class "hms"
+in method for 'asJSON' with signature '"json"': no definition for class "json"
+in method for 'asJSON' with signature '"integer64"': no definition for class "integer64"
+in method for 'asJSON' with signature '"pairlist"': no definition for class "pairlist"
+in method for 'asJSON' with signature '"blob"': no definition for class "blob"
+in method for 'asJSON' with signature '"scalar"': no definition for class "scalar"
+in method for 'asJSON' with signature '"sf"': no definition for class "sf"
+in method for 'asJSON' with signature '"sfc"': no definition for class "sfc"
+in method for 'asJSON' with signature '"vctrs_vctr"': no definition for class "vctrs_vctr"
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (jsonlite)
+* installing *source* package 'png' ...
+** package 'png' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   `libpng-config --cflags` -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c dummy.c -o dummy.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   `libpng-config --cflags` -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c read.c -o read.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   `libpng-config --cflags` -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c write.c -o write.o
+x86_64-conda-linux-gnu-cc -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o png.so dummy.o read.o write.o -L/home/manolis/anaconda3/envs/3.8env/lib -lpng16 -lm -lz -lm -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-png/00new/png/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (png)
+* installing *source* package 'rappdirs' ...
+** package 'rappdirs' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c init.c -o init.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c win-path.c -o win-path.o
+x86_64-conda-linux-gnu-cc -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o rappdirs.so init.o win-path.o -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-rappdirs/00new/rappdirs/libs
+** R
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (rappdirs)
+* installing *source* package 'rlang' ...
+** package 'rlang' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I./rlang/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c capture.c -o capture.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I./rlang/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c internal.c -o internal.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I./rlang/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c rlang.c -o rlang.o
+x86_64-conda-linux-gnu-cc -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I./rlang/  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib  -fvisibility=hidden -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c version.c -o version.o
+x86_64-conda-linux-gnu-cc -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o rlang.so capture.o internal.o rlang.o version.o -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-rlang/00new/rlang/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (rlang)
+* installing *source* package 'withr' ...
+** package 'withr' successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (withr)
+* installing *source* package 'RcppTOML' ...
+** package 'RcppTOML' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-c++ -std=gnu++17 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include -DTOML_ENABLE_FLOAT16=0 -I'/home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/Rcpp/include' -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c RcppExports.cpp -o RcppExports.o
+x86_64-conda-linux-gnu-c++ -std=gnu++17 -I"/home/manolis/anaconda3/envs/3.8env/lib/R/include" -DNDEBUG -I../inst/include -DTOML_ENABLE_FLOAT16=0 -I'/home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/Rcpp/include' -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/manolis/anaconda3/envs/3.8env/include -I/home/manolis/anaconda3/envs/3.8env/include -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib   -fpic  -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/manolis/anaconda3/envs/3.8env/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1728291267341/work=/usr/local/src/conda/r-base-4.1.3 -fdebug-prefix-map=/home/manolis/anaconda3/envs/3.8env=/usr/local/src/conda-prefix  -c parse.cpp -o parse.o
+x86_64-conda-linux-gnu-c++ -std=gnu++17 -shared -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/manolis/anaconda3/envs/3.8env/lib -Wl,-rpath-link,/home/manolis/anaconda3/envs/3.8env/lib -L/home/manolis/anaconda3/envs/3.8env/lib -o RcppTOML.so RcppExports.o parse.o -L/home/manolis/anaconda3/envs/3.8env/lib/R/lib -lR
+installing to /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/00LOCK-RcppTOML/00new/RcppTOML/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (RcppTOML)
+* installing *source* package 'here' ...
+** package 'here' successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (here)
+ERROR: dependency 'Matrix' is not available for package 'reticulate'
+* removing '/home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.1.3-pip3/reticulate'
+
+The downloaded source packages are in
+	'/tmp/Rtmp6nA9eK/downloaded_packages'
+Warning message:
+In install.packages("reticulate", contriburl = "https://cran.rstudio.com/src/contrib",  :
+  installation of package 'reticulate' had non-zero exit status
+Problem encountered when installing R package reticulate

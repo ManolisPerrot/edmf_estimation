@@ -1,0 +1,12 @@
+HTUNE_BB0p1.1.IHOP1.000KCL.nc-> stronger white noise th'=0.1K (ref=0.01K)
+HTUNE_BB0p5.1.IHOP1.000KCL.nc -> much stronger white noise th'=0.5K (ref=0.01K)
+HTUNE_D100M.1.IHOP1.000KCL.nc -> smaller horizontal resolution (Dx=100m instead of 50m
+HTUNE_DIFU1.1.IHOP1.000KCL.nc -> larger coefficient for numerical diffusion (300s instead of 1800s)
+HTUNE_DIFU2.1.IHOP1.000KCL.nc -> smaller coefficient for numerical diffusion (7200s instead of 1800s)
+HTUNE_DZ10M.1.IHOP1.000KCL.nc -> higher vertical resolution
+HTUNE_IHOP1.1.CEN2D.000KCL.nc-> reference
+HTUNE_L20km.1.IHOP1.000KCL.nc-> larger domain 20x20km?? instead of 10x10km??
+HTUNE_RDELT.1.IHOP1.000KCL.nc -> other length scale formulation for turbulence (delt instead of Deardorff)
+HTUNE_RK4DI.1.IHOP1.000KCL.nc-> advection centred 2nd order (reference center 4th order)??
+HTUNE_WENO3.1.IHOP1.000KCL.nc -> advection WENO 3rd order
+HTUNE_WENO5.1.IHOP1.000KCL.nc -> advection WENO 5th order (reference center 4th order)

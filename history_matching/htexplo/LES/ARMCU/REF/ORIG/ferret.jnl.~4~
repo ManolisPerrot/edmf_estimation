@@ -1,0 +1,33 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.1 (optimized)
+ ! Linux 2.6.32-642.13.1.el6.x86_64 64-bit - 02/15/17
+ !  6-Nov-18 15:44     
+
+use HTUNE_CEN2D.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_CERK4.1.ARMCU.000KCL_4D.nc
+shade RNEB
+use HTUNE_D100m.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_DX40m.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_DZ40m.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_DZVAR.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_L10km.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_L25km.1.ARMCu.000KCL.nc
+shade RNEB
+use HTUNE_MREVE.1.ARMCu.000KCL_4D.nc
+shade RNEB
+shade ql
+use HTUNE_SCOND.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_TDELT.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_WENO3.1.ARMCu.000KCL_4D.nc
+shade RNEB
+use HTUNE_WENO5.1.ARMCu.000KCL_4D.nc
+shade RNEB
+quit

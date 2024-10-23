@@ -1,0 +1,12 @@
+HTUNE_A00WC.1.RK4RE.000KCL_4D.nc - reference
+HTUNE_A00WC.1.RK4B2.000KCL_4D.nc -> much stronger white noise th'=0.5K (ref=0.01K)
+HTUNE_A00WC.1.RK4BB.000KCL_4D.nc -> stronger white noise th'=0.1K (ref=0.01K)
+HTUNE_A00WC.1.RK4DT.000KCL_4D.nc-> smaller timestep (0.5s instead of 1s)
+HTUNE_A00WC.1.RK4TU.000KCL_4D.nc-> other length scale formulation for turbulence (delt instead of Deardorff)
+LES0.nc -> HTUNE_A00WC.1.CEN2D.000KCL_4D.nc -> advection centred 2nd order (reference center 4th order)
+HTUNE_A00WC.1.RKD25.000KCL_4D.nc -> finer horizontal resolution (25m instead of 50m)
+HTUNE_A00WC.1.RKD30.000KCL_4D.nc -> larger coefficient for numerical diffusion (300s instead of 1800s)
+HTUNE_A00WC.1.RKD72.000KCL_4D.nc -> smaller coefficient for numerical diffusion (7200s instead of 1800s)
+HTUNE_A00WC.1.RKDZZ.000KCL_4D.nc -> higher vertical resolution
+HTUNE_A00WC.1.RKw3b.000KCL_4D.nc -> advection WENO 3rd order
+HTUNE_A00WC.1.RKw5b.000KCL_4D.nc-> advection WENO 5th order (reference center 4th order)

@@ -1,0 +1,12 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.1 (optimized)
+ ! Linux 2.6.32-642.13.1.el6.x86_64 64-bit - 02/15/17
+ ! 24-Oct-18 18:26     
+
+use HTUNE_MREVE.1.BOMEX.000KCL.nc
+show data
+shade QL
+shade RNEB
+shade QL
+shade QLU_SHCON
+quit

@@ -1,0 +1,2 @@
+LES simulations for the GABLS4 case.
+Compared to the STAGE3_ORIG folder, the time axis of the netcdf file has been converted to a gregorian calendar with standard convention

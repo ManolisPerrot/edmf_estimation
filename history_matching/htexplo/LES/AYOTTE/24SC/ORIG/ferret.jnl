@@ -1,0 +1,8 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.1 (optimized)
+ ! Linux 2.6.32-642.13.1.el6.x86_64 64-bit - 02/15/17
+ ! 13-Nov-18 14:28     
+
+use HTUNE_A24SC.1.REFER.000KCL_4D.nc
+show data
+quit

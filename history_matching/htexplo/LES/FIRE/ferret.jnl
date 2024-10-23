@@ -1,0 +1,12 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v7.1 (optimized)
+ ! Linux 2.6.32-642.13.1.el6.x86_64 64-bit - 02/15/17
+ !  8-Nov-18 08:17     
+
+use LES1.nc
+show data
+plot/l=12 THL
+plot/l=12/transpose THL
+plot/l=12/transpose/i=50:70 THL
+plot/l=12/transpose/i=50:70 RT
+plot/l=12/transpose/i=50:70 QT

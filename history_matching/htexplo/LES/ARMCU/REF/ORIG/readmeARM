@@ -1,0 +1,14 @@
+HTUNE_CEN2D.1.ARMCu.000KCL.nc-> advection centred 2nd order (reference center 4th order)
+HTUNE_D100m.1.ARMCu.000KCL.nc-> horizontal resolution of 100m (instead of 25m)
+HTUNE_DX40m.1.ARMCu.000KCL.nc -> horizontal resolution of 40m (instead of 25m)
+HTUNE_DZ40m.1.ARMCu.000KCL.nc-> vertical resolution of 40m (instead of 25m)
+HTUNE_DZVAR.1.ARMCu.000KCL.nc-> stretched vertical grid
+HTUNE_L10km.1.ARMCu.000KCL.nc -> domain 10km instead of 6.4km
+HTUNE_MREVE.1.ARMCu.000KCL.nc-> only saturation ajustment
+HTUNE_SCOND.1.ARMCu.000KCL.nc -> allow subgrid condensation
+HTUNE_TDELT.1.ARMCu.000KCL.nc -> other length scale formulation for turbulence (delt instead of Deardorff)
+HTUNE_CERK4.1.ARMCu.000KCL.nc -> reference
+HTUNE_WENO3.1.ARMCu.000KCL.nc -> advection WENO 3rd order
+HTUNE_WENO5.1.ARMCu.000KCL.nc -> advection WENO 5th order (reference center 4th order)
+HTUNE_L25km.1.ARMCu.000KCL.nc -> horizontal resolution of 100m, vertical resolution of 40m, on a domain of 25.2 km 
+HTUNE_L51km.1.ARMCu.000KCL.nc -> horizontal resolution of 100m, vertical resolution of 40m, on a domain of 25.2 km

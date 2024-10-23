@@ -1,0 +1,6 @@
+batch=1 ; export batch
+cp $1.nc toto.nc
+ncrename -v th,theta -v t,temp toto.nc totob.nc
+ncatted -O -h -a units,time,o,c,"s" totob.nc
+ncatted -O -h -a time_origin,time,o,c,"11-DEC-2009 10:00:00" totob.nc
+cdo houravg totob.nc new_$1.nc
