@@ -1,9 +1,0 @@
-install_lmdz.sh DEBUT ven. 01 nov. 2024 15:11:11 CET
-################################################################
-Choix des options de compilation
-################################################################
-LMDZ20240508.trunk
-################################################################
-Check if required software is available
-################################################################
-You must first install cmake on your system
