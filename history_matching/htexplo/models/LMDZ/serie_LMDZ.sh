@@ -36,10 +36,10 @@ LMAX=79
 phys=LUDOBest2
 phys=NPv6.2
 # LMDZ path, modified by setup_LMDZ.sh
-LMDZdir=/data/mcoulon/01_RAYT-CLOUD_COMPENSATION/NPV6.3_round3/HighTune_R420_commit/../LMDZ20230626.trunk
+LMDZdir=/home/manolis/Documents/these/SCM_EDMF/edmf_estimation/history_matching/htexplo/../LMDZ20240508.trunk
 EXPE=$local/WAVE$WAVEN
 CTRL=$local/CTRL
-rad=rrtm
+rad=oldrad
 ecrad_dir=$local/../../models/ECRAD/
 nam=namelist_ecrad-default #ecrad namlist name stored in models/ECRAD/runECRAD
 path_data=data #path for ecrad data from the directory where LMDZ is running

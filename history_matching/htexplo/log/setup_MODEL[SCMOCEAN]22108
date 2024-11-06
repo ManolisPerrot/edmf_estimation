@@ -1,0 +1,11 @@
+models/MODEL[SCMOCEAN] does not exists
+Use : setup.sh -h [Model_Name [EXPE_NAME]]
+./setup.sh alone will only check R and python installation
+Model_Name name among :
+AROME
+ARPCLIMAT
+ARPEGE
+ECRAD
+LESLES
+LMDZ
+SCMOCEAN
