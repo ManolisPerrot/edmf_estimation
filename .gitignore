@@ -22,3 +22,4 @@ sobol_analysis/outputs/
 *.svn-base
 *.nc
 *tar.gz
+!./MCMC_output/*.nc
