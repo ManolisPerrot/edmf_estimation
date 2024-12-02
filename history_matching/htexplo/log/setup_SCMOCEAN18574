@@ -1,0 +1,364 @@
+airsea-XPS-13-9370
+/home/manolis/anaconda3/envs/hightune/bin/python3
+3.8 3.8
+HEAD is now at ecec9ea V0.4.0 (#148)
+M	setup.py
+Requirement already satisfied: numpy==1.17.4 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 1)) (1.17.4)
+Requirement already satisfied: scipy==1.7.1 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 2)) (1.7.1)
+Requirement already satisfied: netcdf4 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 3)) (1.7.1.post2)
+Requirement already satisfied: matplotlib==3.2.2 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 4)) (3.2.2)
+Requirement already satisfied: pandas==1.2.3 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 5)) (1.2.3)
+Requirement already satisfied: patsy==0.5.1 in /home/manolis/.local/lib/python3.8/site-packages (from -r requirements_ecec9 (line 6)) (0.5.1)
+Requirement already satisfied: cycler>=0.10 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (0.12.1)
+Requirement already satisfied: kiwisolver>=1.0.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (1.4.7)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (3.1.4)
+Requirement already satisfied: python-dateutil>=2.1 in /home/manolis/.local/lib/python3.8/site-packages (from matplotlib==3.2.2->-r requirements_ecec9 (line 4)) (2.9.0.post0)
+Requirement already satisfied: pytz>=2017.3 in /home/manolis/.local/lib/python3.8/site-packages (from pandas==1.2.3->-r requirements_ecec9 (line 5)) (2024.2)
+Requirement already satisfied: six in /home/manolis/.local/lib/python3.8/site-packages (from patsy==0.5.1->-r requirements_ecec9 (line 6)) (1.16.0)
+Requirement already satisfied: cftime in /home/manolis/.local/lib/python3.8/site-packages (from netcdf4->-r requirements_ecec9 (line 3)) (1.6.4)
+Requirement already satisfied: certifi in /home/manolis/.local/lib/python3.8/site-packages (from netcdf4->-r requirements_ecec9 (line 3)) (2024.8.30)
+running install
+running bdist_egg
+running egg_info
+writing mogp_emulator.egg-info/PKG-INFO
+writing dependency_links to mogp_emulator.egg-info/dependency_links.txt
+writing requirements to mogp_emulator.egg-info/requires.txt
+writing top-level names to mogp_emulator.egg-info/top_level.txt
+reading manifest file 'mogp_emulator.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'mogp_emulator.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+copying mogp_emulator/formula.py -> build/lib/mogp_emulator
+copying mogp_emulator/MeanFunction.py -> build/lib/mogp_emulator
+copying mogp_emulator/version.py -> build/lib/mogp_emulator
+copying mogp_emulator/__init__.py -> build/lib/mogp_emulator
+copying mogp_emulator/DimensionReduction.py -> build/lib/mogp_emulator
+copying mogp_emulator/HistoryMatching.py -> build/lib/mogp_emulator
+copying mogp_emulator/ExperimentalDesign.py -> build/lib/mogp_emulator
+copying mogp_emulator/SequentialDesign.py -> build/lib/mogp_emulator
+copying mogp_emulator/Priors.py -> build/lib/mogp_emulator
+copying mogp_emulator/MultiOutputGP.py -> build/lib/mogp_emulator
+copying mogp_emulator/Kernel.py -> build/lib/mogp_emulator
+copying mogp_emulator/utils.py -> build/lib/mogp_emulator
+copying mogp_emulator/GaussianProcess.py -> build/lib/mogp_emulator
+copying mogp_emulator/fitting.py -> build/lib/mogp_emulator
+copying mogp_emulator/MCMC.py -> build/lib/mogp_emulator
+copying mogp_emulator/tests/benchmark_rosenbrock.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_kdr_GP.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_DimensionReduction.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_HistoryMatching.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/__init__.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_Kernel.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MeanFunction.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_Priors.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_SequentialDesign.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_formula.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MCMC.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_GaussianProcess.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_fitting.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_ExperimentalDesign.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_tsunami.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/test_MultiOutputGP.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_MICE.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_historymatching.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/tests/benchmark_branin.py -> build/lib/mogp_emulator/tests
+copying mogp_emulator/demos/mice_demos.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/excalibur_workshop_demo.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/__init__.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/tutorial.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/projectile.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/demos/gp_demos.py -> build/lib/mogp_emulator/demos
+copying mogp_emulator/benchmarks/benchmark_rosenbrock.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_kdr_GP.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/__init__.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_tsunami.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_MICE.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_historymatching.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/benchmarks/benchmark_branin.py -> build/lib/mogp_emulator/benchmarks
+copying mogp_emulator/linalg/__init__.py -> build/lib/mogp_emulator/linalg
+copying mogp_emulator/linalg/cholesky.py -> build/lib/mogp_emulator/linalg
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/formula.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/MeanFunction.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/version.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/DimensionReduction.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/HistoryMatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_rosenbrock.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_kdr_GP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_DimensionReduction.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_HistoryMatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_Kernel.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MeanFunction.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_Priors.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_SequentialDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_formula.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MCMC.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_GaussianProcess.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_fitting.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_ExperimentalDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_tsunami.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/test_MultiOutputGP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_MICE.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_historymatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/tests/benchmark_branin.py -> build/bdist.linux-x86_64/egg/mogp_emulator/tests
+copying build/lib/mogp_emulator/ExperimentalDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/SequentialDesign.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/Priors.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/mice_demos.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/excalibur_workshop_demo.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/tutorial.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/projectile.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/demos/gp_demos.py -> build/bdist.linux-x86_64/egg/mogp_emulator/demos
+copying build/lib/mogp_emulator/MultiOutputGP.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/Kernel.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/utils.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/GaussianProcess.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_rosenbrock.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_kdr_GP.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_tsunami.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_MICE.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_historymatching.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/benchmarks/benchmark_branin.py -> build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks
+copying build/lib/mogp_emulator/fitting.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+copying build/lib/mogp_emulator/MCMC.py -> build/bdist.linux-x86_64/egg/mogp_emulator
+creating build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+copying build/lib/mogp_emulator/linalg/__init__.py -> build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+copying build/lib/mogp_emulator/linalg/cholesky.py -> build/bdist.linux-x86_64/egg/mogp_emulator/linalg
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/formula.py to formula.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MeanFunction.py to MeanFunction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/version.py to version.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/DimensionReduction.py to DimensionReduction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/HistoryMatching.py to HistoryMatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_rosenbrock.py to benchmark_rosenbrock.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_kdr_GP.py to benchmark_kdr_GP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_DimensionReduction.py to test_DimensionReduction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_HistoryMatching.py to test_HistoryMatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_Kernel.py to test_Kernel.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MeanFunction.py to test_MeanFunction.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_Priors.py to test_Priors.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_SequentialDesign.py to test_SequentialDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_formula.py to test_formula.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MCMC.py to test_MCMC.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_GaussianProcess.py to test_GaussianProcess.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_fitting.py to test_fitting.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_ExperimentalDesign.py to test_ExperimentalDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_tsunami.py to benchmark_tsunami.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/test_MultiOutputGP.py to test_MultiOutputGP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_MICE.py to benchmark_MICE.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_historymatching.py to benchmark_historymatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/tests/benchmark_branin.py to benchmark_branin.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/ExperimentalDesign.py to ExperimentalDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/SequentialDesign.py to SequentialDesign.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/Priors.py to Priors.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/mice_demos.py to mice_demos.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/excalibur_workshop_demo.py to excalibur_workshop_demo.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/tutorial.py to tutorial.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/projectile.py to projectile.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/demos/gp_demos.py to gp_demos.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MultiOutputGP.py to MultiOutputGP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/Kernel.py to Kernel.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/utils.py to utils.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/GaussianProcess.py to GaussianProcess.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_rosenbrock.py to benchmark_rosenbrock.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_kdr_GP.py to benchmark_kdr_GP.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_tsunami.py to benchmark_tsunami.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_MICE.py to benchmark_MICE.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_historymatching.py to benchmark_historymatching.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/benchmarks/benchmark_branin.py to benchmark_branin.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/fitting.py to fitting.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/MCMC.py to MCMC.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/linalg/__init__.py to __init__.cpython-38.pyc
+byte-compiling build/bdist.linux-x86_64/egg/mogp_emulator/linalg/cholesky.py to cholesky.cpython-38.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mogp_emulator.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+/home/manolis/anaconda3/envs/hightune/lib/python3.8/site-packages/setuptools/_distutils/cmd.py:66: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+/home/manolis/anaconda3/envs/hightune/lib/python3.8/site-packages/setuptools/_distutils/cmd.py:66: EasyInstallDeprecationWarning: easy_install command is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` and ``easy_install``.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        See https://github.com/pypa/setuptools/issues/917 for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+zip_safe flag not set; analyzing archive contents...
+creating 'dist/mogp_emulator-0.4.0-py3.8.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Processing mogp_emulator-0.4.0-py3.8.egg
+Removing /home/manolis/.local/lib/python3.8/site-packages/mogp_emulator-0.4.0-py3.8.egg
+Copying mogp_emulator-0.4.0-py3.8.egg to /home/manolis/.local/lib/python3.8/site-packages
+Adding mogp-emulator 0.4.0 to easy-install.pth file
+
+Installed /home/manolis/.local/lib/python3.8/site-packages/mogp_emulator-0.4.0-py3.8.egg
+Processing dependencies for mogp-emulator==0.4.0
+Searching for scipy==1.7.1
+Best match: scipy 1.7.1
+Adding scipy 1.7.1 to easy-install.pth file
+
+Using /home/manolis/.local/lib/python3.8/site-packages
+Searching for numpy==1.17.4
+Best match: numpy 1.17.4
+Adding numpy 1.17.4 to easy-install.pth file
+Installing f2py script to /home/manolis/.local/bin
+Installing f2py3 script to /home/manolis/.local/bin
+Installing f2py3.8 script to /home/manolis/.local/bin
+
+Using /home/manolis/.local/lib/python3.8/site-packages
+Finished processing dependencies for mogp-emulator==0.4.0
+/home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+AlgDesign
+DiceDesign
+DoE.base
+DoE.wrapper
+FrF2
+GenSA
+HI
+MASS
+Matrix
+MfUSampler
+Rcpp
+RcppTOML
+Rdpack
+abind
+ars
+backports
+checkmate
+class
+cli
+coda
+colorspace
+combinat
+conf.design
+cpp11
+distributional
+dotCall64
+estimability
+fansi
+far
+fields
+flexclust
+generics
+glue
+gmm
+gmp
+here
+igraph
+invgamma
+jsonlite
+lattice
+lhs
+lifecycle
+lmtest
+loo
+magrittr
+maps
+mathjaxr
+matrixStats
+mco
+modeltools
+mvtnorm
+ncdf4
+nlme
+numDeriv
+numbers
+partitions
+pillar
+pkgconfig
+png
+polynom
+posterior
+pracma
+rappdirs
+rbibutils
+reticulate
+rlang
+rprojroot
+rsm
+sandwich
+scatterplot3d
+sets
+sfsmisc
+shape
+spam
+tensor
+tensorA
+tibble
+tictoc
+tmvtnorm
+utf8
+vcd
+vctrs
+viridisLite
+withr
+zoo
+Found reticulate in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found invgamma in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found GenSA in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found far in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found fields in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found lhs in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found maps in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found mco in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found ncdf4 in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found shape in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found tensor in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found withr in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found loo in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found MASS in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found pracma in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found mvtnorm in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found flexclust in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found tmvtnorm in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found tictoc in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found ars in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found HI in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found coda in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+Found MfUSampler in /home/manolis/.local/lib/r-HighTune/airsea-XPS-13-9370-R4.4.1-pip3
+HEAD is now at 06b008a Output names to LOOplot
+M	HistoryMatching/HistoryMatching.R
+======================================================================
+            3. CONFIGURING THE SPECIFIC EXPERIMENT                    
+======================================================================
+-----------------------------------------------------------------------
+ Possibility to have a setup_* specific of a given model
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+ Download the data relevant to the current experiment
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+ Creating and installing the working directory WOR/$EXP/log
+-----------------------------------------------------------------------

@@ -6,4 +6,4 @@ wp_bp 0.25 2. 2.5 linear
 up_c  0 0.5 1. linear
 bc_ap 0 0.2 0.45 linear
 delta_bkg 0.25 2. 2.5 linear
-wp_0 -1e-8 -0.5e-7 -1e-7 linear
+wp0 -1e-8 -0.5e-7 -1e-7 linear

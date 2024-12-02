@@ -18,6 +18,9 @@
 - [X] compute beta from loss between MAP and LES
 - [ ] refaire tourner les cas pour être sûr des params thermo? (en vérifiant bien le grad de temp...)
 - [ ] PB with FC500, MAP is not really matching (offset of temp, already found before... Pb of thermo cst?)
+- [ ] fix cp on FC500 to avoid bias.
+- [ ] do a Andrew plot with full distribution, then distribution cutted above a trshold of high proba to see how it is reducing the variability. 
+- [ ] portability: create a script to automatically create a conda env with required packages 
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
