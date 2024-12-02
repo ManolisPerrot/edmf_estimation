@@ -11,7 +11,7 @@ set -e
 set -x
 
 # enter here the version you want to utilize, based on git hash
-VERSION=7bb4b320ee51642ba9ac1c709ac9b99427f9d61e
+VERSION=a80098b137f5051814cd16d13afdca1038374274
 
 if test -d edmf_ocean; then
     cd edmf_ocean
