@@ -1,239 +1,459 @@
-#!/bin/sh
-
-#set -ex
-
-## checks if exactly two arguments are passed to the script (a case/subcase and a wave 
-## number). If not, it prints the usage instructions and exits.
-if [ $# != 2 ] ; then
-cat <<eod
-Use : serie_EdmfOcean.sh CASE/SUBCASE NWAVE
-eod
-exit 1
-fi
-
-## extracts the current working directory (WORKDIR) and the values of case and subcase from 
-## the first argument. The wave number (nwave) is taken from the second argument.
-DIRMUSC=$REP_MUSC
-WORKDIR=`pwd`
-
-model=SCMOCEAN
-tmp=$1
-case="$(sed 's/\/.*//' <<< "$tmp")"
-subcase="$(sed 's/^[^;]*\///' <<< "$tmp")"
-name='SCM'
-nwave=$2
-
-## Paths for parameters and output directories are defined based on the case, subcase, and
-## nwave (wave number).
-
-## file containing parameters on which the SCM has to be evaluated 
-PARAM=$WORKDIR/WAVE${nwave}/Par1D_Wave${nwave}.asc
-
-repout=$WORKDIR/WAVE${nwave}/${case}/${subcase}
-DIRNAMELIST=$WORKDIR/WAVE$nwave/namelist
-DIRCONFIG=$WORKDIR/WAVE$nwave/config
-
-
-## A few variables in the environment to specify the simulation configuration (model component: e.g. small_ap, etc...
-# Please edit param_SCMOCEAN 
-## TODO! or not? 
-. ./param_SCMOCEAN
-
-# Type of cleaning : no, nc, lfa, nclfa, all
-clean='no'
-
-
-#Use for rerunning some simulations in case of some (random) crashes (useful on mac)
-## Mano: 'n' --> not reruning ??
-rerun='n'
-
-echo '***********************************************************************************'
-echo 'Check in configsim.py that case, nlev and timestep is consistent with run_tuning.sh'
-echo 'model ='$model
-echo 'case = '$case
-echo 'subcase = '$subcase
-echo 'nlev = '$nlev
-echo 'timestep = '$timestep
-echo 'cycle = '$cycle ## to remove?
-echo 'simuref = '$simuREF
-echo 'namref = '$namref
-echo 'wave = '$nwave
-echo 'param = '$PARAM
-echo 'repout ='$repout
-echo '***********************************************************************************'
-
-if [ $rerun == 'n' ]; then
-
-## Creates necessary directories (mkdir -p) for storing output data and namelists. It then 
-## removes old files (rm -f).
-mkdir -p $repout
-rm -f $repout/*
-mkdir -p $DIRNAMELIST
-rm -f $DIRNAMELIST/*
-mkdir -p $DIRCONFIG
-rm -f $DIRCONFIG/*
-
-# creates a symbolic link to the parameter file param.asc
-## it contains all the parameters on which we will run the SCM
-rm -f param.asc
-ln -s $PARAM param.asc
-n=`wc -l param.asc | awk ' { print $1 } '`
-nl=$(expr $n - 1)
-echo 'nb de simu='$nl
-
-#====== Specific to SCMOCEAN?
-
-
-
-
-
-
-#===================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Preparation des namelists
-cp $namref namref
-python prep_nam_tuning.py
-mv namref.${name}* $DIRNAMELIST
-mv namref $DIRNAMELIST
-cp param.asc $DIRNAMELIST
-
-rm -f param.asc
-
-# Preparation des fichiers de config
-python prep_config_tunning.py $nl $name $case $subcase $nwave $model $simuREF $cycle $MASTER $PGD $PREP $namsfx
-mv config_* $DIRCONFIG
-
-# Preparation fichier de configuration pour les simulations
-
-cd $DIRMUSC
-
-## temporarily overwrites a Python configuration file (configsim.py) with values for the 
-## model (SCMOCEAN), case, number of levels (nlev), and timestep.
-mv configsim.py configsim.py.save
-cat << EOF > configsim.py
-import sys
-import EMS_cases as CC
-
-model = '$model'
-
-allcases=False
-
-cases = ['$case']
-
-nlev = $nlev
-timestep = $timestep
-
-for cc in cases:
-  if not(cc in CC.cases):
-    print 'case', cc, 'not available'
-    print 'available cases:', CC.cases
-    sys.exit()
-
-lsurfex = True
-if model in ['AROME','ARPPNT']:
-    lsurfex = False
-EOF
-
-# Iterations sur les simulations
-rm -f $WORKDIR/err.log
-
-for i in `seq -f "%03g" 1 ${nl}`
-#for i in `seq -f "%03g" 1 2`
-do
-  if [ $model == 'SCMOCEAN' ]; then
-    ln -s $DIRMUSC/SURFEX/${cycle}/${simuREF} $DIRMUSC/SURFEX/${cycle}/${simuREF}.${name}-${nwave}-$i
-  fi
-  run_MUSC_cases.py $DIRCONFIG/config_${cycle}_${simuREF}.${name}-${nwave}-$i.py $case $subcase
-# Pour être cohérent avec le calcul fait sur les LES
-  cdo houravg $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/netcdf/Out_klevel.nc $repout/${name}-${nwave}-$i.nc || echo $i >> $WORKDIR/err.log
-  if [ $model == 'SCMOCEAN' ]; then
-    rm -f $DIRMUSC/SURFEX/${cycle}/${simuREF}.${name}-${nwave}-$i
-  fi
-  if [ $clean == 'nc' ]; then
-    rm -rf $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/netcdf/*.nc
-  fi
-  if [ $clean == 'lfa' ]; then
-    rm -rf $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/LFAf/*.lfa
-  fi
-  if [ $clean == 'nclfa' ]; then
-    rm -rf $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/netcdf/*.nc
-    rm -rf $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/LFAf/*.lfa
-  fi
-  if [ $clean == 'all' ]; then
-    rm -rf $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i
-  fi
-done
-
-mv configsim.py.save configsim.py
-
-else
-
-# On relance les simulations qui ont planté
-ERRIN=err.log
-ERROUT=err2.log
-rm -f $WORKDIR/$ERROUT
-cd $DIRMUSC/
-
-mv configsim.py configsim.py.save
-cat << EOF > configsim.py
-import sys
-import EMS_cases as CC
-
-model = '$model'
-
-allcases=False
-
-cases = ['$case']
-
-nlev = $nlev
-timestep = $timestep
-
-for cc in cases:
-  if not(cc in CC.cases):
-    print 'case', cc, 'not available'
-    print 'available cases:', CC.cases
-    sys.exit()
-
-lsurfex = True
-if model in ['AROME','ARPPNT']:
-    lsurfex = False
-EOF
-
-for i in `cat $WORKDIR/$ERRIN`
-do
-  if [ $model == 'SCMOCEAN' ]; then
-    ln -s $DIRMUSC/SURFEX/${cycle}/${simuREF} $DIRMUSC/SURFEX/${cycle}/${simuREF}.${name}-${nwave}-$i
-  fi
-  run_MUSC_cases.py $DIRCONFIG/config_${cycle}_${simuREF}.${name}-${nwave}-$i.py $case $subcase
-# Pour être cohérent avec le calcul fait sur les LES
-  cdo houravg $DIRMUSC/simulations/${cycle}/${simuREF}.${name}-${nwave}-$i/L${nlev}_${timestep}s/$case/$subcase/Output/netcdf/Out_klevel.nc $repout/tmp_${name}-${nwave}-$i.nc || echo $i >> $WORKDIR/$ERROUT
-  cd  $repout
-  ncks -v wpvp_conv,wpthp_conv,wpthp_pbl,wpup_conv,wpup_pbl,wpqp_conv,wpqp_pbl -d levh,1,91 tmp_${name}-${nwave}-$i.nc ${name}-${nwave}-$i.nc
-
-  if [ $model == 'SCMOCEAN' ]; then
-    rm -f $DIRMUSC/SURFEX/${cycle}/${simuREF}.${name}-${nwave}-$i
-  fi
-done
-
-mv configsim.py.save configsim.py
-
-fi
-
-cd $WORKDIR
+#!/bin/bash
+# set -vx
+
+######################################################################
+# Author : Frédéric Hourdin (LMDZ team)
+# 2019/02/21
+# Running automatically a series of SCM experiments with LMDZ
+# Launched from HighTune/bench.sh
+# 11/2024: adapation by Manolis Perrot to SCMOCEAN
+######################################################################
+#. env.sh
+# env
+
+
+
+######################################################################
+# To run several occurences in parallel
+# nproc should be ajusted depending on the computer
+# When running in parallel, a smart test mus be done to be sure
+# that the $nproc simulations are finished before running the following
+# ones. A max time is set to $wait_max in case simulations crash
+######################################################################
+
+# nproc=$(( `lscpu  -e=core | sort | uniq | wc -l` - 1 ))
+# wait_max=300
+# if [ $nproc = 1 ]   ; then wait_max=1 ; fi
+
+
+
+######################################################################
+# Reading arguments
+######################################################################
+local=`pwd`
+listecas=${@:1:$#-1} # all but last arguments
+WAVEN=${@: -1}       # last arg
+# LMAX=79 #Mano: ??
+
+
+# edmf_ocean path
+edmf_ocean_dir=../../../../edmf_ocean
+EXPE=$local/WAVE$WAVEN
+# CTRL=$local/CTRL
+
+######################################################################
+# Various checks
+######################################################################
+
+if [ ! -d $edmf_ocean_dir ] ; then
+   echo Directory $edmf_ocean_dir does not exist. Please modify variable '$edmf_ocean_dir'
+   # exit 1 
+   fi
+
+if [ $# -lt 1 ] ; then
+   echo Use : ./serie_SCMOCEAN.sh [case1 [case2]] WAVEN
+   # exit 1 
+   fi
+
+conda deactivate
+conda activate hightune
+#####################################################################
+# I. Creating def files if they do not exist
+#####################################################################
+
+# if [ ! -d $EXPE/DEF ] ; then
+
+   ##################################################################
+   # I.1 Getting parameter generated by the latin hypercube sampling
+   ##################################################################
+   # if [ ! -f $EXPE/Par1D_Wave$WAVEN.asc ] ; then
+   #    echo File $EXPE/Par1D_Wave$WAVEN.asc does not exist.
+   #    echo Please modify variable '$EXPE' or run param2R.sh or param2Rwave.sh on directory $EXPE
+   #    exit 1 ; fi
+
+echo '####################################################################'
+echo '####################################################################'
+echo ' III. Loop on cases'
+echo '####################################################################'
+echo '####################################################################'
+for cas in $listecas ; do
+   mkdir -p $EXPE/$cas
+   conda run -n base python run_parallel_scm.py $cas $WAVEN
+done   
+
+### Mano: à partir de là, faire juste tourner un script python qui va faire tourner tous les cas, plutot que de s'embetter avec du bash!
+
+
+#    sed -e 's/\"//g' $EXPE/Par1D_Wave$WAVEN.asc >| param.asc
+#    params=()
+#    for i in `head -1 param.asc` ; do
+#       params=( ${params[*]} $i )
+#    done
+
+#    echo ${sims[*]}
+#    nl=`wc -l param.asc | awk ' { print $1 } '`
+#    il=2
+#    iproc=0
+#    iii=0
+
+#    #####################################################################
+#    # I.2 Creating physiq.def_ files and namelist_ecrad if needed
+#    #####################################################################
+# #    # For savety, temporary dir, moved to DEF only if all the def files have been created
+# #    TMPdef=TMPdef$$ ; if [ -d "$TMPdef" ] ; then echo $TMPdef exits so clean and rerun ; else mkdir $TMPdef ; fi
+# #    #echo il nl $il $nl
+# #    while [ $il -le $nl ] ; do
+# #      vals=()
+# #      for i in `sed -n -e ${il}p param.asc`  ; do
+# #         vals=( ${vals[*]} $i )
+# #      done
+# #      #echo ${vals[*]}
+# #      #echo ${#vals[*]}
+# #      sim=${vals[0]}
+# #      #-----------------------------------------------------------------
+# #      # Preparing SCM simulations
+# #      # copying and modiying input files
+# #      #-----------------------------------------------------------------
+# #      set -v
+# #      names=`head -1 param.asc | sed -e 's/\"//g' -e 's/ /,/g'`
+# #      vals=`sed -n -e ${il}p param.asc  | sed -e 's/\"//g' -e 's/ /,/g'`
+# #      pwd
+# #      #echo $local/phydef2phydef.sh -names $names -vals $vals -input $edmf_ocean_dir/1D/INPUT/PHYS/physiq.def_$phys  -output $TMPdef/physiq.def_$sim
+# #      #echo $local/phydef2phydef.sh -model CONT -names $names -vals $vals -input $local/orchidee.def -output $TMPdef/orchidee.def_$sim
+# #      $local/phydef2phydef.sh -names $names -vals $vals -input $edmf_ocean_dir/1D/INPUT/PHYS/physiq.def_$phys  -output $TMPdef/physiq.def_$sim
+# #      $local/phydef2phydef.sh -model CONT -names $names -vals $vals -input $local/orchidee.def -output $TMPdef/orchidee.def_$sim
+# #      if [ $rad == ecrad ] ; then #if we run LMDZ with ecrad online
+# #        if [[ $names == *"RAD"* ]] ; then #and their somes radiative parameters 
+# # 	 mkdir -p ${EXPE}/NAMECRAD
+# # 	 cp -f $ecrad_dir/runECRAD/*sh $local 
+# # 	 cp -f $ecrad_dir/runECRAD/${nam} $local
+# #          $local/nam2nam.sh -names $names -vals $vals -input $local/${nam} -output ${EXPE}/NAMECRAD/namelist_ecrad_${sim}
+# #          sed -i'' -e "s#directory_name.*.#directory_name=\"$path_data\"#" ${EXPE}/NAMECRAD/namelist_ecrad_${sim}
+# #        fi
+# #      fi
+# #      case $rad in
+# #          oldrad) NSW=2 ; iflag_rrtm=0 ;;
+# #          rrtm) NSW=6 ; iflag_rrtm=1 ;;
+# #     	 ecrad) NSW=6 ; iflag_rrtm=2 ;;
+# #          *)  NSW=6 ; iflag_rrtm=1 ;;
+# #      esac
+# #      sed -i'' -e 's/^NSW=.*$/NSW='$NSW'/' -e 's/iflag_rrtm=.*$/iflag_rrtm='$iflag_rrtm'/' $TMPdef/physiq.def_$sim
+# #      set +v
+# #      (( il = $il + 1 ))
+# #    done
+# #    mv TMPdef$$ $EXPE/DEF
+# # fi
+
+# # # Stopping here if no case to be done
+# # if [ "$listecas" = "" ] ; then echo No case to be run ; exit ; fi
+# ######################################################################
+# # II. forcing recompilation of lmdz1d.e 
+# ######################################################################
+
+# # if [ -f $edmf_ocean_dir/1D/bin/lmdz1d_${rad}_L$LMAX.e ] ; then
+# #         cd $edmf_ocean_dir/1D/bin/ 
+# #         echo Compiling lmdz1d, output in `pwd`/compile$$.out
+# #         # subtility to get an interactive question from the standard output
+# #         echo If you are asked \"Do you wish to continue?\" and if you are sure
+# #         echo you are not compiling LMDZ elsewhere, answer \"yes\".
+# #         ./compile -L $LMAX -rad $rad 2> `pwd`/compile$$.err | tee `pwd`/compile$$.out | grep "Do you wish to continue"
+# #         cd -
+# # fi
+
+# echo '####################################################################'
+# echo '####################################################################'
+# echo ' III. Loop on cases'
+# echo '####################################################################'
+# echo '####################################################################'
+# for cas in $listecas ; do
+
+#    # Controling frequencey of outputs
+#    echo $cas
+#    if [ ! -f $edmf_ocean_dir/1D/INPUT/DEF/config_orig.def ] ; then
+#        cp $edmf_ocean_dir/1D/INPUT/DEF/config.def $edmf_ocean_dir/1D/INPUT/DEF/config_orig.def
+#        sed -i \
+#           -e 's/phys_out_filetimesteps=.*.$/phys_out_filetimesteps= 1hr 1ts 1day 1hr 6hr 1ts/' \
+#           -e 's/phys_out_filenames=.*.$/phys_out_filenames= hourly histhf day  histins histLES filehf/' \
+#           -e 's/phys_out_filekeys=.*.$/phys_out_filekeys= y n n n n n/' \
+#           -e 's/phys_out_filelevels=.*.$/phys_out_filelevels= 5 1 10 10 10 0/' \
+#           -e 's/phys_out_filetypes=.*.$/phys_out_filetypes= ave(X) inst(X) ave(X) inst(X) inst(X)  inst(X)/' \
+#                       $edmf_ocean_dir/1D/INPUT/DEF/config.def 
+#    fi
+
+#    freq='hourly'
+
+#    case $cas in
+#            ARMCU/REF) lmdzcas=arm_cu ;;
+#            RICO/REF) lmdzcas=rico ;;
+#            FIRE/REF) lmdzcas=FIRE/REF ;;
+#            BOMEX/REF) lmdzcas=bomex ;;
+#            AYOTTE/24SC) lmdzcas=ayotte_24SC ;;
+#            AYOTTE/05WC) lmdzcas=ayotte_05WC ;;
+#            IHOP/REF) lmdzcas=ihop ;;
+#            SANDU/SLOW) lmdzcas=sanduslow ;;
+#            SANDU/REF) lmdzcas=sanduref ;;
+#            SANDU/FAST) lmdzcas=sandufast ;;
+#            RCEOCE/REF) lmdzcas=rce_oce_les ; freq='daily'
+#               sed -i'' -e 's/^nday.*.$/nday=20/' $edmf_ocean_dir/1D/OLDCASES/$lmdzcas/run.def ;;
+#            GABLS4/REF) lmdzcas=gabls4 ;;
+#            CINDY/REF) lmdzcas=cindy3b
+#               if [ ! -d $edmf_ocean_dir/1D/OLDCASES/$lmdzcas ] ; then
+#                  # Creating cindy3b from cindynamo
+#                  cp -r $edmf_ocean_dir/1D/OLDCASES/cindynamo $edmf_ocean_dir/1D/OLDCASES/$lmdzcas
+#                  sed -i'' -e 's/^calend=.*.$/calend=earth_365d/' \
+#                           -e 's/^dayref=.*.$/dayref=275/' \
+#                           -e 's/^nday=.*.$/nday=48/' \
+#                           $edmf_ocean_dir/1D/OLDCASES/$lmdzcas/run.def
+#                  # On tourne pour le moment avec le cas.nc par defaut. cas_nsa_3b.nc ne semble pas fonctionner ...
+#                  #cd $edmf_ocean_dir/1D/OLDCASES/$lmdzcas/setup/ ; cp -f cas_nsa_3b.nc cas.nc ; cd -
+#                  freq='daily'
+#               fi ;;
+#        *) echo "This case cannot be found" && exit ;;
+#    esac
+#    if [ "`echo $lmdzcas | grep '/'`" = "" ] ; then std_fmt=0 ; else std_fmt=1 ; fi
+
+#    # Forcing daily outputs for specific cases
+#    if [ "$freq" = "daily" ] ; then
+#       sed -e 's/phys_out_filetimesteps=.*.$/phys_out_filetimesteps= 1day 1ts 1day 1hr 6hr 1ts/' \
+#                       $edmf_ocean_dir/1D/INPUT/DEF/config.def > $edmf_ocean_dir/1D/OLDCASES/$lmdzcas/config.def
+#    fi
+
+# echo '#######################################################################'
+# echo ' III.1 Runing the original case if not available yet'
+# echo '#######################################################################'
+
+#    CASEdir=$edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas
+#    if [ ! -d $CASEdir ] ; then
+# #       export LANG=fr_FR.UTF-8
+#        unset LANG
+#        cd $edmf_ocean_dir/1D
+# run_script=run`echo $lmdzcas | sed -e 's:/::'`.sh
+#        sed -e 's/L=79/L='$LMAX'/' -e 's/LLM=.*.$/LLM='$LMAX'/' -e 's/listedef=.*.$/listedef=\"'$phys'\"/' -e 's:listecas=.*.$:listecas="'$lmdzcas'":' -e 's/.*RUN THE DIAGNOSTICS.*$/exit/' -e 's/config=${DEF}L${L}$phys$dtsuf/config=${DEF}L${L}$phys$dtsuf$rad/' run.sh  > $run_script 
+#        echo Case $lmdzcas does not exist on $edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}. Will be rerun automatically ; sleep 3
+#        chmod +x ./$run_script
+#        echo running ./$run_script -rad $rad to setup the $cas case
+#        echo If you are asked \"Do you wish to continue?\" and if you are sure
+#        echo you are not compiling LMDZ elsewhere, answer \"yes\".
+#        ./$run_script -rad $rad 2> `pwd`/run$$.err | tee `pwd`/run$$.out | grep "Do you wish to continue"
+#        if [ ! -f EXEC/${phys}L${LMAX}${rad}/$lmdzcas/hourly.nc ] ; then
+#           echo Simulations run$cas was not successfull.
+#           echo Ask for help
+#           exit
+#        fi
+#        cd -
+#        unset LANG
+#    fi
+
+#    cd $CASEdir
+#    #pwd
+#    \rm -rf SCM*
+#    ulimit -s unlimited
+#    DATA=$EXPE/$cas
+
+# #####################################################################
+# # III.2 Function run_SCM : run SCM and post-process toward standard format
+# #####################################################################
+
+#    function run_SCM {
+#       name=$1
+#       sampling=0
+#       debug=0
+#       # 1) Running SCM ------------------------------------------------------------
+#       unset LANG
+#       time ./lmdz1d.e
+#       # -- one mor chance if the model crashes for bad reasons (macOS) ------------
+#       for iretry in 1 ; do if [ ! -f restartphy.nc ] ; then
+#          echo WARNING !!! Simulation $name crashes, one more try of lmdz1d.e
+#          \rm -f restartphy.nc
+#          ./lmdz1d.e ; fi ; done
+#       # 2) Post-processing toward Dephy standard
+#       # -- $sampling=1 : more internal variables of the termal plume model --------
+#       if [ $sampling = 0 ] ; then
+#          ncks -O -v theta,rhum,vitu,vitv,geop,ovap,f_th,w_th,rneb,lwp,pres,re,temp,lwcon,iwcon,ref_liq,ref_ice hourly.nc tmp.nc
+#          ncrename -O -v ovap,qv -v lwcon,qc -v iwcon,qi -v f_th,fm -v w_th,wa -v rhum,hur \
+#             -v vitu,u -v vitv,v -v pres,pf -v presnivs,levf -d presnivs,levf \
+#             -v time_counter,time -d time_counter,time  tmp.nc
+#          ncap2 -O -s 'zf=geop/9.8' tmp.nc tmp2.nc
+#          ncap2 -A -s 'ref_liq=ref_liq*1e-6' tmp2.nc
+#          ncap2 -A -s 'ref_ice=ref_ice*1e-6' tmp2.nc
+# 	 #computing cloud cover as max(rneb)
+# 	 ncwa -v rneb -a levf -y max tmp2.nc tmp2_cc.nc
+#          ncrename -v rneb,cc tmp2_cc.nc
+#          ncatted -a long_name,cc,o,c,"Cloud cover as max(rneb)" tmp2_cc.nc
+#          ncks -C -A -v cc tmp2_cc.nc tmp2.nc
+# 	 #computing incloud water liquid content
+#          ncap2 -s "qcin=qc/rneb" tmp2.nc tmp2_qcin.nc
+# 	 ncap2 -s "where(rneb<0.00001) qcin=0.0" -A tmp2_qcin.nc
+# 	 ncatted -a long_name,qcin,o,c,"incloud water liquid content" tmp2_qcin.nc
+# 	 ncks -C -A -v qcin tmp2_qcin.nc tmp2.nc
+#          ncks -v cc,qcin,zf,pf,re,ref_liq,ref_ice,temp,theta,hur,u,v,qv,qc,qi,fm,wa,rneb,lwp tmp2.nc $name.nc
+#       else
+#          ncks -O -v theta,rhum,vitu,vitv,geop,ovap,ocond,f_th,w_th,rneb,lwp,pres,re,temp,a_th,e_th,d_th,mass,pres hourly.nc tmp.nc
+#          ncrename -O -v ovap,qv -v ocond,qc -v f_th,fm -v w_th,wa -v a_th,a \
+#            -v rhum,hur -v vitu,u -v vitv,v -v pres,pf -v presnivs,levf \
+#            -d presnivs,levf -v time_counter,time -d time_counter,time   tmp.nc
+#          ncap2 -O -s 'zf=geop/9.8' -s 'entr=pf*e_th/(fm*289.*mass*temp)' \
+#            -s 'detr=pf*d_th/(fm*289.*mass*temp)' tmp.nc tmp2.nc
+#          ncks -v zf,pf,re,temp,theta,hur,u,v,qv,qc,fm,wa,entr,detr,a,rneb,lwp \
+#            tmp2.nc $name.nc
+#       fi
+#       # -- calendar issues --------------------------------------------------------
+#       ncatted -a calendar,time,o,c,"standard" -O $name.nc
+#       if [ "$cas" =  "IHOP/REF" ] ; then
+#          ncatted -a units,time,o,c,"seconds since 2002-06-14 05:59:59" \
+#          -a time_origin,time,o,c," 2002-JUN-14 05:59:59" -O $name.nc ; fi
+#       if [ "$cas" = "RICO/REF" ] ; then
+#          ncatted -a units,time,o,c,"seconds since 2004-12-27 00:00:00" \
+#          -a time_origin,time,o,c," 2004-DEC-27 00:00:00" -O $name.nc ; fi
+#       if [ "$debug" = "0" ] ; # cleaning
+#          then \rm -f limit* start* hist* filehf* day.nc tmp*nc* par*nc hour*nc
+#       fi
+#       unset LANG
+#    }
+
+
+# #####################################################################
+# # III.3 Preparing a REF directroy containing the minmum needed for one
+# # simulation. To be duplicated for each simultion
+# #####################################################################
+
+#    save_scm=0
+#    if [ $save_scm = 1 ] ; then
+#       mv REF REF$$/
+#       mv SCM* REF$$/
+#    else
+#       \rm -rf REF SCM-${WAVEN}-*
+#    fi
+   
+#    mkdir REF
+#    cd REF
+#    ln -s ../* .
+#    \rm sta* lim* physiq.def used* ferret* *pdf hourly.nc hist*nc paramLMDZ_phy.nc day.nc
+#    cp ../physiq.def .
+#    cd ..
+#    mkdir -p $DATA
+
+
+#    echo '####################################################################'
+#    echo ' III.4 starting the loop on simulations'
+#    echo '####################################################################'
+#    isim=0
+#    nsims=`ls $EXPE/DEF/physiq.def_* | wc -w`
+#    for sim in ` ( cd $EXPE/DEF ; ls physiq.def_* | sed -e 's/physiq.def_//' ) ` ; do
+      
+#       (( isim = $isim + 1 ))
+#       #######################################################################
+#       # III.3.a Running SCM
+#       #######################################################################
+   
+#       out=/dev/null
+#       out=listing
+#       cp -r REF $sim
+#       # Reruning nominal configuration, to be put on CTRL
+#       #if [ ! -f $CTRL/$cas/SCM.nc ] ; then 
+#       #   cd REF ; mkdir -p $CTRL/$cas ; run_SCM $CTRL/$cas/SCM > $out 2>&1 ; cd -
+#       #fi
+#       cd $sim
+
+#       # Computing the number of output to give the % of simulation when running
+#       if [ $std_fmt = 0 ] ; then def_file=run.def ; else def_file=cas.def ; fi
+#       echo std_fmt $std_fmt
+#       nday=`grep nday $def_file | cut -d= -f2`
+#       deltat=`grep 'phys_out_filetimesteps=' config.def | tail -1 | cut -d= -f2 | awk ' { print $1 } '`
+#       if [ "$deltat" = "1hr" ] ; then ntimeout=$(( $nday * 24 )) ; else ntimeout=$nday ; fi
+
+#       # Runing SCM
+#       if [ ! -f $DATA/$sim.nc ] ; then
+#         # Sequential mode
+#         \cp -f $EXPE/DEF/physiq.def_$sim physiq.def
+# 	if [ -d $EXPE/NAMECRAD/ -a $rad=="ecrad" ] ; then 
+# 	  \rm namelist_ecrad
+#           \cp -f $EXPE/NAMECRAD/namelist_ecrad_$sim namelist_ecrad
+# 	fi
+#         echo !!!!!!!!!!  RUNING $cas $sim !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#         if [ $nproc = 1 ] ; then
+#            time run_SCM $DATA/$sim > $out 2>&1
+#            grep crashes $out ; \rm -f $out
+#         else
+#         # Parallel mode : lmdz1d.e run as bacground process
+#            ( time run_SCM $DATA/$sim > $out 2>&1 ; grep crashes $out ; \rm -f $out.gz ; gzip $out ) &
+#         fi
+#       else
+#          echo WARNING WARNING WARNING $DATA/$sim.nc ALREADY EXISTS
+#       fi
+#       (( iproc = $iproc + 1 ))
+   
+#       #---------------------------------------------------------------------------
+#       # In case of parallel execution :
+#       # waiting the end of a series of simulations before running the folowing one
+#       # checking if the file $DATA/$sim.nc of the last simulation is finished
+#       #---------------------------------------------------------------------------
+   
+#       #echo  '$nproc $iproc $nproc $isim $nsims ' $nproc $iproc $nproc $isim $nsims
+#       if [ $iproc = $nproc -o $isim = $nsims ] ; then
+#          dernier_fichier=$DATA/$sim.nc
+#          iii=0
+#          while [ ! -f $dernier_fichier -a $iii -le $wait_max ] ; do
+#             sleep 1 
+#             (( iii = $iii + 1 ))
+
+#             # Printing the % of computation done
+#             if [ -f hourly.nc ] ; then
+#                itimeout=`ncdump -h hourly.nc | grep -i time | head -1 | cut -d\( -f2 | awk ' { print $1 } '`
+#                echo $itimeout $ntimeout | awk ' { printf "echo Simus -> '$sim'.nc, Waiting creation '$sim'.nc %8.2f /100 %1s\r" , 100 * $1 / $2 , "%" } '
+#             fi
+
+#             # Stoping if simulations are lasting too long
+#             if [ $iii = $wait_max ] ; then echo You waited too long.
+#               echo Either for good reason, then change wait_max in serie_SCMOCEAN.sh
+#               echo Or because there was a problem.
+#               echo "======================"
+#               echo "Last simulation failed"
+#               echo "======================"
+#               echo "========================================================="
+#               echo Files on CASEdir=$edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas
+#               echo "========================================================="
+#               cd $edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas ; ls ; cd -
+#               echo "========================================================="
+#               echo Files on CASEdir=$edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas/$sim
+#               echo "========================================================="
+#               cd $edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas/$sim ; ls ; cd -
+#               echo "========================================================="
+#               echo  Executable files
+#               echo "========================================================="
+#               ls -lrt $edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas/$sim/lmdz1d.e $edmf_ocean_dir/1D/EXEC/${phys}L${LMAX}${rad}/$lmdzcas/lmdz1d.e $edmf_ocean_dir/1D/bin/*
+#               echo "========================================================="
+#               echo The execution of $edmf_ocean_dir/1D/run$lmdzcas.sh failed
+#               echo "========================================================="
+#               exit
+#             fi
+#          done
+
+#          echo $itimeout $ntimeout | awk ' { printf "echo SIMUS -> '$sim'.nc, Waiting creation '$sim'.nc %8.2f %1s\n" , 100 , "%" } '
+#          iproc=0
+#       fi
+   
+#       # Still checking existance of last simuation to include non parallel exec
+#       dernier_fichier=$DATA/$sim.nc
+   
+#       cd ..
+   
+#    done #End loop on simulation
+
+#    #############################################################################
+#    # To be sure that all simulations are finished
+#    #############################################################################
+#    il=2
+#    for sim in ` ( cd $EXPE/DEF ; ls physiq.def_* | sed -e 's/physiq.def_//' ) ` ; do
+#       echo Final check for $sim
+#       while [ ! -f $DATA/$sim.nc ] ; do
+#          echo Waiting for passenger $DATA/$sim.nc
+#          sleep 3
+#       done
+#       (( il = $il + 1 ))
+#    done
+
+# ################################################################################
+# cd ..
+# done #Loop on SCM cases
+# ################################################################################

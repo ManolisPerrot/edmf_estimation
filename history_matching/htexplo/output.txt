@@ -1,0 +1,21 @@
+=====================================================================
+O/ default values and reading arguments
+=====================================================================
+=====================================================================
+1/ experiment setup and controls
+=====================================================================
+======================================================================
+1C/ Running setup.sh SCMOCEAN for a new experiment
+======================================================================
+Running ./setup.sh SCMOCEAN BENCHSCMOCEAN : log in log/setup_SCMOCEAN20500
+Error in setup, tail log/setup_SCMOCEAN20500
+airsea-XPS-13-9370
+/home/manolis/anaconda3/bin/python3
+3.11 3.8
+HEAD is now at ecec9ea V0.4.0 (#148)
+M	setup.py
+Collecting numpy==1.17.4 (from -r requirements_ecec9 (line 1))
+  Using cached numpy-1.17.4.zip (6.4 MB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'canceled'
+ERROR: Operation cancelled by user
