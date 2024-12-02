@@ -14,7 +14,7 @@ nsample = '2048'
 cases=['FC500','W005_C500_NO_COR']
 case = cases[1] # TODO: loop on cases
 # additional_attribute='beta1_ap0_'
-additional_attribute=''
+additional_attribute='logwp0_'
 
 print('opening ','outputs/sobol_'+additional_attribute+case+'_'+nsample)
 with open('outputs/sobol_'+additional_attribute+case+'_'+nsample, 'rb') as handle:

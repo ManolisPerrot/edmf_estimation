@@ -32,11 +32,9 @@ start = TIME.time() #monitor duration of execution
 
 # nsamples = [512,1024,2048,4096]
 nsamples = [2048]
-
-
 cases=['W005_C500_NO_COR']
-# additional_attribute='beta1_ap0_'
-additional_attribute=''
+# add attribute to the name of the output file
+additional_attribute='logwp0'
 
 # cases=['FC500']
 case = cases[0] 
@@ -96,10 +94,10 @@ def discard_NaNs(Y):
 for N in nsamples:
     samples={}
 
-    with open('outputs/samples_'+additional_attribute+cases[0]+'_'+str(N), 'rb') as handle:
+    with open('outputs/samples_'+additional_attribute+'_'+cases[0]+'_'+str(N), 'rb') as handle:
         samples = pickle.load(handle)
 
-    saving_name = 'sobol_'+additional_attribute+cases[0]+'_'+str(N)
+    saving_name = 'sobol_'+additional_attribute+'_'+cases[0]+'_'+str(N)
     print(saving_name)
 
     nvar = len(samples['variables_range'])

@@ -28,27 +28,28 @@ start = TIME.time() #monitor duration of execution
 ###########################################
 
 ### Choose physical cases on which to perform analysis
-cases = ['W005_C500_NO_COR']
-# cases = ['FC500']
+# cases = ['W005_C500_NO_COR']
+cases = ['FC500']
 ### Set number of samples 
 N = 2048
 print(N)
-saving_name = 'samples_beta1_ap0_'+cases[0]+'_'+str(N)
-# saving_name = 'samples_'+cases[0]+'_'+str(N)
+# saving_name = 'samples_beta1_ap0_'+cases[0]+'_'+str(N)
+additional_attribute='logwp0_'
+saving_name = 'samples_'+additional_attribute+cases[0]+'_'+str(N)
 print(saving_name)
 
 # cases = ['W005_C500_NO_COR']
 
 variables =  [
-            #   ['Cent',[0., 0.99]],
+              ['Cent',[0., 0.99]],
               ['Cdet',[1., 1.99]],
-              ['wp_a',[0.01, 1.]],
-              ['wp_b',[0.01, 1.]],
-              ['wp_bp',[0.25, 2.5]],
-              ['up_c',[0., 0.9]],
-            #   ['bc_ap',[0., 0.45]],
-              ['delta_bkg',[0.25, 2.5]],
-              ['wp0',[-1e-8,-1e-7]]
+              ['wp_a',[0.0, 1.]],
+              ['wp_b',[0.0, 1.]],
+              ['wp_bp',[0., 3.]],
+              ['up_c',[0., 0.99]],
+              ['bc_ap',[0., 0.45]],
+              ['delta_bkg',[0., 3.]],
+              ['wp0',[-1e-8,-1e-1]]
              ]
 
 
@@ -64,9 +65,15 @@ X_samples = qmc.LatinHypercube(nvar).random(N).T  #LHC is between 0 and 1, so li
 X_prime_samples = qmc.LatinHypercube(nvar).random(N).T
 
 
-for i in range(nvar):#LHC is between 0 and 1, so rescaling is needed
+for i in range(nvar-1):#LHC is between 0 and 1, so rescaling is needed
     X_samples[i,:] =  variables[i][1][0] + X_samples[i,:] * (variables[i][1][1] - variables[i][1][0])
     X_prime_samples[i,:] = variables[i][1][0] + X_prime_samples[i,:] * (variables[i][1][1] - variables[i][1][0])
+# using log scale for wp0
+i=-1
+X_samples[i,:] =  np.log10(-variables[i][1][0]) + X_samples[i,:] * (np.log10(-variables[i][1][1]) - np.log10(- variables[i][1][0]))
+X_samples[i,:] = -10**X_samples[i,:]
+X_prime_samples[i,:] =  np.log10(-variables[i][1][0]) + X_prime_samples[i,:] * (np.log10(-variables[i][1][1]) - np.log10(- variables[i][1][0]))
+X_prime_samples[i,:] = -10**X_prime_samples[i,:]
 
 
 ###DEFINE Projectors for higher order indices 
