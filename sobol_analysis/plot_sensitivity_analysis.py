@@ -12,7 +12,7 @@ plt.rcParams.update({'lines.linewidth': 2.0})
 
 nsample = '2048'
 cases=['FC500','W005_C500_NO_COR']
-case = cases[1] # TODO: loop on cases
+case = cases[0] # TODO: loop on cases
 # additional_attribute='beta1_ap0_'
 additional_attribute='logwp0_'
 

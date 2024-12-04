@@ -32,11 +32,11 @@ start = TIME.time() #monitor duration of execution
 
 # nsamples = [512,1024,2048,4096]
 nsamples = [2048]
-cases=['W005_C500_NO_COR']
+# cases=['W005_C500_NO_COR']
 # add attribute to the name of the output file
 additional_attribute='logwp0'
 
-# cases=['FC500']
+cases=['FC500']
 case = cases[0] 
 fields = ['temp','u']
 
