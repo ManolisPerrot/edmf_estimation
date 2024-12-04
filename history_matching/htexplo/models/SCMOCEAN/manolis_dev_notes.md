@@ -23,6 +23,11 @@
 - [X] dans serie_SMCOCEAN, à partir d'un moment faire juste tourner un script python plutôt que de s'mebetter avec le bash.
 - [ ]  
 
+# Compute metric
+
+- [ ] il doit me manquer les LES dans REF, mais je comprends pas bien la structure/où les mettre
+- [ ] idéalement: dans one_metric, j'appelle un script python qui me calcule ma métrique
+
 # Doc
 To run:
 - change conda env: 

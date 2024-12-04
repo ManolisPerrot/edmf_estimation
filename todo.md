@@ -16,11 +16,15 @@
 - [X] configure likelihood to use wagner's LES --> NO because they have Stokes Drift !!!
 - [ ] use Van Roekel cases
 - [X] compute beta from loss between MAP and LES
-- [ ] refaire tourner les cas pour être sûr des params thermo? (en vérifiant bien le grad de temp...)
-- [ ] PB with FC500, MAP is not really matching (offset of temp, already found before... Pb of thermo cst?)
-- [ ] fix cp on FC500 to avoid bias.
-- [ ] do a Andrew plot with full distribution, then distribution cutted above a trshold of high proba to see how it is reducing the variability. 
+- [X] refaire tourner les cas pour être sûr des params thermo? (en vérifiant bien le grad de temp...)
+- [X] PB with FC500, MAP is not really matching (offset of temp, already found before... Pb of thermo cst?)
+- [X] fix cp on FC500 to avoid bias.
+- [X] do a Andrew plot with full distribution, then distribution cutted above a trshold of high proba to see how it is reducing the variability. 
+- [ ] REDO Andrew with not saving but keeping in local memory, for it to go faster
+- [ ] check Andrew plot with plotting all the lines, same color and alpha =0.5 to see really the density
+- [ ] run the script on 9 cores on dahu
 - [ ] portability: create a script to automatically create a conda env with required packages 
+- [ ] 
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
