@@ -20,8 +20,8 @@ import numpy as np
 from case_configs import case_params, default_params
 from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
 import subprocess
-from test_version_edmf_ocean import check_edmf_ocean_version
-check_edmf_ocean_version()
+# from test_version_edmf_ocean import check_edmf_ocean_version
+# check_edmf_ocean_version()
 
 # ===================================Functions========================================
 

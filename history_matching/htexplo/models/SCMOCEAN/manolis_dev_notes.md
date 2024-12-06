@@ -27,7 +27,7 @@
 
 - [ ] il doit me manquer les LES dans REF, mais je comprends pas bien la structure/où les mettre
 - [ ] idéalement: dans one_metric, j'appelle un script python qui me calcule ma métrique
-
+--> Suggestion Fred: on LAISSE TOMBER de le mettre dans leur framework SCM/LES, et on repart plus simplement du exemple.sh
 # Doc
 To run:
 - change conda env: 
@@ -37,3 +37,15 @@ To run:
 My SCM model setup is in MODEL/SCMOCEAN, containing:
 - param: text file with parameter to calibrate, min nominal max values and log/linear (warning, log not working for negative values)
 - 
+
+# exemple.sh
+- [X] est-ce que VAR c'est variance ou std ? --> variance, mais si on utilise metric ~ theta^2 c'est bon
+- [X] debugger exemple.sh de EXEMPLE
+- [X] mettre wp0 en log dans param et adapter scm_model ! 
+- [ ] loop on cases (in input of parallelized metrics)
+- [ ] specify different metrics type (in input of parallelized metrics)
+- [ ] comprendre -NLHC 1
+
+# compute_metrics.py
+- [X] specify in input: waven, case, metrics type
+- MANQUE de BIEN réécrire le CSV, je galèèèèèère
