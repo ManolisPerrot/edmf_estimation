@@ -1,4 +1,6 @@
 import numpy as np
+import scipy.stats.qmc as qmc
+
 import arviz as az
 import matplotlib.pyplot as plt
 # from likelihood_mesonh import likelihood_mesonh
@@ -21,34 +23,47 @@ check_edmf_ocean_version()
 # from interpolate_LES_on_SCM_grids import regrid_and_save
 from concurrent.futures import ProcessPoolExecutor
 import concurrent.futures
+import pymc as pm
 plt.rcParams['text.usetex'] = True
 plt.rcParams.update({'figure.facecolor':'white'})
 plt.rcParams.update({'savefig.facecolor':'white'})
-#-----------------------------------------------------------------------------------
-#---------------Load MCMC data----------------------------
-#-----------------------------------------------------------------------------------
-data = az.from_netcdf('MCMC_output/MCMC_2024-12-05_09:05:18.950966.nc')
-## convert to xarray dataset
-ds = az.convert_to_dataset(data)
-likelihood_treshold = -1 #treshold to subsample only for likelihood > trsh * max_likelihood (default to -1, ie no treshold) 
-slicer = ds['likelihood'][0] > likelihood_treshold * ds['likelihood'][0].max() 
 
-ds['likelihood'][0][slicer]
-ds_sliced = { key: ds[key][0, slicer] for key in ds.data_vars.keys() }
-nsubsample = len(ds_sliced['likelihood'])
 #-----------------------------------------------------------------------------------
-#---------------Subsample----------------------------
+#---------------Sample from prior (=LHC)----------------------------
 #-----------------------------------------------------------------------------------
 number_of_draws = 500 #100 a bit sensitive, but OK
-subsample_indices = np.random.choice(nsubsample, number_of_draws, replace=False)
-ds_subsampled = {key: ds_sliced[key][subsample_indices] for key in ds_sliced.keys()}
-ds_subsampled.pop('likelihood')
-ds_subsampled.pop('log_wp_0')
-ds_subsampled = xr.Dataset(ds_subsampled)
-ds_subsampled=ds_subsampled.rename({'wp_0':'wp0'})
+
+variables =  [
+            #   ['Cent',[0., 0.99]],
+            #   ['Cdet',[1., 1.99]],
+            #   ['wp_a',[0.0, 1.]],
+            #   ['wp_b',[0.0, 1.]],
+            #   ['wp_bp',[0., 3.]],
+            #   ['up_c',[0., 0.99]],
+            #   ['bc_ap',[0., 0.45]],
+            #   ['delta_bkg',[0., 3.]],
+              ['wp0',[-1e-8,-1e-1]]
+             ]
+
+nvar = len(variables)
+# Latin Hyper cube sampling
+print('Initial sampling of parameter space, number of samples:', number_of_draws)
+X = qmc.LatinHypercube(nvar).random(number_of_draws).T  #LHC is between 0 and 1, so ling is needed
+for i in range(nvar-1):#LHC is between 0 and 1, so rescaling is needed
+    X[i,:] =  variables[i][1][0] + X[i,:] * (variables[i][1][1] - variables[i][1][0])
+# using log scale for wp0
+i=-1
+X[i,:] =  np.log10(-variables[i][1][0]) + X[i,:] * (np.log10(-variables[i][1][1]) - np.log10(- variables[i][1][0]))
+X[i,:] = -10**X[i,:]
+
+ds_subsampled = {variables[i][0]: ('draw',X[i]) for i in range(nvar)}
+ds_subsampled=xr.Dataset(data_vars=ds_subsampled, coords={'draw': np.arange(number_of_draws)})
+
 #-----------------------------------------------------------------------------------
-# ----------------------Run the SCM cases---------------------------------
+#---------------Compute SCM for each draw----------------------------
 #-----------------------------------------------------------------------------------
+
+
 scm = {}
 
 def scm_model(X, case):
@@ -89,7 +104,7 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
     ax.set_title(r'$\overline{\theta}$')
     ax.plot(scm.t_np1[:, 0], scm.z_r/mld, linestyle=linestyle, color = color,
                 alpha=alpha)
-    ax.set_xlim((1.60, 1.76))
+    ax.set_xlim((1.60, 1.78))
     # ===============================================================
     ax = axes.flat[1]
     ax.set_title(r'$\overline{w^\prime \theta^\prime}$')
@@ -128,12 +143,7 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
         fontweight='bold',
         fontsize='medium', verticalalignment='top', 
         bbox=dict(facecolor='1.', edgecolor='black',linewidth=0.1),)
-        ax.set_ylim((-1.3,0))
-
-# fig, axes = plt.subplots(nrows=1, ncols=4, sharex=False,
-#                          sharey=True, constrained_layout = True)
-
-
+        ax.set_ylim((-1.5,0))
 temp = np.array([scm[case][i].t_np1[:,0] for i in range(number_of_draws)])
 wt   = np.array([scm[case][i].tFlx for i in range(number_of_draws)])
 k    = np.array([scm[case][i].tke_np1 for i in range(number_of_draws)])
@@ -147,14 +157,14 @@ for i in range(number_of_draws):
 
 for k,ax in enumerate(axes.flat):
     mean = np.mean(vars[k],axis=0)
-    std = np.sqrt( np.abs(np.mean((vars[k])**2,axis=0)-mean**2 ))
+    std = np.sqrt( np.mean((vars[k])**2,axis=0)-mean**2 )
     
     ax.plot(mean     ,z_adim[k],'k'   ,linewidth=0.7,label=r'\textrm{mean}')
     ax.plot(mean-std ,z_adim[k],'k--',linewidth=0.7 ,label=r'\textrm{mean} $\pm$ \textrm{std}')
     ax.plot(mean+std ,z_adim[k],'k--',linewidth=0.7 )
     ax.set_box_aspect(1)
 axes.flat[2].legend(fancybox=False, shadow=False,fontsize=8)    
-plt.savefig(f'figures/MCMC_{case}_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
+plt.savefig(f'figures/MCMC_{case}_prior_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
 plt.show()
 
 
@@ -174,7 +184,7 @@ def plot_WC(scm=scm[case][0],mld=320,linestyle='-',color='C0',alpha=0.05,axes=ax
     ax.set_title(r'$\overline{\theta}$')
     ax.plot(scm.t_np1[:, 0], scm.z_r/mld, linestyle=linestyle, color = color,
                 alpha=alpha)
-    ax.set_xlim((1.64, 1.76))
+    ax.set_xlim((1.64, 1.78))
     # ===============================================================
     ax_index=1
     ax = axes.flat[ax_index]
@@ -222,7 +232,7 @@ def plot_WC(scm=scm[case][0],mld=320,linestyle='-',color='C0',alpha=0.05,axes=ax
     # ===============================================================
     # adding subplot labels
     subplot_label = [r'\rm{(a)}', r'\rm{(b)}', r'\rm{(c)}',
-                    r'\rm{(d)}', r'\rm{(e)}', r'\rm{(f)}']
+                     r'\rm{(d)}', r'\rm{(e)}', r'\rm{(f)}']
     for i,ax in enumerate(axes.flat):
         ax.set_box_aspect(1)
         ax.annotate(
@@ -232,7 +242,10 @@ def plot_WC(scm=scm[case][0],mld=320,linestyle='-',color='C0',alpha=0.05,axes=ax
         fontweight='bold',
         fontsize='medium', verticalalignment='top', 
         bbox=dict(facecolor='1.', edgecolor='black',linewidth=0.1),)
-        ax.set_ylim((-1.3,0))
+        ax.set_ylim((-1.5,0))
+
+# fig, axes = plt.subplots(nrows=1, ncols=4, sharex=False,
+#                          sharey=True, constrained_layout = True)
 
 
 temp = np.array([scm[case][i].t_np1[:,0] for i in range(number_of_draws)])
@@ -250,12 +263,12 @@ for i in range(number_of_draws):
 
 for k,ax in enumerate(axes.flat):
     mean = np.mean(vars[k],axis=0)
-    std = np.sqrt( np.abs(np.mean((vars[k])**2,axis=0)-mean**2 ))
+    std = np.sqrt( np.mean((vars[k])**2,axis=0)-mean**2 )
     
     ax.plot(mean     ,z_adim[k],'k'   ,linewidth=0.7,label=r'\textrm{mean}')
     ax.plot(mean-std ,z_adim[k],'k--',linewidth=0.7 ,label=r'\textrm{mean} $\pm$ \textrm{std}')
     ax.plot(mean+std ,z_adim[k],'k--',linewidth=0.7 )
     ax.set_box_aspect(1)
 axes.flat[2].legend(fancybox=False, shadow=False,fontsize=8)    
-plt.savefig(f'figures/MCMC_{case}_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
+plt.savefig(f'figures/MCMC_{case}_prior_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
 plt.show()

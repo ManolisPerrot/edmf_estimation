@@ -47,76 +47,6 @@ print(log_wp_0)
 map_dic = {key:float(MAP[key].values) for key in MAP.keys()}  
 del map_dic['likelihood']
 del map_dic['wp_0']
-# likelihood_mesonh(    
-#     Cent      = Cent,
-#     Cdet      =  Cdet,
-#     wp_a      = wp_a,
-#     wp_b      = wp_b,
-#     wp_bp     = wp_bp,
-#     up_c      = up_c, #we take up_c=vp_c
-#     bc_ap     = bc_ap,
-#     delta_bkg = delta_bkg,
-#     wp0       = wp_0,
-#     sobolev=False,
-#     nan_file='nan_parameters.txt',
-#     trace=True,
-#     ret_log_likelihood=False,
-#     )
-# """
-# Errors are:
-# 1st data:
-# - metric_t: 1.343877792850065e-05
-# - metric_u: 3.416123222101756e-09
-# - metric_v: 3.416123222101756e-09
-
-# 2nd data:
-# - metric_t: 6.2391438912764285e-06
-# - metric_u: 4.836421614543722e-06
-# - metric_v: 0.0001588768739522521
-# """
-
-# likelihood_mesonh(    
-#     Cent      = 0.8985,
-#     Cdet      =  1.827,
-#     wp_a      = 0.9458,
-#     wp_b      = 0.9488,
-#     wp_bp     = 1.951,
-#     up_c      = 0.2711, #we take up_c=vp_c
-#     bc_ap     = 0.3673,
-#     delta_bkg = 2.253,
-#     wp0       = -7.874e-08,
-#     sobolev=False,
-#     nan_file='nan_parameters.txt',
-#     trace=True,
-#     ret_log_likelihood=False,
-#     )
-# """
-# Errors are:
-# 1st data:
-# - metric_t: 1.6724557285266624e-05
-# - metric_u: 3.416123222101756e-09
-# - metric_v: 3.416123222101756e-09
-
-# 2nd data:
-# - metric_t: 4.404447965212885e-06
-# - metric_u: 8.48592718610331e-06
-# - metric_v: 0.0001588768739522521
-# """
-
-
-
-# az.rhat(data)
-
-# az.plot_trace(data, var_names=["Cent"])
-# plt.tight_layout()
-# #plt.savefig('paper/figures/Cent_trace.png')
-# plt.show()
-
-# az.plot_autocorr(data, var_names=["Cent", "Cdet", "delta_bkg"])
-# plt.show()
-
-
-
 
 #--------- Pairplot
 axes = az.plot_pair(data, var_names=['Cent', 'Cdet', 'wp_a', 'wp_b', 'wp_bp', 'up_c', 'bc_ap', 'delta_bkg', 'log_wp_0'], 
@@ -180,13 +110,4 @@ saving_name = 'figures/MCMC_pairplot_logwp0.pdf'
 plt.savefig(saving_name,bbox_inches='tight')
 
 # plt.savefig('figures/MCMC_pairplot.png',bbox_inches='tight')
-# plt.show()
-
-#------------------------------------------------------
-
-# az.plot_forest(data, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# az.plot_forest(data, var_names=["Cdet"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# az.plot_forest(data, var_names=["delta_bkg"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# # az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-
 # plt.show()

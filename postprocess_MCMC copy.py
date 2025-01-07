@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import BoundaryNorm, ListedColormap
 from matplotlib.cm import ScalarMappable
-
+import seaborn as sns
+import xarray as xr
 # from likelihood_mesonh import likelihood_mesonh
 plt.rcParams['text.usetex'] = True
 plt.rcParams.update({'figure.facecolor':'white'})
@@ -21,7 +22,7 @@ data = az.from_netcdf('MCMC_output/MCMC_2024-12-05_09:05:18.950966.nc')
 ## convert to xarray dataset
 ds = az.convert_to_dataset(data)
 
-summary = az.summary(data)
+# az.summary(data)
 ## compute the MAP estimate
 max_index = int(ds.argmax()['likelihood'])
 
@@ -116,6 +117,14 @@ del map_dic['wp_0']
 # plt.show()
 
 
+#compute correlation matrix
+corr = np.zeros((len(map_dic),len(map_dic)))
+for i,ikey in enumerate(map_dic):
+    for j,jkey in enumerate(map_dic):
+        if j>i:
+            corr[i,j] = np.array([[xr.corr(data.posterior[ikey][0], data.posterior[jkey][0])]])
+
+
 
 
 #--------- Pairplot
@@ -123,12 +132,7 @@ axes = az.plot_pair(data, var_names=['Cent', 'Cdet', 'wp_a', 'wp_b', 'wp_bp', 'u
 # kind='scatter', scatter_kwargs={'alpha':1/254,},
 # kind='hexbin',
 kind='kde', 
-marginals=True,figsize=(13,13),
-reference_values=map_dic,reference_values_kwargs={'color':'C1','marker':'o','markersize':7,'alpha':1.},
-point_estimate='mean',point_estimate_kwargs={'linestyle':':'},
-# kde_kwargs={'fill_kwargs':{'alpha':0}},
-# marginal_kwargs={'quantiles':[0.25,0.75],'color':'tab:gray'},
-)
+marginals=True,figsize=(13,13),reference_values=map_dic,divergences=True,reference_values_kwargs={'color':'C1','marker':'o','markersize':7,'alpha':1.})
 
 #------------------------------------------------------
 # Add a discrete colorbar
@@ -151,22 +155,8 @@ sm = ScalarMappable(cmap=custom_cmap, norm=norm)
 sm.set_array([])  # Required for the colorbar
 cbar = fig.colorbar(sm, cax=cbar_ax, ticks=levels, label=r"arbitrary units")
 #------------------------------------------------------
-for i,key in enumerate(map_dic):
+for i in range(9):
     axes[8,i].tick_params(labelrotation=55)
-    # axes[i,i].axvline(summary['mean'][key]+summary['sd'][key])
-    # axes[i,i].axvline(summary['mean'][key]-summary['sd'][key])
-
-
-# axes[8,8].set_xscale('symlog',linthresh=1e-9)
-# axes[8,8].set_xlim(-1e-1,-1e-8)
-# axes[8,8].tick_params(labelrotation=45)
-# # axes[8,8].xaxis.set_major_locator(LogLocator(base=10.0, numticks=5))  # 5 ticks
-# axes[8,8].set_xticks([-1e-2, -1e-4, -1e-6, -1e-8])
-
-# axes[8,0].set_yscale('symlog',linthresh=1e-9)
-# axes[8,0].set_ylim(-1e-1,-1e-8)
-# axes[8,0].tick_params('y',labelrotation=0)
-# axes[8,0].set_yticks([-1e-2, -1e-4, -1e-6, -1e-8])
 for ax in axes.flat:
     ax.set_box_aspect(1)
 
@@ -175,12 +165,47 @@ for i in range(9):
     axes[i,0].set_ylabel(true_names[i])
     axes[8,i].set_xlabel(true_names[i])
 
+# #------------------------------------------------------
+axes[0,8].plot(np.linspace(0,1,10),np.linspace(0,1,10))
+# # Plotting correlations on the upper panels
+# # Generate a custom diverging colormap
+# # fig, axes = plt.subplots(9, 9, figsize=(13, 13))
+
+cmap = sns.diverging_palette(230, 20, as_cmap=True)
+# Plotting correlations as colored squares on upper panels
+for i in range(9):
+    for j in range(9):
+        if i > j:  # Upper-diagonal subplots
+            ax = axes[i, j]
+            
+            # Create a uniform square with color based on the correlation
+            corr_value = corr[i, j]
+            ax.imshow(
+                [[corr_value]], 
+                cmap=cmap, 
+                vmin=-1, 
+                vmax=1,
+                extent=[0, 1, 0, 1]  # Scale to subplot's coordinate system
+            )
+            
+            # Add correlation value as text
+            ax.text(
+                0.5, 0.5, f"{corr_value:.2f}",
+                ha='center', va='center',
+                fontsize=10, color='white' if abs(corr_value) > 0.5 else 'black'
+            )
+            
+            # Remove ticks and labels for clean appearance
+            ax.set_xticks([])
+            ax.set_yticks([])
+# # # Add a colorbar
+# # cbar = fig.colorbar(im)
+# # cbar.set_label("Correlation")
+#------------------------------------------------------
 plt.tight_layout()
 saving_name = 'figures/MCMC_pairplot_logwp0.pdf'
-plt.savefig(saving_name,bbox_inches='tight')
-
-# plt.savefig('figures/MCMC_pairplot.png',bbox_inches='tight')
-# plt.show()
+# plt.savefig(saving_name,bbox_inches='tight')
+plt.show()
 
 #------------------------------------------------------
 
@@ -190,3 +215,4 @@ plt.savefig(saving_name,bbox_inches='tight')
 # # az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
 
 # plt.show()
+
