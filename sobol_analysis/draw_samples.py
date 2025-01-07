@@ -31,7 +31,7 @@ start = TIME.time() #monitor duration of execution
 # cases = ['W005_C500_NO_COR']
 cases = ['FC500']
 ### Set number of samples 
-N = 2048
+N = 4096
 print(N)
 # saving_name = 'samples_beta1_ap0_'+cases[0]+'_'+str(N)
 additional_attribute='logwp0_'
