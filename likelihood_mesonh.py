@@ -29,10 +29,12 @@ from interpolate_LES_on_SCM_grids import regrid_and_save
 model_error_t,data_error_t= 0.5*(np.sqrt(1.672455728497919e-05) +np.sqrt(4.404447965215477e-06 )),0. #0.005,0.005 #°C
 model_error_u,data_error_u= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(8.485927186142573e-06 )),0. #0.01,0.01 #ms-1 
 model_error_v,data_error_v= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(0.00015887687395225203)),0. #0.01,0.01 #ms-1
+model_error_tke,data_error_tke= 0.5*(np.sqrt(4.9156578550989325e-09)+np.sqrt(4.28792663815634e-09)) ,0. #TODO: find the right value !!
 # importance of each field in the cost function (non-dimensional)
 weight_t=1.
 weight_u=1.
 weight_v=1.
+weight_tke=1.
 # Bayesian beta hyperparameter
 # beta_t = weight_t / (model_error_t**2 + data_error_t**2) 
 # beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
@@ -41,7 +43,7 @@ weight_v=1.
 beta_t = weight_t / (0.5*(1.672455728497919e-05) +(4.404447965215477e-06 ))
 beta_u = weight_u / (0.5*(3.4161232221017545e-09)+(8.485927186142573e-06 ))
 beta_v = weight_v / (0.5*(3.4161232221017545e-09)+(0.00015887687395225203))
-
+beta_tke = weight_tke / (model_error_tke**2 + data_error_tke**2)
 
 
 # use H1 Sobolev norm
@@ -74,11 +76,14 @@ regrid_and_save(cases=cases)
 TH_les = {}
 U_les  = {}
 V_les  = {}
+TKE_les= {}
 time = {}
 z_r = {}
 z_w = {}
+z_tke= {}
 z_r_boolean_filter = {}
 z_w_boolean_filter = {}
+z_tke_boolean_filter = {}
 dz_TH_les= {}
 dz_U_les = {}
 dz_V_les = {}
@@ -92,7 +97,7 @@ for case in cases:
     TH_les[case] = les['TH_les'].data.transpose() #transpose to have coordinates as level then time,                                #as in the SCM  
     U_les[case]=les['U_les'].data.transpose()
     V_les[case]=les['U_les'].data.transpose()
-
+    TKE_les[case]=les['TKE_les'].data.transpose()
     dz_TH_les[case] = les['dz_TH_les'].data.transpose() #transpose to have coordinates as level then time,                                #as in the SCM  
     dz_U_les[case]  = les['dz_U_les'].data.transpose()
     dz_V_les[case]  = les['dz_U_les'].data.transpose()
@@ -100,12 +105,14 @@ for case in cases:
         #booleans that has been used to filter LES data
     z_r_boolean_filter[case] = les['z_r_boolean_filter'].data
     z_w_boolean_filter[case] = les['z_w_boolean_filter'].data
+    z_tke_boolean_filter[case] = les['z_tke_boolean_filter'].data
 
     time_les = les.time
     time[case] = ((time_les - time_les[0]) / np.timedelta64(1, 'h')).data.astype(int) + 1 #numpy array of integer hours, starting at inital time + 1h
     
     z_r[case] = les['z_r'].data
     z_w[case] = les['z_w'].data
+    z_tke[case] = les['z_tke'].data
     
 
 def likelihood_mesonh(    
@@ -119,6 +126,7 @@ def likelihood_mesonh(
     delta_bkg = 0.0025*250,
     wp0     = -1.e-08,
     sobolev=False,
+    tke=False,
     nan_file='nan_parameters.txt',
     trace=False,
     ret_log_likelihood=False,
@@ -173,20 +181,26 @@ def likelihood_mesonh(
         TH_scm = scm[case].t_history[z_r_boolean_filter[case]]
         U_scm  = scm[case].u_history[z_r_boolean_filter[case]]
         V_scm  = scm[case].v_history[z_r_boolean_filter[case]]
-        
+        TKE_scm= scm[case].tke_history[z_tke_boolean_filter[case]] 
         if trace:
             # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
             # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
             instant=-1
             # plt.plot(TH_scm[:,instant] ,z_r[case])
             # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
-            plt.plot(TH_scm[:,instant] ,z_r[case])
-            plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            # plt.plot(TH_scm[:,instant] ,z_r[case])
+            # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            plt.plot(TKE_scm[:,instant] ,z_tke[case])
+            plt.plot(TKE_les[case][:,instant],z_tke[case],'k+')
             # plt.plot(U_scm[:,-20],z_r[case])
             # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
-            plt.xlim(1.6,1.8)
+            # plt.xlim(1.6,1.8)
             plt.show()
 
+            plt.plot(TH_scm[:,instant] ,z_r[case])
+            plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            plt.xlim(1.6,1.8)
+            plt.show()
             # print(TH_scm.shape)
 
 
@@ -237,6 +251,15 @@ def likelihood_mesonh(
 
             likelihood = likelihood * np.exp(-beta_t_h1*metric_t_h1 - beta_u_h1*metric_u_h1 - beta_v_h1*metric_v_h1)
             log_likelihood = log_likelihood - beta_t_h1*metric_t_h1 - beta_u_h1*metric_u_h1 - beta_v_h1*metric_v_h1
+        
+        if tke:
+            metric_tke = np.trapz( np.trapz( (TKE_scm - TKE_les[case])**2, z_tke[case], axis=0) , time[case]) * 1/(z_tke[case][-1] - z_tke[case][0]) * 1 / (time[case][-1] - time[case][0]) 
+            likelihood = likelihood * np.exp(-beta_tke*metric_tke)
+            log_likelihood = log_likelihood - beta_tke*metric_tke
+            if trace:
+                print("metric_tke", metric_tke)
+                
+
         return likelihood, log_likelihood
 
     likelihoods=np.zeros(len(cases))
@@ -282,7 +305,7 @@ def likelihood_mesonh(
     else:
         return tot_likelihood
 
-# likelihood_mesonh(sobolev=True,)
+
 
 # likelihood_mesonh(    
 #     Cent      = 0.99,
@@ -301,20 +324,22 @@ def likelihood_mesonh(
 #     )
 
 # likelihood_mesonh(    
-#      Cent      = 0.8985,
-#      Cdet      =  1.827,
-#      wp_a      = 0.9458,
-#      wp_b      = 0.9488,
-#      wp_bp     = 1.951,
-#      up_c      = 0.2711, #we take up_c=vp_c
-#      bc_ap     = 0.3673,
-#      delta_bkg = 2.253,
-#      wp0       = -7.874e-08,
+#     Cent      = 0.1,
+#     Cdet      =  1.827,
+#     wp_a      = 0.9458,
+#     wp_b      = 0.9488,
+#     wp_bp     = 1.951,
+#     up_c      = 0.2711, #we take up_c=vp_c
+#     bc_ap     = 0.3673,
+#     delta_bkg = 2.253,
+#     wp0       = -7.874e-08,
 #      sobolev=False,
 #      nan_file='nan_parameters.txt',
 #      trace=True,
 #      ret_log_likelihood=False,
+#      tke=True
 #      )
+
 #if "__name__"=="__main__":
 #    likelihood_mesonh()
      # print(likelihood)

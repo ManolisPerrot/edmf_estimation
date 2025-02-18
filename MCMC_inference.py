@@ -16,7 +16,9 @@ import datetime
 def log_likelihood(Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, wp_0):
     # print(Cent, Cdet, delta_bkg)
     like = likelihood_mesonh(Cent=Cent, Cdet=Cdet, wp_a=wp_a, wp_b=wp_b, wp_bp=wp_bp, up_c=up_c,
-                            bc_ap=bc_ap, delta_bkg=delta_bkg, wp0=wp_0, ret_log_likelihood=True)
+                            bc_ap=bc_ap, delta_bkg=delta_bkg, wp0=wp_0, ret_log_likelihood=True,
+                            tke=True)
+    ### ATTENTION TKE = True
     # print(like)
     return np.asarray(like)
 
@@ -125,7 +127,7 @@ az.summary(trace)
 ## !!!!!!!!!!!!!!!!!!! WARNING cahnge the name before overridding previous inference !!!!!!!
 a = str(datetime.datetime.now()).split(" ")
 
-saving_name = 'MCMC_output/MCMC_'+a[0]+'_'+a[1]+'.nc'
+saving_name = 'MCMC_output/MCMC_tke_true_'+a[0]+'_'+a[1]+'.nc'
 az.InferenceData.to_netcdf(trace, saving_name)
 
 # trace = az.from_netcdf('trace.nc')

@@ -61,6 +61,7 @@ def regrid_and_save(cases=default_cases):
   TH_les = {}
   U_les  = {}
   V_les  = {}
+  TKE_les = {}
   time = {}
   z_r_les = {}
   z_w_les = {}
@@ -73,11 +74,18 @@ def regrid_and_save(cases=default_cases):
           path= './data/'+case+'/'
           les = xr.open_dataset(path+file)
           print('opening', path+file)
+          #
           LG_MEAN = xr.open_dataset(path+file,group ='/LES_budgets/Mean/Cartesian/Not_time_averaged/Not_normalized/cart')
+          LG_RES = xr.open_dataset(
+                path+file, group='/LES_budgets/Resolved/Cartesian/Not_time_averaged/Not_normalized/cart')
+          LG_SBG = xr.open_dataset(
+                path+file, group='/LES_budgets/Subgrid/Cartesian/Not_time_averaged/Not_normalized/cart')
+        #
           TH_les[case] = (LG_MEAN.MEAN_TH - 273.15).data.transpose() #transpose to have coordinates as level then time, 
                                                                   #as in the SCM  
           U_les[case]=LG_MEAN.MEAN_U.data.transpose()
           V_les[case]=LG_MEAN.MEAN_V.data.transpose()
+          TKE_les[case] = (LG_RES.RES_KE + LG_SBG.SBG_TKE).data.transpose()
           time_les = les.time_les 
           time[case] = (((time_les - time_les[0]) / np.timedelta64(1, 'h')).data.astype(int) + 1)*np.timedelta64(1, 'h') #numpy array of integer hours, starting at inital time + 1h
           z_r_les[case] = (les.level_les - (les.level_les[0] + les.level_les[-1])).data #remap level_les on negative depth values
@@ -92,7 +100,8 @@ def regrid_and_save(cases=default_cases):
           TH_les_int,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(TH_les[case], z_r_les[case], z_r_scm )
           U_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(U_les[case], z_r_les[case], z_r_scm )
           V_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(V_les[case], z_r_les[case], z_r_scm )
-          
+          TKE_les_int ,z_tke_scm_filtered, z_tke_boolean_filter = interpolate_les_on_scm(TKE_les[case], z_r_les[case], z_w_scm )
+
           # z_w_boolean filter is not z_w_scm 
           # but the z_w that we would obtain computing dz_X_scm
           dz_TH_les_int,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
@@ -103,15 +112,18 @@ def regrid_and_save(cases=default_cases):
                   data_vars={     'TH_les':    (['time','z_r'], TH_les_int.T ),
                                   'U_les':     (['time','z_r'], U_les_int.T ),
                                   'V_les':     (['time','z_r'], V_les_int.T ), 
+                                  'TKE_les':   (['time','z_tke'], TKE_les_int.T ), 
                                   'dz_TH_les': (['time','z_w'], dz_TH_les_int.T ),
                                   'dz_U_les':  (['time','z_w'], dz_U_les_int.T ),
                                   'dz_V_les':  (['time','z_w'], dz_V_les_int.T )
                         }, 
                   coords={        'z_r': z_r_scm_filtered,
                                   'z_w': z_w_scm_filtered,
+                                  'z_tke': z_tke_scm_filtered,
                                   'time': time[case],
                                   'z_r_boolean_filter': z_r_boolean_filter,
-                                  'z_w_boolean_filter': z_w_boolean_filter
+                                  'z_w_boolean_filter': z_w_boolean_filter,
+                                  'z_tke_boolean_filter': z_tke_boolean_filter
                           },
                   attrs={         'Description': 'LES interpolated on the SCM grid defined in case_configs',
                                   'Case': case,
@@ -125,3 +137,83 @@ def regrid_and_save(cases=default_cases):
 
 if __name__ == '__main__':
      regrid_and_save()
+#      regrid_and_save(cases=['FC500','W005_C500_NO_COR'])
+
+# ################################################################
+
+# TH_les = {}
+# U_les  = {}
+# V_les  = {}
+# TKE_les = {}
+# time = {}
+# z_r_les = {}
+# z_w_les = {}
+# dz_TH_les= {}
+# dz_U_les = {}
+# dz_V_les = {}
+
+# for case in cases:
+#         file = 'GN_01.1.OC_01.000.nc'
+#         path= './data/'+case+'/'
+#         les = xr.open_dataset(path+file)
+#         print('opening', path+file)
+#         #
+#         LG_MEAN = xr.open_dataset(path+file,group ='/LES_budgets/Mean/Cartesian/Not_time_averaged/Not_normalized/cart')
+#         LG_RES = xr.open_dataset(
+#         path+file, group='/LES_budgets/Resolved/Cartesian/Not_time_averaged/Not_normalized/cart')
+#         LG_SBG = xr.open_dataset(
+#         path+file, group='/LES_budgets/Subgrid/Cartesian/Not_time_averaged/Not_normalized/cart')
+# #
+#         TH_les[case] = (LG_MEAN.MEAN_TH - 273.15).data.transpose() #transpose to have coordinates as level then time, 
+#                                                                 #as in the SCM  
+#         U_les[case]=LG_MEAN.MEAN_U.data.transpose()
+#         V_les[case]=LG_MEAN.MEAN_V.data.transpose()
+#         TKE_les[case] = (LG_RES.RES_KE + LG_SBG.SBG_TKE).data.transpose()
+#         time_les = les.time_les 
+#         time[case] = (((time_les - time_les[0]) / np.timedelta64(1, 'h')).data.astype(int) + 1)*np.timedelta64(1, 'h') #numpy array of integer hours, starting at inital time + 1h
+#         z_r_les[case] = (les.level_les - (les.level_les[0] + les.level_les[-1])).data #remap level_les on negative depth values
+#         z_w_les[case] = (les['level_w'][1:] - (les.level_les[0] + les.level_les[-1])).data
+#         dz_TH_les[case] = (np.divide( ((TH_les[case][1:,:]-TH_les[case][0:-1,:])).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
+#         dz_U_les [case] = (np.divide( ((U_les[case][1:,:]-U_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
+#         dz_V_les [case] = (np.divide( ((V_les[case][1:,:]-V_les[case][0:-1,:])  ).T , (z_r_les[case][1:]-z_r_les[case][0:-1]))).T
+
+#         z_r_scm, z_w_scm, grid_params = get_SCM_grid(case)
+#         print('Interpolate LES on SCM with grid spec', grid_params)
+
+
+# case='FC500'
+# TH_les_int,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(TH_les[case], z_r_les[case], z_r_scm )
+# U_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(U_les[case], z_r_les[case], z_r_scm )
+# V_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(V_les[case], z_r_les[case], z_r_scm )
+# TKE_les_int ,z_r_scm_filtered, z_r_boolean_filter = interpolate_les_on_scm(TKE_les[case], z_r_les[case], z_r_scm )
+
+# # z_w_boolean filter is not z_w_scm 
+# # but the z_w that we would obtain computing dz_X_scm
+# dz_TH_les_int,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_TH_les[case], .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
+# dz_U_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_U_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
+# dz_V_les_int ,z_w_scm_filtered, z_w_boolean_filter = interpolate_les_on_scm(dz_V_les[case] , .5*(z_r_les[case][1:]+z_r_les[case][:-1]), .5*(z_r_scm[1:]+z_r_scm[:-1]) )
+
+# dsout = xr.Dataset( 
+#         data_vars={     'TH_les':    (['time','z_r'], TH_les_int.T ),
+#                         'U_les':     (['time','z_r'], U_les_int.T ),
+#                         'V_les':     (['time','z_r'], V_les_int.T ), 
+#                         'TKE_les':   (['time','z_w'], (TKE_les_int[:-2,:]).T ), #remove the last two levels, to be consistent w/ the z_w_scm_filtered of dz_TH etc 
+#                         'dz_TH_les': (['time','z_w'], dz_TH_les_int.T ),
+#                         'dz_U_les':  (['time','z_w'], dz_U_les_int.T ),
+#                         'dz_V_les':  (['time','z_w'], dz_V_les_int.T )
+#         }, 
+#         coords={        'z_r': z_r_scm_filtered,
+#                         'z_w': z_w_scm_filtered,
+#                         'time': time[case],
+#                         'z_r_boolean_filter': z_r_boolean_filter,
+#                         'z_w_boolean_filter': z_w_boolean_filter
+#                 },
+#         attrs={         'Description': 'LES interpolated on the SCM grid defined in case_configs',
+#                         'Case': case,
+#                         'SCM grid nz':  grid_params['nz'],
+#                         'SCM grid h0':  grid_params['h0'],
+#                         'SCM grid thetas':  grid_params['thetas'],
+#                 })
+
+# dsout.to_netcdf(path+case+'_interpolated_on_SCM.nc', mode='w', format="NETCDF4")
+# print('Interpolated LES saved at', path+case+'_interpolated_on_SCM.nc' )
