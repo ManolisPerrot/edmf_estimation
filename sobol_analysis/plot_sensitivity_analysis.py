@@ -13,8 +13,8 @@ plt.rcParams.update({'lines.linewidth': 2.0})
 nsample = '2048'
 cases=['FC500','W005_C500_NO_COR']
 case = cases[1] # TODO: loop on cases
-# additional_attribute='beta1_ap0_'
-additional_attribute='logwp0_'
+additional_attribute='beta1_ap0_'
+# additional_attribute='logwp0_'
 # additional_attribute=''
 
 print('opening ','outputs/sobol_'+additional_attribute+case+'_'+nsample)
@@ -25,8 +25,8 @@ with open('outputs/sobol_'+additional_attribute+case+'_'+nsample, 'rb') as handl
 
 saving_path = 'figures/analysis_of_variance_'+additional_attribute+case+nsample+'.png'
 
-true_name={'Cent': r'$\beta_1$',
-            'Cdet': r'$\beta_2$',
+true_name={'Cent': r'$C_{\mathrm{ent}}$',
+            'Cdet': r'$C_{\mathrm{det}}$',
             'wp_a': r'$a$',
             'wp_b': r'$b$',
             'wp_bp': r'$b^\prime$',
@@ -161,7 +161,6 @@ else:
     xmin = -1e-5
     # xmin = 0
     xmax = 0.00025
-    xmax = 1e-3
     zlim = -400
 
     # colors = []
@@ -192,8 +191,8 @@ else:
         color = colors[parameter]
         L2sobolindex=output[case]['sobol_indices'][parameter][field]['l2 index']
         ax.plot(parameter, L2sobolindex, 'o', color=color)
-        TotL2sobolindex=output[case]['sobol_indices'][parameter][field]['total l2 index']
-        ax.plot(parameter, TotL2sobolindex, 'o', color=color,alpha=0.5)
+        # TotL2sobolindex=output[case]['sobol_indices'][parameter][field]['total l2 index']
+        # ax.plot(parameter, TotL2sobolindex, 'o', color=color,alpha=0.5)
     ax.set_title(r'1st Sobol $L^2$ indices for $Y=\theta$')
     ax.set_xticklabels([true_name[key] for key in output[case]['sobol_indices']])
     ax.grid()
@@ -284,8 +283,8 @@ else:
 
 handles, labels = axs.flat[0].get_legend_handles_labels()
 fig.legend(handles, labels,loc='upper center', bbox_to_anchor=(0.5, 0.02),fancybox=False, shadow=False, ncol=4)
-# fig.tight_layout()
+fig.tight_layout()
 # fig.legend(handles,labels)
-# plt.savefig(saving_path,bbox_inches='tight',dpi=600)
-# print('figure saved at ',saving_path)
+plt.savefig(saving_path,bbox_inches='tight',dpi=600)
+print('figure saved at ',saving_path)
 plt.show()

@@ -128,7 +128,7 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
         fontweight='bold',
         fontsize='medium', verticalalignment='top', 
         bbox=dict(facecolor='1.', edgecolor='black',linewidth=0.1),)
-        ax.set_ylim((-1.3,0))
+        ax.set_ylim((-416,0))
 
 # fig, axes = plt.subplots(nrows=1, ncols=4, sharex=False,
 #                          sharey=True, constrained_layout = True)
@@ -138,7 +138,7 @@ temp = np.array([scm[case][i].t_np1[:,0] for i in range(number_of_draws)])
 wt   = np.array([scm[case][i].tFlx for i in range(number_of_draws)])
 k    = np.array([scm[case][i].tke_np1 for i in range(number_of_draws)])
 wtke = np.array([scm[case][i].wtke for i in range(number_of_draws)])
-mld=320
+mld=1
 vars   = [temp,wt,k,wtke]
 z_adim = [scm[case][0].z_r/mld,scm[case][0].z_w/mld,scm[case][0].z_w/mld,scm[case][0].z_r/mld]
 
@@ -232,7 +232,7 @@ def plot_WC(scm=scm[case][0],mld=320,linestyle='-',color='C0',alpha=0.05,axes=ax
         fontweight='bold',
         fontsize='medium', verticalalignment='top', 
         bbox=dict(facecolor='1.', edgecolor='black',linewidth=0.1),)
-        ax.set_ylim((-1.3,0))
+        ax.set_ylim((-416,0))
 
 
 temp = np.array([scm[case][i].t_np1[:,0] for i in range(number_of_draws)])
@@ -241,7 +241,7 @@ wt   = np.array([scm[case][i].tFlx for i in range(number_of_draws)])
 wu   = np.array([scm[case][i].uFlx for i in range(number_of_draws)])
 k    = np.array([scm[case][i].tke_np1 for i in range(number_of_draws)])
 wtke = np.array([scm[case][i].wtke for i in range(number_of_draws)])
-mld=320
+mld=1
 vars   = [temp,u,k,wt,wu,wtke]
 z_adim = [scm[case][0].z_r/mld,scm[case][0].z_r/mld,scm[case][0].z_w/mld,scm[case][0].z_w/mld,scm[case][0].z_w/mld,scm[case][0].z_r/mld]
 

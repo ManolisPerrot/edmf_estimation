@@ -16,7 +16,8 @@ nsamples = ['1024','2048','4096']
 
 cases=['FC500','W005_C500_NO_COR']
 case = cases[0] 
-additional_attribute='logwp0_'
+# additional_attribute='logwp0_'
+additional_attribute=''
 
 output={}
 for nsample in nsamples:
@@ -32,8 +33,8 @@ for nsample in nsamples:
 
 saving_path = 'figures/sensitivity_of_variance_'+additional_attribute+case+'.png'
 
-true_name={'Cent': r'$\beta_1$',
-            'Cdet': r'$\beta_2$',
+true_name={'Cent': r'$C_{\mathrm{ent}}$',
+            'Cdet': r'$C_{\mathrm{det}}$',
             'wp_a': r'$a$',
             'wp_b': r'$b$',
             'wp_bp': r'$b^\prime$',
