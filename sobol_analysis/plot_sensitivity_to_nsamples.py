@@ -10,15 +10,18 @@ plt.rcParams.update({'savefig.facecolor': 'white'})
 plt.rcParams.update({'lines.linewidth': 2.0})
 # plt.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
 
-nsamples = ['512','1024','2048','4096']
+# nsamples = ['512','1024','2048','4096']
 
+nsamples = ['1024','2048','4096']
 
 cases=['FC500','W005_C500_NO_COR']
 case = cases[0] 
+# additional_attribute='logwp0_'
+additional_attribute=''
 
 output={}
 for nsample in nsamples:
-    with open('outputs/sobol_FC500_'+nsample, 'rb') as handle:
+    with open('outputs/sobol_'+additional_attribute+case+'_'+nsample, 'rb') as handle:
     # with open('outputs/sobol_'+nsample, 'rb') as handle:
         output[nsample] = pickle.load(handle)
 
@@ -28,10 +31,10 @@ for nsample in nsamples:
 ############
 
 
-saving_path = 'figures/sensitivity_of_variance_'+case+'.png'
+saving_path = 'figures/sensitivity_of_variance_'+additional_attribute+case+'.png'
 
-true_name={'Cent': r'$\beta_1$',
-            'Cdet': r'$\beta_2$',
+true_name={'Cent': r'$C_{\mathrm{ent}}$',
+            'Cdet': r'$C_{\mathrm{det}}$',
             'wp_a': r'$a$',
             'wp_b': r'$b$',
             'wp_bp': r'$b^\prime$',
@@ -86,6 +89,8 @@ for k,nsample in enumerate(nsamples):
         L2sobolindex=output[nsample][case]['sobol_indices'][parameter][field]['l2 index']
         ax.plot(variable_name, L2sobolindex, 'o', 
         color=colors[k],  alpha=alphas[k], label=r'$N=$'+nsample)
+        TotL2sobolindex=output[nsample][case]['sobol_indices'][parameter][field]['total l2 index']
+        ax.plot(variable_name, TotL2sobolindex, '+', color=colors[k],alpha=alphas[k])
     ax.set_title(r'$L^2$ Sobol index')
     # ax.set_yscale('log')
 
