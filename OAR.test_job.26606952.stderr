@@ -1,0 +1,11 @@
+Multiprocess sampling (9 chains in 9 jobs)
+DEMetropolisZ: [Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, log_wp_0, likelihood]
+/home/PROJECTS/pr-plume/edmf_estimation/edmf_ocean/library/F2PY/scm_class.py:638: RuntimeWarning: invalid value encountered in multiply
+  if self.MF_tke and self.MF_tra: self.buoyMF[:] = -self.Fmass[:]*self.Bp[:]  ## corresponds to  - FM x Bp
+/home/PROJECTS/pr-plume/edmf_estimation/edmf_ocean/library/F2PY/scm_class.py:638: RuntimeWarning: invalid value encountered in multiply
+  if self.MF_tke and self.MF_tra: self.buoyMF[:] = -self.Fmass[:]*self.Bp[:]  ## corresponds to  - FM x Bp
+/home/PROJECTS/pr-plume/edmf_estimation/edmf_ocean/library/F2PY/scm_class.py:638: RuntimeWarning: invalid value encountered in multiply
+  if self.MF_tke and self.MF_tra: self.buoyMF[:] = -self.Fmass[:]*self.Bp[:]  ## corresponds to  - FM x Bp
+Sampling 9 chains for 2_000 tune and 50_000 draw iterations (18_000 + 450_000 draws total) took 67327 seconds.
+The rhat statistic is larger than 1.01 for some parameters. This indicates problems during sampling. See https://arxiv.org/abs/1903.08008 for details
+The effective sample size per chain is smaller than 100 for some parameters.  A higher number is needed for reliable rhat and ess computation. See https://arxiv.org/abs/1903.08008 for details

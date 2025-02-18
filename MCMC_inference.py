@@ -8,6 +8,9 @@ import pytensor.tensor as pt
 from pytensor.graph import Apply, Op
 import arviz as az
 import matplotlib.pyplot as plt
+import os 
+import datetime
+
 
 
 def log_likelihood(Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, wp_0):
@@ -110,7 +113,8 @@ with MC_model:
     # step = pm.Metropolis()      # kind of MCMC random walk algorithm. 
     # step = pm.Slice()           # kind of MCMC random walk algorithm.
     step = pm.DEMetropolisZ()     # kind of MCMC random walk algorithm.
-    trace = pm.sample(50000, step=step, tune=2000)  # samples #50 000 takes ~20h
+    trace = pm.sample(50000, step=step, tune=2000,cores=9)  # samples #50 000 takes ~20h
+    # trace = pm.sample(10, step=step, tune=1,cores=2)  # samples #50 000 takes ~20h
     end = time.time()
     print('Time taken: ', end - start)
 
@@ -119,24 +123,26 @@ az.summary(trace)
 
 ## To save to netcdf
 ## !!!!!!!!!!!!!!!!!!! WARNING cahnge the name before overridding previous inference !!!!!!!
-saving_name = 'full_MCMC_run_test.nc'
+a = str(datetime.datetime.now()).split(" ")
+
+saving_name = 'MCMC_output/MCMC_'+a[0]+'_'+a[1]+'.nc'
 az.InferenceData.to_netcdf(trace, saving_name)
 
 # trace = az.from_netcdf('trace.nc')
 
-az.plot_trace(trace)
-az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
-plt.show()
+# az.plot_trace(trace)
+# az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
+# plt.show()
 
-az.plot_forest(trace, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-az.plot_forest(trace, var_names=["Cdet"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-az.plot_forest(trace, var_names=["delta_bkg"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+# az.plot_forest(trace, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+# az.plot_forest(trace, var_names=["Cdet"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+# az.plot_forest(trace, var_names=["delta_bkg"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
+# # az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
 
-plt.show()
+# plt.show()
 
-az.plot_autocorr(trace, var_names=["Cent", "Cdet", "delta_bkg", "likelihood"])
-plt.show()
+# az.plot_autocorr(trace, var_names=["Cent", "Cdet", "delta_bkg", "likelihood"])
+# plt.show()
 
-az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
-plt.show()
+# az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
+# plt.show()

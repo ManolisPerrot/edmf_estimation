@@ -1,0 +1,9 @@
+opening ./data/FC500/GN_01.1.OC_01.000.nc
+Interpolate LES on SCM with grid spec {'nz': 100, 'h0': 1000.0, 'thetas': 6.5}
+Interpolated LES saved at ./data/FC500/FC500_interpolated_on_SCM.nc
+opening ./data/W005_C500_NO_COR/GN_01.1.OC_01.000.nc
+Interpolate LES on SCM with grid spec {'nz': 100, 'h0': 1000.0, 'thetas': 6.5}
+Interpolated LES saved at ./data/W005_C500_NO_COR/W005_C500_NO_COR_interpolated_on_SCM.nc
+opening ./data/FC500/FC500_interpolated_on_SCM.nc
+opening ./data/W005_C500_NO_COR/W005_C500_NO_COR_interpolated_on_SCM.nc
+█Time taken:  41.568597078323364

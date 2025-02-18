@@ -1,0 +1,4 @@
+Only 100 samples in chain.
+Multiprocess sampling (32 chains in 32 jobs)
+DEMetropolisZ: [Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, log_wp_0, likelihood]
+## OAR [2024-12-04 14:11:11] Job 26606418 KILLED ##

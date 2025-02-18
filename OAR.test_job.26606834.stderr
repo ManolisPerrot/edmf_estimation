@@ -1,0 +1,5 @@
+Only 10 samples in chain.
+Multiprocess sampling (2 chains in 2 jobs)
+DEMetropolisZ: [Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, log_wp_0, likelihood]
+Sampling 2 chains for 1 tune and 10 draw iterations (2 + 20 draws total) took 15 seconds.
+The number of samples is too small to check convergence reliably.
