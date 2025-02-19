@@ -122,4 +122,4 @@ echo -------------------------------------------------------------
 # ModelParam.R
 time Rscript htune_Emulating_Multi_Metric_Multi_LHS_new.R -wave ${wave} -cutoff 3 -sample_size 30000 -sample_size_next_design 10
 
-#evince InputSpace_wave${wave}.pdf
+evince InputSpace_wave${wave}.pdf

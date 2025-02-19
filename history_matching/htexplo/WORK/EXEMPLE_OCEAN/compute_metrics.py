@@ -188,12 +188,13 @@ print(metrics_selected)
 
 output_file = "Metrics.csv"
 with open(output_file, mode="w", newline="") as file:
-    writer = csv.writer(file)
+    writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=' ')  # Prevents quotes
     writer.writerow(["SIM"]+metrics)
     vals_inline = [metrics_selected[key] for key in metrics_selected]
     print(vals_inline)
     for i in range(len(run_id)):
         writer.writerow([run_id[i]+','+str(float(vals_inline[k][i])) for k in range(len(vals_inline))])
+        
         # writer.writerow([rid]+val)
 #     for rid, val in zip(run_id, metric_t):
 #         writer.writerow([rid, val])
