@@ -21,10 +21,10 @@
 - [X] fix cp on FC500 to avoid bias.
 - [X] do a Andrew plot with full distribution, then distribution cutted above a trshold of high proba to see how it is reducing the variability. 
 - [ ] REDO Andrew with not saving but keeping in local memory, for it to go faster
-- [ ] check Andrew plot with plotting all the lines, same color and alpha =0.5 to see really the density
-- [ ] run the script on 9 cores on dahu
+- [X] check Andrew plot with plotting all the lines, same color and alpha =0.5 to see really the density
+- [X] run the script on 9 cores on dahu
 - [ ] portability: create a script to automatically create a conda env with required packages 
-- [ ] 
+- [ ] extend the dataset to more cases + place cases of the literature on the non-dim space. 
 
 Discussion with Maurice Brémond (automatic diff tool Tapenade):
 - réécrire fontion cout en fortan
@@ -35,8 +35,7 @@ Discussion with Maurice Brémond (automatic diff tool Tapenade):
   
 - [ ] Implement Hightune ??
 
-- [ ] do andrew plots / check souza 
-- [ ]
+
 
 - [ ] redo the two inferences with NaN fixed (start with 3 parameters Cent, ap0, wp_bp)
 
