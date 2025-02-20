@@ -1,0 +1,3 @@
+Multiprocess sampling (9 chains in 9 jobs)
+DEMetropolisZ: [Cent, Cdet, wp_a, wp_b, wp_bp, up_c, bc_ap, delta_bkg, log_wp_0, likelihood]
+## OAR [2025-02-19 14:09:59] Job 27119152 KILLED ##

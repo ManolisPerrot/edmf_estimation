@@ -26,11 +26,11 @@ from interpolate_LES_on_SCM_grids import regrid_and_save
 
 # ===================================Choose hyperparameters of the calibration===========
 # dimensional error tolerance for L2 norm 
-model_error_t,data_error_t= 0.5*(np.sqrt(1.672455728497919e-05) +np.sqrt(4.404447965215477e-06 )),0. #0.005,0.005 #°C
-model_error_u,data_error_u= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(8.485927186142573e-06 )),0. #0.01,0.01 #ms-1 
-model_error_v,data_error_v= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(0.00015887687395225203)),0. #0.01,0.01 #ms-1
-model_error_tke,data_error_tke= 0.5*(np.sqrt(4.9156578550989325e-09)+np.sqrt(4.28792663815634e-09)) ,0. #TODO: find the right value !!
-# importance of each field in the cost function (non-dimensional)
+# model_error_t,data_error_t= 0.5*(np.sqrt(1.672455728497919e-05) +np.sqrt(4.404447965215477e-06 )),0. #0.005,0.005 #°C
+# model_error_u,data_error_u= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(8.485927186142573e-06 )),0. #0.01,0.01 #ms-1 
+# model_error_v,data_error_v= 0.5*(np.sqrt(3.4161232221017545e-09)+np.sqrt(0.00015887687395225203)),0. #0.01,0.01 #ms-1
+# model_error_tke,data_error_tke= 0.5*(np.sqrt(4.9156578550989325e-09)+np.sqrt(4.28792663815634e-09)) ,0. 
+# # importance of each field in the cost function (non-dimensional)
 weight_t=1.
 weight_u=1.
 weight_v=1.
@@ -40,10 +40,12 @@ weight_tke=1.
 # beta_u = weight_u / (model_error_u**2 + data_error_u**2) 
 # beta_v = weight_v / (model_error_v**2 + data_error_v**2) 
 
+# errors obtained from a first MAP estimate. Then evaluate unormalized metrics at the MAP. 
+
 beta_t = weight_t / (0.5*(1.672455728497919e-05) +(4.404447965215477e-06 ))
 beta_u = weight_u / (0.5*(3.4161232221017545e-09)+(8.485927186142573e-06 ))
 beta_v = weight_v / (0.5*(3.4161232221017545e-09)+(0.00015887687395225203))
-beta_tke = weight_tke / (model_error_tke**2 + data_error_tke**2)
+beta_tke = weight_tke / (0.5*(4.9156578550989325e-09 + 4.28792663815634e-09))
 
 
 # use H1 Sobolev norm
@@ -182,25 +184,25 @@ def likelihood_mesonh(
         U_scm  = scm[case].u_history[z_r_boolean_filter[case]]
         V_scm  = scm[case].v_history[z_r_boolean_filter[case]]
         TKE_scm= scm[case].tke_history[z_tke_boolean_filter[case]] 
-        if trace:
-            # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
-            # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
-            instant=-1
-            # plt.plot(TH_scm[:,instant] ,z_r[case])
-            # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
-            # plt.plot(TH_scm[:,instant] ,z_r[case])
-            # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
-            plt.plot(TKE_scm[:,instant] ,z_tke[case])
-            plt.plot(TKE_les[case][:,instant],z_tke[case],'k+')
-            # plt.plot(U_scm[:,-20],z_r[case])
-            # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
-            # plt.xlim(1.6,1.8)
-            plt.show()
+        # if trace:
+        #     # plt.plot(scm[case].t_history[:,-1] ,scm[case].z_r)
+        #     # plt.plot(scm[case].t_history[:,-20],scm[case].z_r)
+        #     # instant=-1
+        #     # # plt.plot(TH_scm[:,instant] ,z_r[case])
+        #     # # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            # # plt.plot(TH_scm[:,instant] ,z_r[case])
+            # # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            # plt.plot(TKE_scm[:,instant] ,z_tke[case])
+            # plt.plot(TKE_les[case][:,instant],z_tke[case],'k+')
+            # # plt.plot(U_scm[:,-20],z_r[case])
+            # # plt.plot(U_les[case][:,-1] ,z_r[case],'k+')
+            # # plt.xlim(1.6,1.8)
+            # plt.show()
 
-            plt.plot(TH_scm[:,instant] ,z_r[case])
-            plt.plot(TH_les[case][:,instant],z_r[case],'k+')
-            plt.xlim(1.6,1.8)
-            plt.show()
+            # plt.plot(TH_scm[:,instant] ,z_r[case])
+            # plt.plot(TH_les[case][:,instant],z_r[case],'k+')
+            # plt.xlim(1.6,1.8)
+            # plt.show()
             # print(TH_scm.shape)
 
 
@@ -323,22 +325,22 @@ def likelihood_mesonh(
 #     ret_log_likelihood=True,
 #     )
 
-# likelihood_mesonh(    
-#     Cent      = 0.1,
-#     Cdet      =  1.827,
-#     wp_a      = 0.9458,
-#     wp_b      = 0.9488,
-#     wp_bp     = 1.951,
-#     up_c      = 0.2711, #we take up_c=vp_c
-#     bc_ap     = 0.3673,
-#     delta_bkg = 2.253,
-#     wp0       = -7.874e-08,
-#      sobolev=False,
-#      nan_file='nan_parameters.txt',
-#      trace=True,
-#      ret_log_likelihood=False,
-#      tke=True
-#      )
+likelihood_mesonh(    
+    Cent      = 0.1,
+    Cdet      =  1.827,
+    wp_a      = 0.9458,
+    wp_b      = 0.9488,
+    wp_bp     = 1.951,
+    up_c      = 0.2711, #we take up_c=vp_c
+    bc_ap     = 0.3673,
+    delta_bkg = 2.253,
+    wp0       = -7.874e-08,
+     sobolev=False,
+     nan_file='nan_parameters.txt',
+     trace=True,
+     ret_log_likelihood=False,
+     tke=True
+     )
 
 #if "__name__"=="__main__":
 #    likelihood_mesonh()

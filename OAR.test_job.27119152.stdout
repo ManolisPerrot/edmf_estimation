@@ -1,0 +1,24 @@
+opening ./data/FC500/GN_01.1.OC_01.000.nc
+Interpolate LES on SCM with grid spec {'nz': 100, 'h0': 1000.0, 'thetas': 6.5}
+Interpolated LES saved at ./data/FC500/FC500_interpolated_on_SCM.nc
+opening ./data/W005_C500_NO_COR/GN_01.1.OC_01.000.nc
+Interpolate LES on SCM with grid spec {'nz': 100, 'h0': 1000.0, 'thetas': 6.5}
+Interpolated LES saved at ./data/W005_C500_NO_COR/W005_C500_NO_COR_interpolated_on_SCM.nc
+opening ./data/FC500/FC500_interpolated_on_SCM.nc
+opening ./data/W005_C500_NO_COR/W005_C500_NO_COR_interpolated_on_SCM.nc
+Cent 0.1 Cdet 1.827 wp_a 0.9458 wp_b 0.9488 wp_bp 1.951 up_c 0.2711 vp_c 0.2711 bc_ap 0.3673 delta_bkg 2.253 wp0 -7.874e-08
+run SCM case FC500: zinv = -470.92674579515074
+metric_t 8.206435449105967e-05
+metric_u 3.416123222101756e-09
+metric_v 3.416123222101756e-09
+0.0016150148509944215
+metric_tke 8.680194437484333e-09
+Cent 0.1 Cdet 1.827 wp_a 0.9458 wp_b 0.9488 wp_bp 1.951 up_c 0.2711 vp_c 0.2711 bc_ap 0.3673 delta_bkg 2.253 wp0 -7.874e-08
+run SCM case W005_C500_NO_COR: zinv = -444.20180934761345
+metric_t 6.24748973830119e-05
+metric_u 4.758655249129945e-05
+metric_v 0.0001588768739522521
+1.0128725509492461e-05
+metric_tke 9.482279629035641e-09
+likelihood is 3.1597046955502447e-10
+█
