@@ -2,9 +2,11 @@
 
 unset LANG
 
-## D'ABORD FAIRE
+## D'ABORD FAIRE la toute première fois 
 # svn checkout --username htune https://svn.lmd.jussieu.fr/HighTune/trunk HighTune
 # cd HighTune && bash setup.sh
+
+# usage
 
 if [ $# -lt 1 ] ; then 
   echo "Usage: $0 <nwave>|clean|setup [wave_two_metrics]"
@@ -15,8 +17,9 @@ fi
 # 0.1/ Default values
 metrics=FC_TH
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
-sample_size=300000
-sample_size_next_design=45
+sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
+sample_size=300000 # number of Gaussian Process evaluations
+
 
 # 0.3/ options
 while (($# > 0)) ; do
@@ -41,7 +44,7 @@ while (($# > 0)) ; do
 # -sample_size SAMPLESIZE : sample size for the NROY graphics
 # -sample_size_next_design SAMPLESIZENEX : sample size for next design
 # -model MODEL      : name of MODEL, available on models/
-# -metrics METRICS  : METRICS is a list of metrics separated by "," or " "
+# -metrics METRICS  : METRICS is a list of metrics separated by "," 
 # eod
 #                 exit 0 ;;
           *) model=$1 ; shift ;;
@@ -94,7 +97,7 @@ echo ------------------
 
 mkdir WAVE${wave}
 
-set -ex
+# set -ex
 
 echo -------------------------------------------------------------
 echo Enable conda environment
@@ -109,14 +112,14 @@ echo '[min,max,default]' of parameters
 echo -------------------------------------------------------------
 # /!\ ATTENTION l'ordre à l'air différent que dans SCM/LES : min, max, default et PAS min, default, max
 cat > param <<eod
-Cent 0 0.99 0.9 linear
-Cdet 1 1.99 1.7 linear
-wp_a 0.01 1.0 0.9 linear
-wp_b 0.01 1.0 0.9 linear
-wp_bp 0.25 2.5 2. linear
-up_c  0 1. 0.5 linear
-bc_ap 0 0.45 0.2 linear
-delta_bkg 0.25 2.5 2. linear
+Cent 0. 1. 0.9 linear
+Cdet 1. 2. 1.7 linear
+wp_a 0. 1. 0.9 linear
+wp_b 0. 1. 0.9 linear
+wp_bp 0. 3. 2. linear
+up_c  0. 1. 0.5 linear
+bc_ap 0. 0.45 0.2 linear
+delta_bkg 0. 3. 2. linear
 wp0 1e-8 1e-1 0.5e-7 log
 eod
 cat param
@@ -186,6 +189,6 @@ echo -------------------------------------------------------------
 
 \cp -f Params.asc Metrics.csv Wave${wave}.RData Par1D_Wave${wave}.asc Wave${wave}_SCM.Rdata Wave${wave}_REF.Rdata WAVE${wave}/
 # ModelParam.R
-time Rscript htune_Emulating_Multi_Metric_Multi_LHS_new.R -wave ${wave} -cutoff 3 -sample_size 30000 -sample_size_next_design 10
+time Rscript htune_Emulating_Multi_Metric_Multi_LHS_new.R -wave ${wave} -cutoff 3 -sample_size $sample_size -sample_size_next_design $sample_size_next_design
 
 #evince InputSpace_wave${wave}.pdf

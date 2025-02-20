@@ -1,9 +1,9 @@
-Cent 0 0.99 0.9 linear
-Cdet 1 1.99 1.7 linear
-wp_a 0.01 1.0 0.9 linear
-wp_b 0.01 1.0 0.9 linear
-wp_bp 0.25 2.5 2. linear
-up_c  0 1. 0.5 linear
-bc_ap 0 0.45 0.2 linear
-delta_bkg 0.25 2.5 2. linear
+Cent 0. 1. 0.9 linear
+Cdet 1. 2. 1.7 linear
+wp_a 0. 1. 0.9 linear
+wp_b 0. 1. 0.9 linear
+wp_bp 0. 3. 2. linear
+up_c  0. 1. 0.5 linear
+bc_ap 0. 0.45 0.2 linear
+delta_bkg 0. 3. 2. linear
 wp0 1e-8 1e-1 0.5e-7 log
