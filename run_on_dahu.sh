@@ -2,9 +2,9 @@
 # -- set project name --
 #OAR --project pr-plume
 # -- set job name
-#OAR -n test_job
+#OAR -n MCMC_inference
 # -- Set resources and walltime
-#OAR -l /core=9,walltime=20:20:00
+#OAR -l /core=9,walltime=30:20:00
 # -- load environment --
 source /applis/environments/conda.sh
 conda activate baseMano
