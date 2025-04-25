@@ -17,8 +17,8 @@ fi
 # 0.1/ Default values
 metrics=FC_TH
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
-sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
-sample_size=300000 # number of Gaussian Process evaluations
+sample_size_next_design=10 # number of SCM evaluations at each wave, 10*number of parameters
+sample_size=30000 # number of Gaussian Process evaluations
 
 
 # 0.3/ options
@@ -69,7 +69,7 @@ echo -----------------------------------
 echo  clean : menage des précédents runs
 echo -----------------------------------
 
-    \rm -r param ModelParam.R *.csv *Rdata *RData *asc *pdf Remain* WAVE* 
+    \rm -r param ModelParam.R *.csv *Rdata *RData *asc *pdf Remain* WAVE* param_after_wave*
     exit
 fi
 
@@ -135,11 +135,12 @@ echo -------------------------------------------------------------
 # metric_les = int (X_les - X_les)^2 dz dt / int dz dt = 0 by DEFINITION
 # VAR is error_model**2+error_data**2
 
-# Define all the possible metrics and there mean/tolerance, with syntax: case_X  
+# Define all the possible metrics and their mean/tolerance, with syntax: case_X  
+# FC: Free Convection; WC: Wind and Cooling
 cat > cibles_all.csv <<eod
 TYPE,FC_TH,FC_dzTH,WC_TH,WC_dzTH,WC_U,WC_dzU
 MEAN,0,0,0,0,0,0
-VAR,1e-12,1e-12,1e-12,1e-12,1e-12,1e-12
+VAR,1e-10,1e-12,1e-3,1e-12,8.5e-06,1e-12
 eod
 
 # Extract the columns corresponding to user-defined metrics

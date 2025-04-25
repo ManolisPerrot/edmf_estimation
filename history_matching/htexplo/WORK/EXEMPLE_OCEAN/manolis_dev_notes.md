@@ -25,29 +25,41 @@ My SCM model setup is in MODEL/SCMOCEAN, containing:
 Multi metrics and multi waves are working !
 
 
-**pour demain** : lire Couvreux pour répondre à 
-- [ ] investigate sensitivity to number of waves
-- [ ] convergence criterion based on remaining space ?
-- [ ] sensitivity to error (VAR) 
+# Sensitivity results from Couvreux 2021 
+- convergence criterion based on remaining space 
+- reducing tolerance (VAR) --> NROY disminshes, but when tol < error_data no more effect
+- succesive metrics or simulataneous metrics: after several waves, same NROY. Focus on some aspects can be put w/ succesive apporaches, or highly non-linear metrics...
+- greater number of SCM runs: faster covergence ? 
+
+
+
+
 - [ ] andrew plots (check Couvreux paper scripts and diags)
 
 - [ ] faire les plots de la fig. 3 de Couvreux
 ----
-- [ ] enable automatic multi waves, w/ option -wave 1 2 3 etc
+<!-- - [ ] enable automatic multi waves, w/ option -wave 1 2 3 etc -->
 - [X] check recommended number of SCM runs (I think is 10 x nb parameters)
 - [ ] check recomended number for $sample_size 
   - dans Couvreux (2021) iels semblent utiliser 5 000 000 ?
   - [ ] regarder thèse Volodina ?
-  - [ ] regarder 
+  - [ ] default dans Bench: 300 000 
 - [X] modify wp0 range
 - [X] check consistent range w/ MCMC
+- [X] tester les mêmes tolérances que MCMC --> marche pas ?
+- [X] faire une boucle pour s'arrêter quand NROY à convergé (regarder)
 - [ ] log plot for wp0 ?
 - [ ] add TKE metric
 
 - [ ] faire proprement la doc "usage" dans exemple.sh, car là c'est pas cohérent
 
 
+21/2/25: -j'ai lancé test pour FC_TH VAR=1.7e-05, 90 scm, 300000 GP --> NROY=1, pas de contraintes
+         - reteste avec VAR 1.5e-6 --> pareil
 
+Questions for dephy:
+- [ ] comment choisir NLHC ?
+- [ ] comment choisir nb GP ?
 
 ----------------------------------------------------------
 (Vielles notes archivées, quand j'étais parti sur utiliser le framework bench.sh qui est finalement assez lourd. Finalement j'utilise exemple.sh qui est plus simple)
