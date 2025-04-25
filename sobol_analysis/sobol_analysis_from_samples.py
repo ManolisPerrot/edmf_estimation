@@ -1,3 +1,10 @@
+'''
+Compute 1ast and Total Sobol indices from already computed samples. One can choose to perform the analysis only on temperature ouput, or on temperature and velocity output (relevant for the case W005_C500).
+Two type of indices are computed: z-index (at the end of the simulation) which is Sobol index at each depth, and l2-index (integrated over the depth and time). 
+For each type: enumerator is contribution of one parameter to the total variance, while denominator is the toatl variance (the same for each parameter).
+Outputs are save as pickle files in the outputs folder. 
+'''
+
 ###########################################
 # Imports
 ###########################################

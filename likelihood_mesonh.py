@@ -325,22 +325,22 @@ def likelihood_mesonh(
 #     ret_log_likelihood=True,
 #     )
 
-likelihood_mesonh(    
-    Cent      = 0.1,
-    Cdet      =  1.827,
-    wp_a      = 0.9458,
-    wp_b      = 0.9488,
-    wp_bp     = 1.951,
-    up_c      = 0.2711, #we take up_c=vp_c
-    bc_ap     = 0.3673,
-    delta_bkg = 2.253,
-    wp0       = -7.874e-08,
-     sobolev=False,
-     nan_file='nan_parameters.txt',
-     trace=True,
-     ret_log_likelihood=False,
-     tke=True
-     )
+# likelihood_mesonh(    
+#     Cent      = 0.1,
+#     Cdet      =  1.827,
+#     wp_a      = 0.9458,
+#     wp_b      = 0.9488,
+#     wp_bp     = 1.951,
+#     up_c      = 0.2711, #we take up_c=vp_c
+#     bc_ap     = 0.3673,
+#     delta_bkg = 2.253,
+#     wp0       = -7.874e-08,
+#      sobolev=False,
+#      nan_file='nan_parameters.txt',
+#      trace=True,
+#      ret_log_likelihood=False,
+#      tke=True
+#      )
 
 #if "__name__"=="__main__":
 #    likelihood_mesonh()

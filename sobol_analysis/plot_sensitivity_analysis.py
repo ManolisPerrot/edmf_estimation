@@ -1,3 +1,8 @@
+'''
+Plotting ouputs of the Sobol Analysis. 
+One should check which file is opened from /outputs
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 import netCDF4 as nc

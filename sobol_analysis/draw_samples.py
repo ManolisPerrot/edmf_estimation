@@ -1,3 +1,7 @@
+''' Draw evaluations of the model with different parameter values.
+    The additional attribute is used to specify if a log scale is used for wp0, or if some parameters have been fixed
+'''
+
 ###########################################
 # Imports
 ###########################################

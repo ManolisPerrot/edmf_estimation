@@ -63,11 +63,11 @@ for i in range(len(true_names)):
     
 plt.tight_layout()
 saving_name = 'figures/MCMC_mixing.pdf'
-plt.savefig(saving_name,bbox_inches='tight')
+# plt.savefig(saving_name,bbox_inches='tight')
 
 # #-------------------- Autocorrelation
-# az.plot_autocorr(data, var_names=["Cent", "Cdet", "delta_bkg"])
-# plt.show()
+az.plot_autocorr(data, var_names=["Cent", "Cdet", "delta_bkg"])
+plt.show()
 
 
 
@@ -75,5 +75,5 @@ plt.savefig(saving_name,bbox_inches='tight')
 az.plot_forest(data, var_names=var_names, combined=True, hdi_prob=0.95, r_hat=True, ess=True);
 plt.tight_layout()
 saving_name = 'figures/MCMC_forest.pdf'
-plt.savefig(saving_name,bbox_inches='tight')
+# plt.savefig(saving_name,bbox_inches='tight')
 plt.show()
