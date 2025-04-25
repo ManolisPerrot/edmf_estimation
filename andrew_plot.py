@@ -60,7 +60,8 @@ def scm_model(X, case):
     scm.run_direct()            # Run the SCM 
     return scm
 
-cases=['FC500','W005_C500_NO_COR']
+# cases=['FC500','W005_C500_NO_COR']
+cases=['FC500']
 for case in cases:
     def scm_model_wrapper(draw):
         print('computing scm number',draw)
@@ -89,7 +90,8 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
     ax.set_title(r'$\overline{\theta}$')
     ax.plot(scm.t_np1[:, 0], scm.z_r/mld, linestyle=linestyle, color = color,
                 alpha=alpha)
-    ax.set_xlim((1.60, 1.76))
+    ax.set_xlim((1.60, 1.78))
+    ax.set_ylim((-500, 0))
     # ===============================================================
     ax = axes.flat[1]
     ax.set_title(r'$\overline{w^\prime \theta^\prime}$')
@@ -99,6 +101,8 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
                     alpha=alpha)
     ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
     ax.set_xlabel(r'$K.m.s^{-1}$')
+    ax.set_xlim((-1e-4, 1.5e-4))
+
     # ===============================================================
     # ===============================================================
     ax = axes.flat[2]
@@ -128,7 +132,7 @@ def plot_FC500(scm=scm['FC500'][0],mld=320,linestyle='-',color='C0',alpha=0.05,a
         fontweight='bold',
         fontsize='medium', verticalalignment='top', 
         bbox=dict(facecolor='1.', edgecolor='black',linewidth=0.1),)
-        ax.set_ylim((-416,0))
+        ax.set_ylim((-480,0))
 
 # fig, axes = plt.subplots(nrows=1, ncols=4, sharex=False,
 #                          sharey=True, constrained_layout = True)
@@ -157,7 +161,7 @@ axes.flat[2].legend(fancybox=False, shadow=False,fontsize=8)
 plt.savefig(f'figures/MCMC_{case}_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
 plt.show()
 
-
+exit()
 #====================WC====================
 case='W005_C500_NO_COR'
 
@@ -257,5 +261,5 @@ for k,ax in enumerate(axes.flat):
     ax.plot(mean+std ,z_adim[k],'k--',linewidth=0.7 )
     ax.set_box_aspect(1)
 axes.flat[2].legend(fancybox=False, shadow=False,fontsize=8)    
-plt.savefig(f'figures/MCMC_{case}_andrew_N{str(number_of_draws)}.pdf',bbox_inches='tight')
+plt.savefig(f'figures/MCMC_{case}_andrew_tke_N{str(number_of_draws)}.pdf',bbox_inches='tight')
 plt.show()
