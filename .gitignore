@@ -27,4 +27,11 @@ history_matching/htexplo/WORK/EXEMPLE_OCEAN/metrics*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/predictions*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/WAVE*/
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/Wave*
+
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/Metrics.csv
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/Par*
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/param*
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/Params*
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/Remaining*
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/tau*
 sbi/sbi-logs/

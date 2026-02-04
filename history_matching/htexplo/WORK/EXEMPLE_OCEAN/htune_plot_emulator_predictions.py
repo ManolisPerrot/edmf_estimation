@@ -67,10 +67,10 @@ fig,axes = plt.subplots(ncols=npar_toplot, figsize=(8*npar_toplot,6))
 if npar_toplot == 1 : axes = [axes]
 
 markers = [".","s","d"]
-from mycolors import rainbow6 as cols
-cols = cols[2:]
-from mycolors import basic5 as cols
-cols = cols[1:]
+# from mycolors import rainbow6 as cols
+# cols = cols[2:]
+# from mycolors import basic5 as cols
+# cols = cols[1:]
 cols = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 for iwave,wave in enumerate(wavesList):

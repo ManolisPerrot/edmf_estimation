@@ -8,19 +8,30 @@ Contains:
 - Bayesian Calibration via MCMC (DE-Metropolis-Z algorithm)
 - Calibration via emulated History Matching (htexplo tool)
 
-## Installation
+## Installing emdf_ocean
 todo: check permissions...
 
 
 
 1. Clone this github repo.
-2. Create a specific environment (baseMano) `conda env create -f environment.yml`, and activate `conda activate baseMano`
+2. Create a specific environment (baseMano) `conda env create -f baseMano_env.yml`, and activate `conda activate baseMano`
 3. Download and install edmf_ocean model running `bash fetch_and_compile_edmf_ocean.sh`. If compilation succeeded, the last prompt should be `FORTRAN SCM TOOLS OK`. 
 4. Download the LES (Large Eddy Simulation) reference datasets here https://zenodo.org/records/13149047. Reference data are in tests/data/. Copy this /data folder into the repo main folder edmf_estimation. To perform UQ, two reference datasets are available: FC500 (free convection) and W005_C500. 
 Alternatively, description of the datasets and documentation to retrieve the data is provided here https://github.com/plumehub/docs.
 `case_configs.py` contains informations used to run edmf_ocean. Additional cases can be configured via this file.
 
 **Troubleshooting Compilation errors (step 2):** if compilation failed, go to edmf_estimation/edmf_ocean/library/fortran_src and check that the .so files that were generated match the .so filenames written in `makefile`. If they do not match, change the names in the makefile by the one created in the folder (typically, replacing `scmoce.cpython-311-x86_64-linux-gnu.so` by `scmoce.cpython-364-x86_64-linux-gnu.so` ). Then recompile.  
+
+
+<!-- # Setting up hightune explorer (for history matching only)
+- Create `hightune` conda environment: 
+  - `conda env create -f history_matching/htexplo/WORK/EXEMPLE_OCEAN/env_hightune.yml`
+  - alternatively, create the env with mamba (usually the creation is faster)
+  - `conda activate hightune`
+- Setup history matching: `bash history_matching/htexplo/setup.sh` -->
+
+
+
 
 ## Sobol Analysis
 
@@ -59,7 +70,7 @@ htexplo requires old version of numpy and scipy, while edmf_ocean requires newer
 One need to create another specific conda environment, named (hightune):
 
 `cd history_matching/htexplo/WORK/EXEMPLE_OCEAN/`
-`conda env create -f environment.yml`
+`conda env create -f env_hightune.yml`
 
 Then to install specific modules:
 
@@ -70,7 +81,7 @@ Then to install specific modules:
 
 ### Usage
 
-First, make sure you have activated (baseMano) env, and not (hightune). 
+<!-- First, make sure you have activated (baseMano) env, and not (hightune).  -->
 Our implementation is NOT based on the general scipt `bench.sh`, but on the simpler script `exemple.sh` in EXEMPLE_OCEAN.  
 
 To run one wave of history matching, run `exemple.sh`:

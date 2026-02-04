@@ -89,7 +89,7 @@ for i,key in enumerate(map_dic):
 
 # axes[8,8].set_xscale('symlog',linthresh=1e-9)
 # axes[8,8].set_xlim(-1e-1,-1e-8)
-# axes[8,8].tick_params(labelrotation=45)
+# axes[8,8].tick_wwparams(labelrotation=45)
 # # axes[8,8].xaxis.set_major_locator(LogLocator(base=10.0, numticks=5))  # 5 ticks
 # axes[8,8].set_xticks([-1e-2, -1e-4, -1e-6, -1e-8])
 

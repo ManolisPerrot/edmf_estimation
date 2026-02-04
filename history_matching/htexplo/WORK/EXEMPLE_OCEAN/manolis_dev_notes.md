@@ -5,8 +5,8 @@ bash exemple.sh -wave 1
 faire des autres waves ça marche
 
 # Documentation
-
 - TODO: document installation and conda envs
+- [ ] test installation
 
 
 My SCM model setup is in MODEL/SCMOCEAN, containing:
@@ -21,6 +21,10 @@ My SCM model setup is in MODEL/SCMOCEAN, containing:
 - [X] loop on cases (in input of parallelized metrics)
 - [X] specify different metrics type (in input of parallelized metrics)
 - [ ] comprendre -NLHC 1
+- [X] changer -wave clean en juste clean
+- [X] quand on a pas fait clean, mettre un warning et dire: use clean before running
+- [ ] translate everythin IN ENGLISH
+
 
 Multi metrics and multi waves are working !
 

@@ -130,21 +130,3 @@ a = str(datetime.datetime.now()).split(" ")
 saving_name = 'MCMC_output/MCMC_tke_true_'+a[0]+'_'+a[1]+'.nc'
 az.InferenceData.to_netcdf(trace, saving_name)
 
-# trace = az.from_netcdf('trace.nc')
-
-# az.plot_trace(trace)
-# az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
-# plt.show()
-
-# az.plot_forest(trace, var_names=["Cent"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# az.plot_forest(trace, var_names=["Cdet"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# az.plot_forest(trace, var_names=["delta_bkg"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-# # az.plot_forest(trace, var_names=["likelihood"], combined=True, hdi_prob=0.95, r_hat=True, ess=True);
-
-# plt.show()
-
-# az.plot_autocorr(trace, var_names=["Cent", "Cdet", "delta_bkg", "likelihood"])
-# plt.show()
-
-# az.plot_pair(trace, var_names=["Cent", "Cdet", "delta_bkg"], kind='kde', marginals=True)
-# plt.show()

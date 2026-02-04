@@ -1,0 +1,1 @@
+install.packages("https://cran.r-project.org/src/contrib/Archive/HI/HI_0.5.tar.gz", repos=NULL, type="source", method="wget", lib="/home/perroman/.local/lib/r-HighTune/ige-mcpn-151-R4.5.1-pip3") ; quit() ;

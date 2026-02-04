@@ -100,14 +100,11 @@ echo ------------------
 if [ "$action" == "run" ]; then
     wave_dir="WAVE${wave}"
     if [ -d "$wave_dir" ]; then
-        echo "$wave_dir exists, please run '$0 clean' before rerunning this wave."
+        echo "$wave_dir already exists, indicating that wave1 has been previously done."
+        echo "Please run '$0 clean' before rerunning this wave."
         exit 1
     fi
 fi
-
-# Then later in the script, you can safely do:
-mkdir "WAVE${wave}"
-
 
 mkdir WAVE${wave}
 
