@@ -25,4 +25,6 @@ sobol_analysis/outputs/
 !./MCMC_output/*.nc
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/metrics*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/predictions*
-history_matching/htexplo/WORK/EXEMPLE_OCEAN/WAVE*
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/WAVE*/
+history_matching/htexplo/WORK/EXEMPLE_OCEAN/Wave*
+sbi/sbi-logs/
