@@ -11,10 +11,16 @@ set -eo pipefail
 
 # usage
 
-if [ $# -lt 1 ] ; then 
-  echo "Usage: $0 <nwave>|clean|setup [wave_two_metrics]"
-  exit
+# if [ $# -lt 1 ] ; then 
+#   echo "Usage: $0 <nwave>|clean|setup [wave_two_metrics]"
+#   exit
+# fi
+# Check for at least one argument
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 clean|setup|[-wave NWAVE] [other options]"
+    exit 1
 fi
+
 
 
 # 0.1/ Default values
@@ -22,14 +28,15 @@ metrics=FC_TH
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
 sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
-
+action="run"
 
 # 0.3/ options
 while (($# > 0)) ; do
         case $1 in
-          # -serie) serie=$2 ; shift ; shift ;; # useful for ecRad runs 
-          # -wdir) wdir=$2 ; shift ; shift ;;
-          # -param) param=$2 ; shift ; shift ;;
+          clean)   
+            action="clean"  # special action
+            shift 
+            ;;
           -sample_size) sample_size=$2 ; shift ; shift ;;
           -sample_size_next_design) sample_size_next_design=$2 ; shift ; shift ;;
           -wave)  wave="$2"  ; shift ; shift ;;
@@ -67,9 +74,9 @@ wave_two_metrics=9999 # starting from this wave, a second metric will be added
 local=`pwd`
 src=../../src
 
-if [ "$wave" == "clean" ] ; then
+if [ "$action" == "clean" ]; then
 echo -----------------------------------
-echo  clean : menage des précédents runs
+echo  clean : Cleaning previous runs
 echo -----------------------------------
 
     \rm -r param ModelParam.R *.csv *Rdata *RData *asc *pdf Remain* WAVE* param_after_wave*
