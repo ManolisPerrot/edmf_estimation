@@ -9,19 +9,11 @@ unset LANG
 set -eo pipefail
 
 
-# usage
-
-# if [ $# -lt 1 ] ; then 
-#   echo "Usage: $0 <nwave>|clean|setup [wave_two_metrics]"
-#   exit
-# fi
-# Check for at least one argument
+# usage (Check for at least one argument)
 if [ $# -lt 1 ]; then
     echo "Usage: $0 clean|setup|[-wave NWAVE] [other options]"
     exit 1
 fi
-
-
 
 # 0.1/ Default values
 metrics=FC_TH
@@ -104,6 +96,18 @@ fi
 echo ------------------
 echo  Work : WAVE $wave
 echo ------------------
+# Check if running a wave and the directory exists
+if [ "$action" == "run" ]; then
+    wave_dir="WAVE${wave}"
+    if [ -d "$wave_dir" ]; then
+        echo "$wave_dir exists, please run '$0 clean' before rerunning this wave."
+        exit 1
+    fi
+fi
+
+# Then later in the script, you can safely do:
+mkdir "WAVE${wave}"
+
 
 mkdir WAVE${wave}
 
