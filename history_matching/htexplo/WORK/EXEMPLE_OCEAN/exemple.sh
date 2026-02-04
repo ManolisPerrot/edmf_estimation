@@ -6,6 +6,9 @@ unset LANG
 # svn checkout --username htune https://svn.lmd.jussieu.fr/HighTune/trunk HighTune
 # cd HighTune && bash setup.sh
 
+set -eo pipefail
+
+
 # usage
 
 if [ $# -lt 1 ] ; then 
@@ -17,7 +20,7 @@ fi
 # 0.1/ Default values
 metrics=FC_TH
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
-sample_size_next_design=10 # number of SCM evaluations at each wave, 10*number of parameters
+sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
 
 
@@ -103,9 +106,28 @@ echo -------------------------------------------------------------
 echo Enable conda environment
 echo -------------------------------------------------------------
 
-source /home/manolis/anaconda3/etc/profile.d/conda.sh
-conda deactivate
+# set +u   # disable "unbound variable" check temporarily
+
+# Initialize conda in a user-independent way
+if command -v conda >/dev/null 2>&1; then
+    eval "$(conda shell.bash hook)"
+else
+    echo "ERROR: conda not found in PATH"
+    exit 1
+fi
+
+conda deactivate 2>/dev/null || true
 conda activate hightune
+
+# set -u   # re-enable strict mode
+# -------------------------------------------------------------
+# Sanity checks (fail fast)
+# -------------------------------------------------------------
+echo "Using conda env:"
+conda info --envs | awk '$1=="hightune"{print $1, $2}'
+
+echo "Python executable:"
+which python
 
 echo -------------------------------------------------------------
 echo '[min,max,default]' of parameters
@@ -173,7 +195,7 @@ echo  Generation des resultats de modeles
 echo -------------------------------------------------------------
 
 conda deactivate
-conda activate base
+conda activate baseMano
 
 
 python compute_metrics.py $wave $metrics
