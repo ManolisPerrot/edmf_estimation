@@ -8,6 +8,7 @@ Contains:
 - Bayesian Calibration via MCMC (DE-Metropolis-Z algorithm)
 - Calibration via emulated History Matching (htexplo tool)
 
+
 ## Installing emdf_ocean
 todo: check permissions...
 
@@ -66,18 +67,24 @@ Using the tool `htexplo` (reference paper of the method: Couvreux et al. (2021) 
 
 ### Installation
 
-htexplo requires old version of numpy and scipy, while edmf_ocean requires newer versions. 
+1. htexplo requires old version of numpy and scipy, while edmf_ocean requires newer versions. 
 One need to create another specific conda environment, named (hightune):
 
 `cd history_matching/htexplo/WORK/EXEMPLE_OCEAN/`
 `conda env create -f env_hightune.yml`
+`conda activate hightune` 
 
 Then to install specific modules:
 
-`conda activate hightune`
+2. WARNING: the conda cdo can cause problems and force r-base to the latest version, which can cause problems during R compilation. 
+It is recommended to install cdo system-wide (`sudo apt install cdo` or an nix/guix equivalent on a cluster without root priviledge).
+
+And setup history matching libraries running
 `bash history_matching/htexplo/setup.sh`
 
-(Then debug/install the missing packages, in particular for R. The section 'Installation Rstudio' from htexplo doc `history_matching/htexplo/Readme` could be useful.) 
+
+(Then debug/install the missing packages, in particular for R. The section 'Installation Rstudio' from htexplo doc `history_matching/htexplo/Readme` could be useful.
+) 
 
 ### Usage
 
