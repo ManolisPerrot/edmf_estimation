@@ -31,6 +31,7 @@ history_matching/htexplo/WORK/EXEMPLE_OCEAN/Wave*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/Metrics.csv
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/Par*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/param*
+!history_matching/htexplo/WORK/EXEMPLE_OCEAN/param2R.sh
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/Params*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/Remaining*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/tau*
@@ -42,6 +43,7 @@ history_matching/htexplo/WORK/EXEMPLE_GOTM/Wave*
 history_matching/htexplo/WORK/EXEMPLE_GOTM/Metrics.csv
 history_matching/htexplo/WORK/EXEMPLE_GOTM/Par*
 history_matching/htexplo/WORK/EXEMPLE_GOTM/param*
+!history_matching/htexplo/WORK/EXEMPLE_GOTM/param2R.sh
 history_matching/htexplo/WORK/EXEMPLE_GOTM/Params*
 history_matching/htexplo/WORK/EXEMPLE_GOTM/Remaining*
 history_matching/htexplo/WORK/EXEMPLE_GOTM/tau*
