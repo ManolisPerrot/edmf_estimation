@@ -62,73 +62,7 @@ def bld(t, s, z):
       
     return np.nanmean(bld_vals)  # depth corresponding to max N2 averaged over time  
   
-# TODO : remove and put in a compute_metrics_les.py, to use to write 'param' file
-def compute_les_metrics(case_ids=None):  
-    """  
-    Compute BLD metrics from LES cases in oMLDb  
-      
-    Parameters  
-    ----------  
-    case_ids : list of str, optional  
-        List of case IDs to use. If None, uses all available cases.  
-          
-    Returns  
-    -------  
-    dict  
-        Dictionary mapping case_id to BLD value  
-    """  
-    print("Computing LES metrics from oMLDb...")  
 
-#===== test with predefined values
-    if case_ids==['test']:
-        return {'test': test_value}
-#===========
-
-    # Load catalog  
-    catalog = omldb.load_catalog()  
-      
-    # Filter for LES cases  
-    les_catalog = catalog[catalog['data_type'] == 'LES']  
-      
-    if case_ids is None:  
-        # Use all available LES cases  
-        case_ids = les_catalog['case_id'].tolist()  
-    else:  
-        # Validate requested cases exist  
-        available = set(les_catalog['case_id'])  
-        case_ids = [cid for cid in case_ids if cid in available]  
-        if not case_ids:  
-            raise ValueError("None of the requested case_ids found in database")  
-      
-    print(f"Processing {len(case_ids)} LES cases...")  
-      
-    metrics = {}  
-    for case_id in case_ids:  
-        try:  
-            print(f"  Loading {case_id}...")  
-            ds = omldb.load_case(case_id)  
-              
-            # Extract variables (adjust variable names based on your data)  
-            z = ds['z'].values
-            temp = ds['temp'].values
-            salt = ds['salt'].values
-              
-            # Compute BLD for this case  
-            bld_val = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
-            metrics[case_id] = bld_val  
-              
-            print(f"    BLD = {bld_val:.2f} m")  
-              
-        except Exception as e:  
-            print(f"  Warning: Could not process {case_id}: {e}")  
-            continue  
-      
-    if not metrics:  
-        raise ValueError("No LES cases could be processed successfully")  
-      
-    print(f"\nSuccessfully computed metrics for {len(metrics)} cases")  
-    return metrics  
-  
 
 
 
@@ -241,16 +175,14 @@ def write_iteration(params, res):
     write_it_number(it)  
   
   
-def simulation_wrapper(params, les_metrics, case_configs, param_list, runs_dir='../runs', keep_every=None):  
+def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=None):  
     """  
-    Run GOTM simulation for each LES case and compute cost function  
+    Run GOTM simulation for each LES case and compute metric 
       
     Parameters  
     ----------  
     params : array-like  
         Parameter values to test  
-    les_metrics : dict  
-        Dictionary of LES BLD values for each case  
     case_configs : dict  
         Dictionary mapping case_id to original GOTM config file path  
     param_list : list of str  
@@ -260,8 +192,7 @@ def simulation_wrapper(params, les_metrics, case_configs, param_list, runs_dir='
           
     Returns  
     -------  
-    torch.Tensor  
-        Cost function value (mean squared relative error across all cases)  
+    dict  
     """  
     params = np.asarray(params)  
     runs_dir = Path(runs_dir)  
@@ -272,21 +203,21 @@ def simulation_wrapper(params, les_metrics, case_configs, param_list, runs_dir='
     for idx, p in enumerate(params):  
         new_params[param_list[idx]] = p  
       
-    # Get iteration number for organizing runs  
-    it = read_it_number()  
+    # # Get iteration number for organizing runs  
+    # it = read_it_number()  
 
-    # Create run directory for this iteration  
-    iter_dir = runs_dir / f"iter_{it:04d}"  
+    # # Create run directory for this iteration  
+    # iter_dir = runs_dir / f"iter_{it:04d}"  
       
     # Run GOTM for each case  
     errors = []  
     gotm_blds = {}  
       
-    for case_id, h_les in les_metrics.items():  
+    for case_id in case_ids :  
         print(f"\n  Running GOTM for {case_id}...")  
           
         # Create run directory for this case and iteration  
-        case_run_dir = iter_dir / case_id  
+        case_run_dir = runs_dir / case_id  
         case_run_dir.mkdir(parents=True, exist_ok=True)  
           
         # Get original config for this case  
@@ -331,12 +262,13 @@ def simulation_wrapper(params, les_metrics, case_configs, param_list, runs_dir='
             h_gotm = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
             gotm_blds[case_id] = h_gotm  
               
-            # Compute relative error for this case  
-            rel_error = ((h_gotm - h_les) / h_les) ** 2  
-            errors.append(rel_error)  
+            # # Compute relative error for this case  
+            # rel_error = ((h_gotm - h_les) / h_les) ** 2  
+            # errors.append(rel_error)  
               
-            print(f"    LES BLD: {h_les:.2f} m, GOTM BLD: {h_gotm:.2f} m, Error: {rel_error:.6e}")  
-              
+            # print(f"    LES BLD: {h_les:.2f} m, GOTM BLD: {h_gotm:.2f} m, Error: {rel_error:.6e}")  
+
+            print(f"GOTM BLD: {h_gotm:.2f} m")              
         except Exception as e:  
             print(f"  Error reading output for {case_id}: {e}")  
             errors.append(1e6)  
@@ -345,32 +277,10 @@ def simulation_wrapper(params, les_metrics, case_configs, param_list, runs_dir='
       
     # Log results  
     with open("optim.log", "a") as log_file:  
-        log_file.write(f'\nIteration {it}\n')  
         log_file.write(f'Params: {dict(zip(param_list, params))}\n')  
-        for case_id in les_metrics.keys():  
-            h_les = les_metrics[case_id]  
+        for case_id in case_ids:  
             h_gotm = gotm_blds.get(case_id, np.nan)  
-            log_file.write(f'  {case_id}: LES={h_les:.2f}, GOTM={h_gotm:.2f}\n')  
-        log_file.write(f'Cost function J = {J}\n')  
-      
-    # print(f'\n  Overall cost function: {np.nanmean(J):.6e}')  
-      
-    # # Clean up old iterations (keep every Nth iteration)  
-    # if keep_every is not None and it > 0:  
-    #     if it % keep_every != 0:  
-    #         # Remove this iteration directory after we're done  
-    #         print(f"  Cleaning up iteration {it} (keeping every {keep_every})")  
-    #         try:  
-    #             shutil.rmtree(iter_dir)  
-    #         except Exception as e:  
-    #             print(f"  Warning: Could not remove {iter_dir}: {e}")  
-      
-
-
-    # Increment iteration counter  
-    # write_it_number(it + 1)  
-      
-        # return torch.as_tensor(J)  
+            log_file.write(f'  {case_id}: , GOTM={h_gotm:.2f}\n')   
     return gotm_blds
   
 ###############  
