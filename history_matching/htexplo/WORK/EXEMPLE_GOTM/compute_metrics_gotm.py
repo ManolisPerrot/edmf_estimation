@@ -148,7 +148,7 @@ def get_gotm_config_for_case(case_id):
         Path to the GOTM yaml configuration file  
     """  
     if case_id=='test':
-        case_path = '../../../../../GOTM/cases/garanaik/'
+        case_path = Path('GOTM/cases/garanaik/')
 
     else:# Get case metadata  
         metadata = omldb.load_case_metadata(case_id)  
@@ -417,7 +417,7 @@ print("Step 2: Loading GOTM configurations")
 print("="*60)  
   
 case_configs = {}  
-for case_id in case_ids.keys():  
+for case_id in case_ids:  
     # try:  
     config_path = get_gotm_config_for_case(case_id)  
     case_configs[case_id] = config_path  
