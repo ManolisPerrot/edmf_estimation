@@ -21,6 +21,8 @@ import shutil
 plt.ion()  
 
 waven   = sys.argv[1]  # First argument   
+args = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
+case_ids = [arg.split('_')[0] for arg in args] #extract case_ids on which to run GOTM
 
 # Constants  
 g = 9.81  
@@ -60,7 +62,7 @@ def bld(t, s, z):
       
     return np.nanmean(bld_vals)  # depth corresponding to max N2 averaged over time  
   
-  
+# TODO : remove and put in a compute_metrics_les.py, to use to write 'param' file
 def compute_les_metrics(case_ids=None):  
     """  
     Compute BLD metrics from LES cases in oMLDb  
