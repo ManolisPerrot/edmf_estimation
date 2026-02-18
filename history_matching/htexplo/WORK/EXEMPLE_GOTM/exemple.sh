@@ -16,7 +16,7 @@ if [ $# -lt 1 ]; then
 fi
 
 # 0.1/ Default values
-metrics=FC_TH
+metrics=perfect_mld4h
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
 sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
@@ -158,19 +158,12 @@ echo -------------------------------------------------------------
 echo Target and tolerance for metrics
 echo -------------------------------------------------------------
 
-# L2 metrics for field X:  int (X_scm - X_les)^2 dz dt / int dz dt
-# /!\ in hightune terminology, there is a metric_scm that should match a metric_les.
-# With our choice, 
-# metric_scm = int (X_scm - X_les)^2 dz dt / int dz dt
-# metric_les = int (X_les - X_les)^2 dz dt / int dz dt = 0 by DEFINITION
-# VAR is error_model**2+error_data**2
+#mld4h: mld averaged over the 4 last hours
 
-# Define all the possible metrics and their mean/tolerance, with syntax: case_X  
-# FC: Free Convection; WC: Wind and Cooling
 cat > cibles_all.csv <<eod
-TYPE,FC_TH,FC_dzTH,WC_TH,WC_dzTH,WC_U,WC_dzU
-MEAN,0,0,0,0,0,0
-VAR,1e-10,1e-12,1e-3,1e-12,8.5e-06,1e-12
+TYPE,perfect_mld4h
+MEAN,-100.0
+VAR,1
 eod
 
 # Extract the columns corresponding to user-defined metrics
@@ -205,7 +198,7 @@ echo -------------------------------------------------------------
 conda deactivate
 conda activate baseMano
 
-python compute_metrics.py $wave $metrics
+python compute_metrics_gotm.py $wave $metrics
 
 conda deactivate
 conda activate hightune
