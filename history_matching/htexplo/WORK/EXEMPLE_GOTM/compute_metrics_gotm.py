@@ -372,3 +372,4 @@ with open(param_file, "r") as file:
         param_dict[key] = values
 
 
+simulation_wrapper(param_dict['SCM-1-090'], case_configs, param_dict["t_IDs"], runs_dir)
