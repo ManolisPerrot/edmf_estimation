@@ -116,23 +116,24 @@ echo -------------------------------------------------------------
 
 # set +u   # disable "unbound variable" check temporarily
 
-# Initialize conda in a user-independent way
-if command -v conda >/dev/null 2>&1; then
-    eval "$(conda shell.bash hook)"
-else
-    echo "ERROR: conda not found in PATH"
-    exit 1
-fi
+## Initialize conda in a user-independent way
+#if command -v conda >/dev/null 2>&1; then
+#    eval "$(conda shell.bash hook)"
+#else
+#    echo "ERROR: conda not found in PATH"
+#    exit 1
+#fi
+#
+#conda deactivate 2>/dev/null || true
+#conda activate hightune
 
-conda deactivate 2>/dev/null || true
-conda activate hightune
 
 # set -u   # re-enable strict mode
 # -------------------------------------------------------------
 # Sanity checks (fail fast)
 # -------------------------------------------------------------
-echo "Using conda env:"
-conda info --envs | awk '$1=="hightune"{print $1, $2}'
+#echo "Using conda env:"
+#conda info --envs | awk '$1=="hightune"{print $1, $2}'
 
 echo "Python executable:"
 which python
@@ -142,15 +143,16 @@ echo '[min,max,default]' of parameters
 echo -------------------------------------------------------------
 # /!\ ATTENTION l'ordre à l'air différent que dans SCM/LES : min, max, default et PAS min, default, max
 cat > param <<eod
-Cent 0. 1. 0.9 linear
-Cdet 1. 2. 1.7 linear
-wp_a 0. 1. 0.9 linear
-wp_b 0. 1. 0.9 linear
-wp_bp 0. 3. 2. linear
-up_c  0. 1. 0.5 linear
-bc_ap 0. 0.45 0.2 linear
-delta_bkg 0. 3. 2. linear
-wp0 1e-8 1e-1 0.5e-7 log
+cc1 2.5000 10.000 5.0000 linear
+cc2 0.4000 1.6000 0.8000 linear
+cc3 1.0000 4.0000 1.9680 linear
+cc4 0.5360 2.1360 1.1360 linear
+cc6 0.2000 0.8000 0.4000 linear
+ct1 2.9500 12.500 5.9500 linear
+ct2 0.3000 1.2000 0.6000 linear
+ct3 0.5000 2.0000 1.0000 linear
+ct5 0.1533 0.6633 0.3333 linear
+ctt 0.3000 1.4000 0.7200 linear
 eod
 cat param
 
@@ -195,13 +197,13 @@ echo -------------------------------------------------------------
 echo  Generation des resultats de modeles
 echo -------------------------------------------------------------
 
-conda deactivate
-conda activate baseMano
+#conda deactivate
+#conda activate baseMano
 
 python compute_metrics_gotm.py $wave $metrics
 
-conda deactivate
-conda activate hightune
+#conda deactivate
+#conda activate hightune
 
 \cp -f Par1D_Wave${wave}.asc Params.asc
 Rscript --vanilla htune_csv2Rdata.R ${wave} -dir . -par Params.asc -sim Metrics.csv 
