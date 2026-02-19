@@ -116,16 +116,16 @@ echo -------------------------------------------------------------
 
 # set +u   # disable "unbound variable" check temporarily
 
-## Initialize conda in a user-independent way
-#if command -v conda >/dev/null 2>&1; then
-#    eval "$(conda shell.bash hook)"
-#else
-#    echo "ERROR: conda not found in PATH"
-#    exit 1
-#fi
-#
-#conda deactivate 2>/dev/null || true
-#conda activate hightune
+# Initialize conda in a user-independent way
+if command -v conda >/dev/null 2>&1; then
+    eval "$(conda shell.bash hook)"
+    conda deactivate 2>/dev/null || true
+    conda activate hightune
+else
+    source ~/.bashrc
+    micromamba activate hightune
+fi
+
 
 
 # set -u   # re-enable strict mode
