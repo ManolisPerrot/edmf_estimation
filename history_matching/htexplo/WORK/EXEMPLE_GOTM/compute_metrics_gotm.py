@@ -12,7 +12,8 @@ import subprocess
 import sys  
 from pathlib import Path  
 import shutil  
-  
+from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
+import csv
 
   
 # # Import oMLDb  
@@ -21,8 +22,12 @@ import shutil
 plt.ion()  
 
 waven   = sys.argv[1]  # First argument   
-args = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
-case_ids = [arg.split('_')[0] for arg in args] #extract case_ids on which to run GOTM
+metrics_names = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
+case_ids = [arg.split('_')[0] for arg in metrics_names] #extract case_ids on which to run GOTM
+
+# #testing
+# metrics_names=['perfect_mld4h']
+# waven=1
 
 # Constants  
 g = 9.81  
@@ -226,7 +231,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         # Create modified config  
         modified_config = case_run_dir / "gotm_modified.yaml"  
         modif_config_file(original_config, modified_config, new_params)  
-          
+
         # Run GOTM  
         try:  
             run_gotm("gotm_modified.yaml" , case_run_dir)  
@@ -372,4 +377,32 @@ with open(param_file, "r") as file:
         param_dict[key] = values
 
 
-simulation_wrapper(param_dict['SCM-1-090'], case_configs, param_dict["t_IDs"], runs_dir)
+# run cases in parrallel
+metrics={}
+
+# Define the task to parallelize for each run
+def task(run_id):
+    return simulation_wrapper(param_dict[run_id], case_configs, param_dict["t_IDs"], runs_dir/run_id)
+
+
+L = list(param_dict.keys())[1:]
+
+# run in parallel
+with Pool() as p:
+    out = p.map(task, list(param_dict.keys())[1:])
+    # out = out[1:] #remove 't_IDs' from the list
+    #     # metrics_all.update(out)
+
+metrics['perfect'+'_mld4h'] = [o['test'] for o in out]
+
+run_id = list(param_dict.keys())[1:]
+output_file = "Metrics.csv"
+with open(output_file, mode="w", newline="") as file:
+    writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=' ')  # No quotes
+    writer.writerow(["SIM"] + metrics_names)  # Write header row
+
+    vals_inline = [metrics[key] for key in metrics]  
+
+    for i in range(len(run_id)):
+        row = [run_id[i]] + [float(vals_inline[k][i]) for k in range(len(vals_inline))]  # Exclude repeated run_id
+        writer.writerow(row)
