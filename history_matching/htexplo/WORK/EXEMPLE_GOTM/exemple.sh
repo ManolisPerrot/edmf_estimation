@@ -164,7 +164,7 @@ echo -------------------------------------------------------------
 
 cat > cibles_all.csv <<eod
 TYPE,perfect_mld4h
-MEAN,-100.0
+MEAN,-39.0
 VAR,1
 eod
 
