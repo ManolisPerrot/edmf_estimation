@@ -239,7 +239,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
             print(f"  Error running GOTM for {case_id}: {e}")  
             # Assign large penalty for failed runs  
             errors.append(1e6)  
-            gotm_blds[case_id] = np.nan  
+            gotm_blds[case_id] = -1e6  
             continue  
           
         # Read GOTM output  
@@ -252,7 +252,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         if not output_path.exists():  
             print(f"  Warning: Output file not found for {case_id}")  
             errors.append(1e6)  
-            gotm_blds[case_id] = np.nan  
+            gotm_blds[case_id] = -1e6  
             continue  
           
         # Read variables  
@@ -277,7 +277,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         except Exception as e:  
             print(f"  Error reading output for {case_id}: {e}")  
             errors.append(1e6)  
-            gotm_blds[case_id] = np.nan  
+            gotm_blds[case_id] = -1e6  
             continue  
       
     # Log results  
