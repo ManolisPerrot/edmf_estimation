@@ -17,32 +17,31 @@ import csv
 
   
 # # Import oMLDb  
-# import omldb  
+import omldb  
   
 plt.ion()  
 
-waven   = sys.argv[1]  # First argument   
-metrics_names = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
-case_ids = [arg.split('_')[0] for arg in metrics_names] #extract case_ids on which to run GOTM
-
-# #testing
-# metrics_names=['perfect_mld4h']
-# waven=1
+debug =True
+if debug:
+    waven=1
+    metrics_names = ['LES_IDEAL_GARANAIK2023_C01_mld4h']
+else:
+    waven   = sys.argv[1]  # First argument   
+    metrics_names = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
+case_ids = [arg.rsplit('_',1)[0] for arg in metrics_names] #extract case_ids on which to run GOTM
 
 # Constants  
 g = 9.81  
 rho = 1026.0  
 alphaT = 2e-4  
 betaS = 8e-4  
+mynan = -1e6
+
   
 # Time step range for averaging  
 nt1 = 96  # final time step for plots  
 nt0 = nt1 - 12  # range of time for averaging in hr  
 
-#tttest
-case_ids = ['test']
-test_value = -100.
-mynan = -1e6
 
 # Functions from Garanaik et al  
 def density_eos(t, s):  
