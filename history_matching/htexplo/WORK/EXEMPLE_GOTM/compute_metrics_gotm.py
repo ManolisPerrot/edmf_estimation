@@ -42,6 +42,7 @@ nt0 = nt1 - 12  # range of time for averaging in hr
 #tttest
 case_ids = ['test']
 test_value = -100.
+mynan = -1e6
 
 # Functions from Garanaik et al  
 def density_eos(t, s):  
@@ -238,8 +239,8 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         except Exception as e:  
             print(f"  Error running GOTM for {case_id}: {e}")  
             # Assign large penalty for failed runs  
-            errors.append(1e6)  
-            gotm_blds[case_id] = -1e6  
+            errors.append(mynan)  
+            gotm_blds[case_id] = mynan 
             continue  
           
         # Read GOTM output  
@@ -251,8 +252,8 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
           
         if not output_path.exists():  
             print(f"  Warning: Output file not found for {case_id}")  
-            errors.append(1e6)  
-            gotm_blds[case_id] = -1e6  
+            errors.append(mynan)  
+            gotm_blds[case_id] = mynan 
             continue  
           
         # Read variables  
@@ -265,6 +266,8 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
               
             # Compute BLD from GOTM  
             h_gotm = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
+            if np.isnan(h_gotm):
+                h_gotm = mynan
             gotm_blds[case_id] = h_gotm  
               
             # # Compute relative error for this case  
@@ -276,8 +279,8 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
             print(f"GOTM BLD: {h_gotm:.2f} m")              
         except Exception as e:  
             print(f"  Error reading output for {case_id}: {e}")  
-            errors.append(1e6)  
-            gotm_blds[case_id] = -1e6  
+            errors.append(mynan)  
+            gotm_blds[case_id] = mynan
             continue  
       
     # Log results  
