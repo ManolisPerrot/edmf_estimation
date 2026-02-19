@@ -8,7 +8,8 @@
   - [X] changer les paramètres et les valeurs (écriture du fichier param)
   - [X] chenger les target (=metriques) : perfect_mld4h etcc
 - [ ] update hightune.yml 
-- [ ] tester omld sur 
+- [ ] créer dans omld une fonction CAS/medata.toml et crée un CAS/gotm.yml --> **il manque les CI dans metadata.toml pour faire ça !!**
+
 
 # OMLD in hightune env notes
 
@@ -16,4 +17,4 @@
 - pip install --> voulait python >3.9, j'ai changé à la main pyproject.toml à 3.8...
 - dit qu'il est pas content avec scipy et numpy incomptabli (pcq hightune impose un numpy vieux)
 - Mais ça marche j'ai fait toutes les étpaes de la doc
- 
+ - 
