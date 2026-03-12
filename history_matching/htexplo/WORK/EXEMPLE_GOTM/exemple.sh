@@ -35,6 +35,7 @@ while (($# > 0)) ; do
 	        # -GCM)  GCM="$2"  ; shift ; shift ;;
           # -model) model=$2 ; shift ; shift ;;
           -metrics) metrics="`echo $2 | sed -e 's/,/ /g'`" ; shift ; shift ;;
+          -tolerance)  tolerance="$2"  ; shift ; shift ;; #tolerance to the metrics
           # -dry) dryrun=1 ; shift ;;
           # TODO: WRITE --help
 #           -h|-help|--help) echo Usage: $0 "[-param param_file] [-waves "1 [2 3 ...]"] [-wdir DIRNAME] [-sample_size sample_size] [-model model] [-metrics metrics1,metrics2,...] or directly "$0 model"" ; cat <<eod
@@ -162,15 +163,19 @@ echo -------------------------------------------------------------
 
 #mld4h: mld averaged over the 4 last hours
 
-cat > cibles_all.csv <<eod
-TYPE,perfect_mld4h
-MEAN,-39.0
-VAR,1
-eod
+#TODO: clarify if it is STD or var ??
 
-# Extract the columns corresponding to user-defined metrics
-metrics_str=$(echo $metrics | tr ' ' ',') # Convert space-separated metrics to comma-separated
-csvcut -c "TYPE,$metrics_str" cibles_all.csv > cibles.csv
+# cat > cibles_all.csv <<eod
+# TYPE,perfect_mld4h
+# MEAN,-39.0
+# VAR,1
+# eod
+
+python compute_metrics_les.py $metrics $tolerance
+
+# # Extract the columns corresponding to user-defined metrics
+# metrics_str=$(echo $metrics | tr ' ' ',') # Convert space-separated metrics to comma-separated
+# csvcut -c "TYPE,$metrics_str" cibles_all.csv > cibles.csv
 
 cat cibles.csv
 \cp -f cibles.csv metrics_REF_${wave}.csv
