@@ -1,19 +1,27 @@
 #!/usr/bin/env python  
 """  
-K-epsilon model calibration using multiple LES cases from oMLDb  
+Compute metrics for gotm ouputs. 
+Main usage: 
+```bash
+python compute_metrics_les.py $metrics $tolerance
+```
+where:
+- $metrics is a list of metrics names of the form caseId_metricType separated by spaces
+- $tolerance is a 
 """  
   
 import numpy as np  
 import matplotlib.pyplot as plt  
 from scipy.io import netcdf_file  
 import yaml  
-import glob, os, re  
+import re  
 import subprocess  
 import sys  
 from pathlib import Path  
-import shutil  
 from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
 import csv
+from summary_statistics import metric_type_catalog
+import xarray as xr
 
   
 # # Import oMLDb  
@@ -30,47 +38,10 @@ else:
     metrics_names = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
 case_ids = [arg.rsplit('_',1)[0] for arg in metrics_names] #extract case_ids on which to run GOTM
 
+print(case_ids)
+
 # Constants  
-g = 9.81  
-rho = 1026.0  
-alphaT = 2e-4  
-betaS = 8e-4  
 mynan = -1e6
-
-  
-# Time step range for averaging  
-nt1 = 96  # final time step for plots  
-nt0 = nt1 - 12  # range of time for averaging in hr  
-
-
-# Functions from Garanaik et al  
-def density_eos(t, s):  
-    """Density calculation from given temp and salinity"""  
-    density = rho * (1.0 - alphaT * (t - 20) + betaS * (s - 35))  
-    return density  
-  
-  
-def bld(t, s, z):  
-    """OSBL depth corresponding to max N2"""  
-    density = density_eos(t, s)  
-    N2 = np.gradient(-density, z, axis=1)  
-    bld_vals = np.zeros(len(N2[:, 0]))  
-    dz = z[1] - z[0]  
-      
-    for t_idx in np.arange(len(N2[:, 0])):  
-        i = N2[t_idx, :].argmax()  
-          
-        # quadratic interpolation  
-        f_1, f0, f1 = N2[t_idx, i - 1], N2[t_idx, i], N2[t_idx, i + 1]  
-        delta = (f_1 - f1) / (2.0 * (f_1 - 2.0 * f0 + f1))  
-        bld_vals[t_idx] = z[i] + delta * dz  
-      
-    return np.nanmean(bld_vals)  # depth corresponding to max N2 averaged over time  
-  
-
-
-
-
   
 def get_gotm_config_for_case(case_id):  
     """  
@@ -95,7 +66,7 @@ def get_gotm_config_for_case(case_id):
       
     # Look for GOTM yaml file in the case directory  
     # Assuming it's named gotm.yaml or gotm_{case_id}.yaml  
-    yaml_files = list(case_path.glob("gotm_v7.yaml"))  
+    yaml_files = list(case_path.glob("gotm.yaml"))  
       
     if not yaml_files:  
         raise FileNotFoundError(f"No GOTM yaml file found for case {case_id} in {case_path}")  
@@ -137,7 +108,7 @@ def run_gotm(config, run_dir):
     # Create log files  
     stdout_log = run_dir / "gotm_stdout.log"  
     stderr_log = run_dir / "gotm_stderr.log"  
-    command = ["gotm", config]  
+    command = ["gotm", "--ignore_unknown_config", config]  
       
     try:  
         with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:  
@@ -155,34 +126,34 @@ def run_gotm(config, run_dir):
         print(f"  - {stderr_log}")  
   
   
-def write_it_number(it):  
-    """Write iteration number to file"""  
-    with open("it_file.dat", "w") as it_file:  
-        it_file.write(f'{it}')  
+# def write_it_number(it):  
+#     """Write iteration number to file"""  
+#     with open("it_file.dat", "w") as it_file:  
+#         it_file.write(f'{it}')  
   
   
-def read_it_number():  
-    """Read iteration number from file"""  
-    if not Path("it_file.dat").exists():  
-        return 0  
-    with open("it_file.dat", "r") as it_file:  
-        it = int(it_file.read())  
-    return it  
+# def read_it_number():  
+#     """Read iteration number from file"""  
+#     if not Path("it_file.dat").exists():  
+#         return 0  
+#     with open("it_file.dat", "r") as it_file:  
+#         it = int(it_file.read())  
+#     return it  
   
   
-def write_iteration(params, res):  
-    """Callback function to write iteration info"""  
-    it = read_it_number()  
-    print('--------------------------')  
-    print(f'----iteration {it} ------')  
-    print('--------------------------')  
-    it += 1  
-    write_it_number(it)  
+# def write_iteration(params, res):  
+#     """Callback function to write iteration info"""  
+#     it = read_it_number()  
+#     print('--------------------------')  
+#     print(f'----iteration {it} ------')  
+#     print('--------------------------')  
+#     it += 1  
+#     write_it_number(it)  
   
   
 def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=None):  
     """  
-    Run GOTM simulation for each LES case and compute metric 
+    Run GOTM simulation for each LES case
       
     Parameters  
     ----------  
@@ -207,12 +178,6 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
     new_params = {}  
     for idx, p in enumerate(params):  
         new_params[param_list[idx]] = p  
-      
-    # # Get iteration number for organizing runs  
-    # it = read_it_number()  
-
-    # # Create run directory for this iteration  
-    # iter_dir = runs_dir / f"iter_{it:04d}"  
       
     # Run GOTM for each case  
     errors = []  
@@ -254,85 +219,109 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
             errors.append(mynan)  
             gotm_blds[case_id] = mynan 
             continue  
-          
-        # Read variables  
-        try:  
-            f = netcdf_file(str(output_path), 'r')  
-            z = f.variables['z'][0, :, 0, 0].copy().squeeze()  
-            temp = f.variables['temp'][:, :, 0, 0].copy()  
-            salt = f.variables['salt'][:, :, 0, 0].copy()  
-            f.close()  
-              
-            # Compute BLD from GOTM  
-            h_gotm = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
-            if np.isnan(h_gotm):
-                h_gotm = mynan
-            gotm_blds[case_id] = h_gotm  
-              
-            # # Compute relative error for this case  
-            # rel_error = ((h_gotm - h_les) / h_les) ** 2  
-            # errors.append(rel_error)  
-              
-            # print(f"    LES BLD: {h_les:.2f} m, GOTM BLD: {h_gotm:.2f} m, Error: {rel_error:.6e}")  
 
-            print(f"GOTM BLD: {h_gotm:.2f} m")              
-        except Exception as e:  
-            print(f"  Error reading output for {case_id}: {e}")  
-            errors.append(mynan)  
-            gotm_blds[case_id] = mynan
-            continue  
+def xr_opendataset_gotm(path,**kwargs):
+    """  
+    Load gotm NetCDF outputs, as would do xarray.
+    Currently, xarray cannot open gotm ouputs since z and zi are both coordinates and variables of time and space (for e.g. surface following coordinates).
+    When z and zi does not depend on time and space, this function is a fix based on Qing Li's gotmtool.model.load_data().
       
-    # Log results  
-    with open("optim.log", "a") as log_file:  
-        log_file.write(f'Params: {dict(zip(param_list, params))}\n')  
-        for case_id in case_ids:  
-            h_gotm = gotm_blds.get(case_id, np.nan)  
-            log_file.write(f'  {case_id}: , GOTM={h_gotm:.2f}\n')   
-    return gotm_blds
+    Parameters  
+    ----------  
+    path : array-like  
+        Parameter values to test  
+        
+    Returns  
+    -------  
+    xarray.dataset 
+        The corresponding dataset, where z and zi are only coordinates and no more space-time varying variables. 
+    """ 
+    # load z and zi
+    with netcdf_file(path, 'r', mmap=False) as ncfile:
+        nc_z  = ncfile.variables['z']
+        nc_zi = ncfile.variables['zi']
+        z = xr.DataArray(
+                nc_z[0,:,0,0],
+                dims=('z'),
+                coords={'z': nc_z[0,:,0,0]},
+                attrs={'long_name': nc_z.long_name.decode(), 'units': nc_z.units.decode()}
+                )
+        zi = xr.DataArray(
+                nc_zi[0,:,0,0],
+                dims=('zi'),
+                coords={'zi': nc_zi[0,:,0,0]},
+                attrs={'long_name': nc_zi.long_name.decode(), 'units': nc_zi.units.decode()}
+                )
+    # load other variables
+    out = xr.load_dataset(
+            path,
+            drop_variables=['z', 'zi'],
+            **kwargs,
+            )
+    out = out.assign_coords({
+        'z': z,
+        'zi': zi,
+        })
+    out = out.assign_coords({
+        'z_2d': (('time', 'z'), nc_z[:,:,0,0]),
+        'zi_2d': (('time', 'zi'), nc_zi[:,:,0,0]),
+        })
+    for var in out.data_vars:
+        if 'z' in out.data_vars[var].dims:
+            out.data_vars[var].assign_coords({'z':z})
+        elif 'zi' in out.data_vars[var].dims:
+            out.data_vars[var].assign_coords({'zi':zi})
+    # return a reorderd view
+    return out.transpose('time', 'z', 'zi', 'lon', 'lat')
+
+    #     # Read variables  
+    #     try:  
+    #         f = netcdf_file(str(output_path), 'r')  
+    #         z = f.variables['z'][0, :, 0, 0].copy().squeeze()  
+    #         temp = f.variables['temp'][:, :, 0, 0].copy()  
+    #         salt = f.variables['salt'][:, :, 0, 0].copy()  
+    #         f.close()  
+              
+    #         # Compute BLD from GOTM  
+    #         h_gotm = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
+    #         if np.isnan(h_gotm):
+    #             h_gotm = mynan
+    #         gotm_blds[case_id] = h_gotm  
+              
+    #         # # Compute relative error for this case  
+    #         # rel_error = ((h_gotm - h_les) / h_les) ** 2  
+    #         # errors.append(rel_error)  
+              
+    #         # print(f"    LES BLD: {h_les:.2f} m, GOTM BLD: {h_gotm:.2f} m, Error: {rel_error:.6e}")  
+
+    #         print(f"GOTM BLD: {h_gotm:.2f} m")              
+    #     except Exception as e:  
+    #         print(f"  Error reading output for {case_id}: {e}")  
+    #         errors.append(mynan)  
+    #         gotm_blds[case_id] = mynan
+    #         continue  
+      
+    # # Log results  
+    # with open("optim.log", "a") as log_file:  
+    #     log_file.write(f'Params: {dict(zip(param_list, params))}\n')  
+    #     for case_id in case_ids:  
+    #         h_gotm = gotm_blds.get(case_id, np.nan)  
+    #         log_file.write(f'  {case_id}: , GOTM={h_gotm:.2f}\n')   
+    # return gotm_blds
   
 ###############  
 # Main script  
 ###############  
-  
-#if __name__ == "__main__":  
-      
-# Configuration  
-runs_dir = Path(f'WAVE{waven}/runs')  
-runs_dir.mkdir(parents=True, exist_ok=True)  
-  
 
-# 
-# TODO in a separate compute_les_metrics.py # Step 1: Compute LES metrics from oMLDb  
-# print("="*60)  
-# print("Step 1: Computing LES metrics")  
-# print("="*60)  
-  
-# Option A: Use specific cases  
-# case_ids = [  
-#     'LES_IDEAL_GARANAIK2023_C01',  # cooling  
-#     'LES_IDEAL_GARANAIK2023_C02',  # stratification  
-#     'LES_IDEAL_GARANAIK2023_C04',  # stratification  
-#     # Add more cases as needed  
-# ]  
-  
-# Option B: Use all available LES cases (uncomment to use)  
-# case_ids = None  
-  
-# Option C: Use "obs" metrics from GOTM outputs with given parameters (perfect model test)
-
-case_ids = ['test']
-
-# les_metrics = compute_les_metrics(case_ids=case_ids)  
-  
-# print("\nLES Metrics:")  
-# for case_id, bld_val in les_metrics.items():  
-#     print(f"  {case_id}: BLD = {bld_val:.2f} m")  
-  
-# Step 2: Get GOTM config files for each case  
 print("\n" + "="*60)  
 print("Step 2: Loading GOTM configurations")  
 print("="*60)  
-  
+runs_dir = Path(f'WAVE{waven}/runs')  
+runs_dir.mkdir(parents=True, exist_ok=True)  
+
+# structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{_id}/{case_id}/ gotm_modified.yaml and gotm.out
+
+
 case_configs = {}  
 for case_id in case_ids:  
     # try:  
@@ -347,37 +336,47 @@ for case_id in case_ids:
 if not case_configs:  
     raise ValueError("No GOTM configuration files found for any cases")  
   
-# Step 3: Define parameters to calibrate  
 print("\n" + "="*60)  
 print("Step 3: Setting up calibration parameters")  
 print("="*60)  
 
 
-#--------------------------------------------
-# TODO: wrap this into a function
-# read parameters ascii file and return a dictionnary {params_id: params_list}
-param_file =f'Par1D_Wave{waven}.asc'
-# Initialize an empty dictionary
-param_dict = {}
-# Open the file and read lines
-with open(param_file, "r") as file:
-    # Read the first line (header) and strip quotes
-    header_line = file.readline().strip()
-    headers = [header.strip('"') for header in header_line.split()]
-    
-    # Store the headers as the first entry in the dictionary
-    param_dict["t_IDs"] = headers[1:]  # Skip the first header entry, "t_IDs"
-    
-    # Read the remaining lines for data entries
-    for line in file:
-        # Split line into identifier and data values
-        parts = line.strip().split()
-        key = parts[0].strip('"')  # First item is the identifier, without quotes
-        values = [float(value) for value in parts[1:]]  # Convert remaining values to floats
+def parameter_file_to_dic(param_file):
+    """  
+    Read parameter ascii file 
+      
+    Parameters  
+    ----------  
+    param_file: ascii file produced by htune_convertDesign.R
+          
+    Returns  
+    -------  
+    dict  
+    """ 
+    # Initialize an empty dictionary
+    param_dict = {}
+    # Open the file and read lines
+    with open(param_file, "r") as file:
+        # Read the first line (header) and strip quotes
+        header_line = file.readline().strip()
+        headers = [header.strip('"') for header in header_line.split()]
         
-        # Add to dictionary
-        param_dict[key] = values
+        # Store the headers as the first entry in the dictionary
+        param_dict["t_IDs"] = headers[1:]  # Skip the first header entry, "t_IDs"
+        
+        # Read the remaining lines for data entries
+        for line in file:
+            # Split line into identifier and data values
+            parts = line.strip().split()
+            key = parts[0].strip('"')  # First item is the identifier, without quotes
+            values = [float(value) for value in parts[1:]]  # Convert remaining values to floats
+            
+            # Add to dictionary
+            param_dict[key] = values
+    return param_dict
 
+param_file =f'Par1D_Wave{waven}.asc'
+param_dict = parameter_file_to_dic(param_file)
 
 # run cases in parrallel
 metrics={}
@@ -386,18 +385,45 @@ metrics={}
 def task(run_id):
     return simulation_wrapper(param_dict[run_id], case_configs, param_dict["t_IDs"], runs_dir/run_id)
 
-
 L = list(param_dict.keys())[1:]
 
-# run in parallel
 with Pool() as p:
     out = p.map(task, list(param_dict.keys())[1:])
-    # out = out[1:] #remove 't_IDs' from the list
-    #     # metrics_all.update(out)
 
-metrics['perfect'+'_mld4h'] = [o['test'] for o in out]
 
-run_id = list(param_dict.keys())[1:]
+# metrics['perfect'+'_mld4h'] = [o['test'] for o in out]
+
+
+
+run_ids = list(param_dict.keys())[1:]
+
+def compute_one_metric(metric_name):  
+    """  
+    Compute one metric type on one case for ALL varying parameters (labelled by runID) 
+      
+    Parameters  
+    ----------  
+    metric_name : str
+        metric name of the form caseID_metricType
+          
+    Returns  
+    -------  
+    list  
+        List of metric_type computed on all parameter evaluation labelled by runID   
+    """  
+    case_id, metric_type = metric_name.rsplit("_", 1)
+    metadata = omldb.load_case_metadata(case_id)
+    metric = []
+    for run_id in run_ids:
+        # ds = xr.open_dataset(runs_dir/run_id/case_id/'gotm_out.nc',drop_variables=['z','zi'])
+        ds = xr_opendataset_gotm(runs_dir/run_id/case_id/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
+        val = metric_type_catalog(metric_type)(ds,metadata)
+        metric.append(val)
+    return metric
+
+for m_name in metrics_names:
+    metrics[m_name] = compute_one_metric(m_name)
+
 output_file = "Metrics.csv"
 with open(output_file, mode="w", newline="") as file:
     writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=' ')  # No quotes
@@ -405,6 +431,6 @@ with open(output_file, mode="w", newline="") as file:
 
     vals_inline = [metrics[key] for key in metrics]  
 
-    for i in range(len(run_id)):
-        row = [run_id[i]] + [float(vals_inline[k][i]) for k in range(len(vals_inline))]  # Exclude repeated run_id
+    for i,run_id in enumerate(run_ids):
+        row = [run_id] + [float(vals_inline[k][i]) for k in range(len(vals_inline))]  # Exclude repeated run_id
         writer.writerow(row)
