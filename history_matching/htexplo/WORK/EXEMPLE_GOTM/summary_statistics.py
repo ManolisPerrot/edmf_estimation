@@ -7,7 +7,7 @@ def density_eos(t, s,rho0,T0,S0,alpha,beta):
   
   
 def bld_averaged(density,z):  
-    """OSBL depth corresponding to max N2"""   
+    """OSBL depth corresponding to max N2"""  
     N2 = np.gradient(-density, z, axis=1)  
     bld_vals = np.zeros(len(N2[:, 0]))  
     dz = z[1] - z[0]  
@@ -42,8 +42,8 @@ def mld4h(ds,metadata):
     closest_time = ds.time.values[idx]
     # actual offset in hours
     actual_hours = (last_time - closest_time) / np.timedelta64(1, "h")
-    print(f"Requested average: {hours} h")
-    print(f"Due to dataset structure, average is performed in pratice on: {actual_hours:.3f} h")
+    # print(f"Requested average: {hours} h")
+    # print(f"Due to dataset structure, average is performed in pratice on: {actual_hours:.3f} h")
     # Extract variables from the dataset  
     z = ds['z'].values
     temp = ds['temp'].values
@@ -73,8 +73,8 @@ def mld12h(ds,metadata):
     closest_time = ds.time.values[idx]
     # actual offset in hours
     actual_hours = (last_time - closest_time) / np.timedelta64(1, "h")
-    print(f"Requested average: {hours} h")
-    print(f"Due to dataset structure, average is performed in pratice on: {actual_hours:.3f} h")
+    # print(f"Requested average: {hours} h")
+    # print(f"Due to dataset structure, average is performed in pratice on: {actual_hours:.3f} h")
     # Extract variables from the dataset  
     z = ds['z'].values
     temp = ds['temp'].values
@@ -91,3 +91,14 @@ def mld12h(ds,metadata):
     # Compute metric
     return bld_averaged(density, z) 
 
+def metric_type_catalog(metric_type=None):
+    '''Lists all the metric types'''
+    catalog = {'mld4h':mld4h,
+                'mld12h':mld12h}
+    if not metric_type:
+        return catalog
+    else:
+        try: 
+            return catalog[metric_type]
+        except : 
+            raise KeyError("Metric type not found") 
