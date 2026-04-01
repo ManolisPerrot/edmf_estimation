@@ -97,60 +97,45 @@ def run_gotm(config, run_dir):
         Path to GOTM configuration file  
     run_dir : str or Path  
         Directory to run GOTM in  
-    """  
-    # run_dir = Path(run_dir)  
-    # run_dir.mkdir(parents=True, exist_ok=True)  
-      
-    # # Copy config to run directory  
-    # config_copy = run_dir / Path(config).name  
-    # shutil.copy(config, config_copy)  
-
+    """   
     # Create log files  
     stdout_log = run_dir / "gotm_stdout.log"  
     stderr_log = run_dir / "gotm_stderr.log"  
     command = ["gotm", "--ignore_unknown_config", config]  
+    out_file = run_dir / "gotm_out.nc"
       
-    try:  
-        with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:  
-            subprocess.run(  
-                command,   
-                check=True,   
-                stdout=fout,  
-                stderr=ferr,  
-                cwd=str(run_dir)  
-            )  
-    except subprocess.CalledProcessError as e:  
-        print(f"An error occurred while running gotm: {e}", file=sys.stderr)  
-        print(f"Check logs in {run_dir}:")  
-        print(f"  - {stdout_log}")  
-        print(f"  - {stderr_log}")  
-  
-  
-# def write_it_number(it):  
-#     """Write iteration number to file"""  
-#     with open("it_file.dat", "w") as it_file:  
-#         it_file.write(f'{it}')  
-  
-  
-# def read_it_number():  
-#     """Read iteration number from file"""  
-#     if not Path("it_file.dat").exists():  
-#         return 0  
-#     with open("it_file.dat", "r") as it_file:  
-#         it = int(it_file.read())  
-#     return it  
-  
-  
-# def write_iteration(params, res):  
-#     """Callback function to write iteration info"""  
-#     it = read_it_number()  
-#     print('--------------------------')  
-#     print(f'----iteration {it} ------')  
-#     print('--------------------------')  
-#     it += 1  
-#     write_it_number(it)  
-  
-  
+    try:
+        # --- Clean previous output (IMPORTANT) ---
+        if out_file.exists():
+            out_file.unlink()
+
+        with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
+            subprocess.run(
+                command,
+                check=True,
+                stdout=fout,
+                stderr=ferr,
+                cwd=str(run_dir)
+            )
+
+        # --- Validate output ---
+        if not out_file.exists():
+            raise RuntimeError("gotm_out.nc not created")
+
+        try:
+            ds = xr_opendataset_gotm(out_file)
+        except Exception:
+            raise RuntimeError("Invalid NetCDF output")
+
+        if ds.dims.get("time", 0) == 0:
+            raise RuntimeError("Empty dataset")
+
+    except Exception as e:
+        # Optional: enrich error with log hint
+        raise RuntimeError(
+            f"GOTM run failed in {run_dir}. See logs: {stderr_log}"
+        ) from e
+    
 def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=None):  
     """  
     Run GOTM simulation for each LES case
@@ -274,72 +259,29 @@ def xr_opendataset_gotm(path,**kwargs):
     # return a reorderd view
     return out.transpose('time', 'z', 'zi', 'lon', 'lat')
 
-    #     # Read variables  
-    #     try:  
-    #         f = netcdf_file(str(output_path), 'r')  
-    #         z = f.variables['z'][0, :, 0, 0].copy().squeeze()  
-    #         temp = f.variables['temp'][:, :, 0, 0].copy()  
-    #         salt = f.variables['salt'][:, :, 0, 0].copy()  
-    #         f.close()  
-              
-    #         # Compute BLD from GOTM  
-    #         h_gotm = bld(temp[nt0:nt1], salt[nt0:nt1], z)  
-    #         if np.isnan(h_gotm):
-    #             h_gotm = mynan
-    #         gotm_blds[case_id] = h_gotm  
-              
-    #         # # Compute relative error for this case  
-    #         # rel_error = ((h_gotm - h_les) / h_les) ** 2  
-    #         # errors.append(rel_error)  
-              
-    #         # print(f"    LES BLD: {h_les:.2f} m, GOTM BLD: {h_gotm:.2f} m, Error: {rel_error:.6e}")  
-
-    #         print(f"GOTM BLD: {h_gotm:.2f} m")              
-    #     except Exception as e:  
-    #         print(f"  Error reading output for {case_id}: {e}")  
-    #         errors.append(mynan)  
-    #         gotm_blds[case_id] = mynan
-    #         continue  
+def compute_one_metric(metric_name):  
+    """  
+    Compute one metric type on one case for ALL varying parameters (labelled by runID) 
       
-    # # Log results  
-    # with open("optim.log", "a") as log_file:  
-    #     log_file.write(f'Params: {dict(zip(param_list, params))}\n')  
-    #     for case_id in case_ids:  
-    #         h_gotm = gotm_blds.get(case_id, np.nan)  
-    #         log_file.write(f'  {case_id}: , GOTM={h_gotm:.2f}\n')   
-    # return gotm_blds
-  
-###############  
-# Main script  
-###############  
-
-print("\n" + "="*60)  
-print("Step 2: Loading GOTM configurations")  
-print("="*60)  
-runs_dir = Path(f'WAVE{waven}/runs')  
-runs_dir.mkdir(parents=True, exist_ok=True)  
-
-# structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{_id}/{case_id}/ gotm_modified.yaml and gotm.out
-
-
-case_configs = {}  
-for case_id in case_ids:  
-    # try:  
-    config_path = get_gotm_config_for_case(case_id)  
-    case_configs[case_id] = config_path  
-    print(f"  {case_id}: {config_path}")  
-    # except FileNotFoundError as e:  
-    #     print(f"  Warning: {e}")  
-    #     # Remove case from metrics if no config found  
-    #     del les_metrics[case_id]  
-  
-if not case_configs:  
-    raise ValueError("No GOTM configuration files found for any cases")  
-  
-print("\n" + "="*60)  
-print("Step 3: Setting up calibration parameters")  
-print("="*60)  
-
+    Parameters  
+    ----------  
+    metric_name : str
+        metric name of the form caseID_metricType
+          
+    Returns  
+    -------  
+    list  
+        List of metric_type computed on all parameter evaluation labelled by runID   
+    """  
+    case_id, metric_type = metric_name.rsplit("_", 1)
+    metadata = omldb.load_case_metadata(case_id)
+    metric = []
+    for run_id in run_ids:
+        # ds = xr.open_dataset(runs_dir/run_id/case_id/'gotm_out.nc',drop_variables=['z','zi'])
+        ds = xr_opendataset_gotm(runs_dir/run_id/case_id/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
+        val = metric_type_catalog(metric_type)(ds,metadata)
+        metric.append(val)
+    return metric
 
 def parameter_file_to_dic(param_file):
     """  
@@ -374,9 +316,39 @@ def parameter_file_to_dic(param_file):
             # Add to dictionary
             param_dict[key] = values
     return param_dict
+  
+###############  
+# Main script  
+###############  
+
+print("\n" + "="*60)  
+print("Loading GOTM configurations")  
+print("="*60)  
+runs_dir = Path(f'WAVE{waven}/runs')  
+runs_dir.mkdir(parents=True, exist_ok=True)  
+# structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{_id}/{case_id}/ gotm_modified.yaml and gotm.out
+
+case_configs = {}  
+for case_id in case_ids:  
+    # try:  
+    config_path = get_gotm_config_for_case(case_id)  
+    case_configs[case_id] = config_path  
+    print(f"  {case_id}: {config_path}")  
+    # except FileNotFoundError as e:  
+    #     print(f"  Warning: {e}")  
+    #     # Remove case from metrics if no config found  
+    #     del les_metrics[case_id]  
+  
+if not case_configs:  
+    raise ValueError("No GOTM configuration files found for any cases")  
+  
+print("\n" + "="*60)  
+print("Step 3: Setting up calibration parameters")  
+print("="*60)  
 
 param_file =f'Par1D_Wave{waven}.asc'
 param_dict = parameter_file_to_dic(param_file)
+
 
 # run cases in parrallel
 metrics={}
@@ -390,36 +362,7 @@ L = list(param_dict.keys())[1:]
 with Pool() as p:
     out = p.map(task, list(param_dict.keys())[1:])
 
-
-# metrics['perfect'+'_mld4h'] = [o['test'] for o in out]
-
-
-
 run_ids = list(param_dict.keys())[1:]
-
-def compute_one_metric(metric_name):  
-    """  
-    Compute one metric type on one case for ALL varying parameters (labelled by runID) 
-      
-    Parameters  
-    ----------  
-    metric_name : str
-        metric name of the form caseID_metricType
-          
-    Returns  
-    -------  
-    list  
-        List of metric_type computed on all parameter evaluation labelled by runID   
-    """  
-    case_id, metric_type = metric_name.rsplit("_", 1)
-    metadata = omldb.load_case_metadata(case_id)
-    metric = []
-    for run_id in run_ids:
-        # ds = xr.open_dataset(runs_dir/run_id/case_id/'gotm_out.nc',drop_variables=['z','zi'])
-        ds = xr_opendataset_gotm(runs_dir/run_id/case_id/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
-        val = metric_type_catalog(metric_type)(ds,metadata)
-        metric.append(val)
-    return metric
 
 for m_name in metrics_names:
     metrics[m_name] = compute_one_metric(m_name)
