@@ -23,6 +23,7 @@ sobol_analysis/outputs/
 *.nc
 *tar.gz
 !./MCMC_output/*.nc
+*.csv
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/metrics*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/predictions*
 history_matching/htexplo/WORK/EXEMPLE_OCEAN/WAVE*/

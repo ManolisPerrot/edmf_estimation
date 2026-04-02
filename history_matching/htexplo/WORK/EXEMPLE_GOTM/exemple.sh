@@ -16,11 +16,12 @@ if [ $# -lt 1 ]; then
 fi
 
 # 0.1/ Default values
-metrics=perfect_mld4h
+metrics='LES_IDEAL_GARANAIK2023_C01_mld4h'
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
-sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
+sample_size_next_design=10 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
 action="run"
+tolerance=1
 
 # 0.3/ options
 while (($# > 0)) ; do

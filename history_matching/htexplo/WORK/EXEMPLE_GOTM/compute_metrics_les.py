@@ -1,3 +1,4 @@
+'''Compute metrics on all given cases and store as csv file.'''
 import sys   
 import csv  
 import omldb  
@@ -26,7 +27,7 @@ def compute_metrics(metrics_names):
     print("Computing LES metrics from oMLDb...")  
 
     # Load catalog  
-    omldb.build_index()
+    omldb.build_catalog()
     catalog = omldb.load_catalog()  
       
     # Filter for LES cases  
@@ -66,6 +67,7 @@ def compute_metrics(metrics_names):
     print(f"\nSuccessfully computed metrics for {len(metrics)} cases")  
     return metrics
 
+### Main script ###
 
 output_file = "cibles.csv"
 metrics = compute_metrics(metrics_names)
