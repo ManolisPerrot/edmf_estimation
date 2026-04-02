@@ -26,7 +26,7 @@ def compute_metrics(metrics_names):
     print("Computing LES metrics from oMLDb...")  
 
     # Load catalog  
-    omldb.build_index()
+    omldb.build_catalog()
     catalog = omldb.load_catalog()  
       
     # Filter for LES cases  
