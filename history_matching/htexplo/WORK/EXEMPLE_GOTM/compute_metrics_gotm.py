@@ -1,153 +1,97 @@
-#!/usr/bin/env python  
-"""  
-Compute metrics for gotm ouputs. 
-Main usage: 
+#!/usr/bin/env python
+"""
+Compute metrics for gotm ouputs.
+Main usage:
 ```bash
-python compute_metrics_les.py $metrics $tolerance
+python compute_metrics_les.py $metrics
 ```
 where:
 - $metrics is a list of metrics names of the form caseId_metricType separated by spaces
-- $tolerance is a 
-"""  
-  
-import numpy as np  
-import matplotlib.pyplot as plt  
-from scipy.io import netcdf_file  
-import yaml  
-import re  
-import subprocess  
-import sys  
-from pathlib import Path  
-from multiprocess import Pool #multiprocessING cannot handle locally defined functions, multiprocess can
+"""
+
+import numpy as np
+from scipy.io import netcdf_file
+import re
+import subprocess
+import sys
+from pathlib import Path
+from multiprocess import (
+    Pool,
+)  # multiprocessING cannot handle locally defined functions, multiprocess can
 import csv
 from summary_statistics import metric_type_catalog
 import xarray as xr
 from warnings import warn
+import omldb
 
-  
-# # Import oMLDb  
-import omldb  
-  
-plt.ion()  
 
-debug =True
-if debug:
-    waven=1
-    metrics_names = ['LES_IDEAL_GARANAIK2023_C01_mld4h']
-else:
-    waven   = sys.argv[1]  # First argument   
-    metrics_names = sys.argv[2:]  # Other arguments=metrics name with the format case-ids_metric-type
-case_ids = [arg.rsplit('_',1)[0] for arg in metrics_names] #extract case_ids on which to run GOTM
+def get_gotm_config_for_case(case_id):
+    """
+    Get the GOTM configuration file path for a given LES case
 
-print(case_ids)
+    Parameters
+    ----------
+    case_id : str
+        Case ID from oMLDb
 
-# Constants  
-mynan = -1e6
-  
-def get_gotm_config_for_case(case_id):  
-    """  
-    Get the GOTM configuration file path for a given LES case  
-      
-    Parameters  
-    ----------  
-    case_id : str  
-        Case ID from oMLDb  
-          
-    Returns  
-    -------  
-    Path  
-        Path to the GOTM yaml configuration file  
-    """  
-    if case_id=='test':
-        case_path = Path('GOTM/cases/garanaik/')
+    Returns
+    -------
+    Path
+        Path to the GOTM yaml configuration file
+    """
 
-    else:# Get case metadata  
-        metadata = omldb.load_case_metadata(case_id)  
-        case_path = omldb.get_case_path(case_id)   
-      
-    # Look for GOTM yaml file in the case directory  
-    # Assuming it's named gotm.yaml or gotm_{case_id}.yaml  
-    yaml_files = list(case_path.glob("gotm.yaml"))  
-      
-    if not yaml_files:  
-        raise FileNotFoundError(f"No GOTM yaml file found for case {case_id} in {case_path}")  
-      
-    return yaml_files[0]  
-  
-  
-def modif_config_file(in_file, out_file, new_params):  
-    """Modify configuration file with new sets of parameters"""  
-    with open(in_file, "r") as sources:  
-        lines = sources.readlines()  
-      
-    with open(out_file, "w") as sources:  
-        for line in lines:  
-            for key, value in new_params.items():  
-                pattern = rf'^(\s*{re.escape(key)}\s*:\s*).*$'  
-                line = re.sub(pattern, r'\g<1>' + str(value), line)  
-            sources.write(line)  
-  
-  
-def run_gotm(config, run_dir):  
-    """  
-    Run GOTM simulation in a specific directory  
-      
-    Parameters  
-    ----------  
-    config : str or Path  
-        Path to GOTM configuration file  
-    run_dir : str or Path  
-        Directory to run GOTM in  
-    """   
-    # Create log files  
-    stdout_log = run_dir / "gotm_stdout.log"  
-    stderr_log = run_dir / "gotm_stderr.log"  
-    command = ["gotm", "--ignore_unknown_config", config]  
+    case_path = omldb.get_case_path(case_id)
+
+    # Look for GOTM yaml file in the case directory
+    # Assuming it's named gotm.yaml or gotm_{case_id}.yaml
+    yaml_files = list(case_path.glob("gotm.yaml"))
+
+    if not yaml_files:
+        raise FileNotFoundError(
+            f"No GOTM yaml file found for case {case_id} in {case_path}"
+        )
+
+    return yaml_files[0]
+
+
+def modif_config_file(in_file, out_file, new_params):
+    """Modify configuration file with new sets of parameters"""
+    with open(in_file, "r") as sources:
+        lines = sources.readlines()
+
+    with open(out_file, "w") as sources:
+        for line in lines:
+            for key, value in new_params.items():
+                pattern = rf"^(\s*{re.escape(key)}\s*:\s*).*$"
+                line = re.sub(pattern, r"\g<1>" + str(value), line)
+            sources.write(line)
+
+
+def run_gotm(config, run_dir):
+    """
+    Run GOTM simulation in a specific directory
+
+    Parameters
+    ----------
+    config : str or Path
+        Path to GOTM configuration file
+    run_dir : str or Path
+        Directory to run GOTM in
+    """
+    # Create log files
+    stdout_log = run_dir / "gotm_stdout.log"
+    stderr_log = run_dir / "gotm_stderr.log"
+    command = ["gotm", "--ignore_unknown_config", config]
     out_file = run_dir / "gotm_out.nc"
 
     # --- Clean previous output (IMPORTANT) ---
     if out_file.exists():
         out_file.unlink()
 
+    # ------- Run simulation
     with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
-        subprocess.run(
-            command,
-            check=True,
-            stdout=fout,
-            stderr=ferr,
-            cwd=str(run_dir)
-        )    
-    # try:
-    #     # --- Clean previous output (IMPORTANT) ---
-    #     if out_file.exists():
-    #         out_file.unlink()
+        subprocess.run(command, check=True, stdout=fout, stderr=ferr, cwd=str(run_dir))
 
-    #     with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
-    #         subprocess.run(
-    #             command,
-    #             check=True,
-    #             stdout=fout,
-    #             stderr=ferr,
-    #             cwd=str(run_dir)
-    #         )
-
-    # #     # --- Validate output ---
-    # #     if not out_file.exists():
-    # #         raise RuntimeError("gotm_out.nc not created")
-
-    # #     try:
-    # #         ds = xr_opendataset_gotm(out_file)
-    # #     except Exception:
-    # #         raise RuntimeError("Invalid NetCDF output")
-
-    # #     if ds.dims.get("time", 0) == 0:
-    # #         raise RuntimeError("Empty dataset")
-
-    # # except Exception as e:
-    # #     # Optional: enrich error with log hint
-    # #     raise RuntimeError(
-    # #         f"GOTM run failed in {run_dir}. See logs: {stderr_log}"
-    # #     ) from e
 
 def gotm_run_valid(run_dir):
     """
@@ -172,173 +116,168 @@ def gotm_run_valid(run_dir):
         warn(f"GOTM run failed in {run_dir}: Empty dataset")
         return False
     # Check it does not contain NaN
-    if np.isnan(ds.temp).any() or np.isnan(ds.salt).any() :
+    if np.isnan(ds.temp).any() or np.isnan(ds.salt).any():
         warn(f"GOTM run failed in {run_dir}: Temperature or salinity contains NaN")
         return False
     return True
 
-def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=None):  
-    """  
+
+def simulation_wrapper(params, case_configs, param_list, runs_dir):
+    """
     Run GOTM simulation for each LES case
-      
-    Parameters  
-    ----------  
-    params : array-like  
-        Parameter values to test  
-    case_configs : dict  
-        Dictionary mapping case_id to original GOTM config file path  
-    param_list : list of str  
-        List of parameter names  
-    runs_dir : str or Path  
-        Base directory for GOTM runs  
-          
-    Returns  
-    -------  
-    None  
-    """  
-    params = np.asarray(params)  
-    runs_dir = Path(runs_dir)  
-    runs_dir.mkdir(parents=True, exist_ok=True)  
-      
-    # Create parameter dictionary  
-    new_params = {}  
-    for idx, p in enumerate(params):  
-        new_params[param_list[idx]] = p  
-      
-    # Run GOTM for each case  
-    # errors = []  
-    # gotm_blds = {}  
-      
-    for case_id in case_ids :  
-        # print(f"\n  Running GOTM for {case_id}...")  
-          
-        # Create run directory for this case and iteration  
-        case_run_dir = runs_dir / case_id  
-        case_run_dir.mkdir(parents=True, exist_ok=True)  
-          
-        # Get original config for this case  
-        original_config = case_configs[case_id]  
-          
-        # Create modified config  
-        modified_config = case_run_dir / "gotm_modified.yaml"  
-        modif_config_file(original_config, modified_config, new_params)  
 
-        # Run GOTM  
-        try:  
-            run_gotm("gotm_modified.yaml" , case_run_dir)  
-        except Exception as e:  
-            print(f"  Error running GOTM for {case_id}: {e}")   
-            continue  
-          
-        # # Read GOTM output  
-        # with open(modified_config) as f:  
-        #     config = yaml.safe_load(f)  
-          
-        # output_file = list(config['output'].keys())[0] + '.nc'  
-        # output_path = case_run_dir / output_file  
-          
-        # if not output_path.exists():  
-        #     print(f"  Warning: Output file not found for {case_id}")  
-        #     errors.append(mynan)  
-        #     gotm_blds[case_id] = mynan 
-        #     continue  
+    Parameters
+    ----------
+    params : array-like
+        Parameter values to test
+    case_configs : dict
+        Dictionary mapping case_id to original GOTM config file path
+    param_list : list of str
+        List of parameter names
+    runs_dir : str or Path
+        Base directory for GOTM runs
 
-def xr_opendataset_gotm(path,**kwargs):
-    """  
+    Returns
+    -------
+    None
+    """
+    params = np.asarray(params)
+    runs_dir = Path(runs_dir)
+    runs_dir.mkdir(parents=True, exist_ok=True)
+
+    # Create parameter dictionary
+    new_params = {}
+    for idx, p in enumerate(params):
+        new_params[param_list[idx]] = p
+
+    # Run GOTM for each case
+    for case_id in case_ids:
+        # Create run directory for this case and iteration
+        case_run_dir = runs_dir / case_id
+        case_run_dir.mkdir(parents=True, exist_ok=True)
+
+        # Get original config for this case
+        original_config = case_configs[case_id]
+
+        # Create modified config
+        modified_config = case_run_dir / "gotm_modified.yaml"
+        modif_config_file(original_config, modified_config, new_params)
+
+        # Run GOTM
+        try:
+            run_gotm("gotm_modified.yaml", case_run_dir)
+        except Exception as e:
+            print(f"  Error running GOTM for {case_id}: {e}")
+            continue
+
+
+def xr_opendataset_gotm(path, **kwargs):
+    """
     Load gotm NetCDF outputs, as would do xarray.
     Currently, xarray cannot open gotm ouputs since z and zi are both coordinates and variables of time and space (for e.g. surface following coordinates).
     When z and zi does not depend on time and space, this function is a fix based on Qing Li's gotmtool.model.load_data().
-      
-    Parameters  
-    ----------  
-    path : array-like  
-        Parameter values to test  
-        
-    Returns  
-    -------  
-    xarray.dataset 
-        The corresponding dataset, where z and zi are only coordinates and no more space-time varying variables. 
-    """ 
+
+    Parameters
+    ----------
+    path : array-like
+        Parameter values to test
+
+    Returns
+    -------
+    xarray.dataset
+        The corresponding dataset, where z and zi are only coordinates and no more space-time varying variables.
+    """
     # load z and zi
-    with netcdf_file(path, 'r', mmap=False) as ncfile:
-        nc_z  = ncfile.variables['z']
-        nc_zi = ncfile.variables['zi']
+    with netcdf_file(path, "r", mmap=False) as ncfile:
+        nc_z = ncfile.variables["z"]
+        nc_zi = ncfile.variables["zi"]
         z = xr.DataArray(
-                nc_z[0,:,0,0],
-                dims=('z'),
-                coords={'z': nc_z[0,:,0,0]},
-                attrs={'long_name': nc_z.long_name.decode(), 'units': nc_z.units.decode()}
-                )
+            nc_z[0, :, 0, 0],
+            dims=("z"),
+            coords={"z": nc_z[0, :, 0, 0]},
+            attrs={"long_name": nc_z.long_name.decode(), "units": nc_z.units.decode()},
+        )
         zi = xr.DataArray(
-                nc_zi[0,:,0,0],
-                dims=('zi'),
-                coords={'zi': nc_zi[0,:,0,0]},
-                attrs={'long_name': nc_zi.long_name.decode(), 'units': nc_zi.units.decode()}
-                )
+            nc_zi[0, :, 0, 0],
+            dims=("zi"),
+            coords={"zi": nc_zi[0, :, 0, 0]},
+            attrs={
+                "long_name": nc_zi.long_name.decode(),
+                "units": nc_zi.units.decode(),
+            },
+        )
     # load other variables
     out = xr.load_dataset(
-            path,
-            drop_variables=['z', 'zi'],
-            **kwargs,
-            )
-    out = out.assign_coords({
-        'z': z,
-        'zi': zi,
-        })
-    out = out.assign_coords({
-        'z_2d': (('time', 'z'), nc_z[:,:,0,0]),
-        'zi_2d': (('time', 'zi'), nc_zi[:,:,0,0]),
-        })
+        path,
+        drop_variables=["z", "zi"],
+        **kwargs,
+    )
+    out = out.assign_coords(
+        {
+            "z": z,
+            "zi": zi,
+        }
+    )
+    out = out.assign_coords(
+        {
+            "z_2d": (("time", "z"), nc_z[:, :, 0, 0]),
+            "zi_2d": (("time", "zi"), nc_zi[:, :, 0, 0]),
+        }
+    )
     for var in out.data_vars:
-        if 'z' in out.data_vars[var].dims:
-            out.data_vars[var].assign_coords({'z':z})
-        elif 'zi' in out.data_vars[var].dims:
-            out.data_vars[var].assign_coords({'zi':zi})
+        if "z" in out.data_vars[var].dims:
+            out.data_vars[var].assign_coords({"z": z})
+        elif "zi" in out.data_vars[var].dims:
+            out.data_vars[var].assign_coords({"zi": zi})
     # return a reorderd view
-    return out.transpose('time', 'z', 'zi', 'lon', 'lat')
+    return out.transpose("time", "z", "zi", "lon", "lat")
 
-def compute_one_metric(metric_name,penalization=1e10):  
-    """  
-    Compute one metric type on one case for ALL varying parameters (labelled by runID) 
-      
-    Parameters  
-    ----------  
+
+def compute_one_metric(metric_name, penalization=1e10):
+    """
+    Compute one metric type on one case for ALL varying parameters (labelled by runID)
+
+    Parameters
+    ----------
     metric_name : str
         metric name of the form caseID_metricType
-          
-    Returns  
-    -------  
-    list  
-        List of metric_type computed on all parameter evaluation labelled by runID   
-    """  
+
+    Returns
+    -------
+    list
+        List of metric_type computed on all parameter evaluation labelled by runID
+    """
     case_id, metric_type = metric_name.rsplit("_", 1)
     metadata = omldb.load_case_metadata(case_id)
     metric = []
     for run_id in run_ids:
-        case_run_dir = runs_dir/run_id/case_id
+        case_run_dir = runs_dir / run_id / case_id
         if gotm_run_valid(case_run_dir):
-            ds = xr_opendataset_gotm(case_run_dir/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
-            val = metric_type_catalog(metric_type)(ds,metadata)
+            ds = xr_opendataset_gotm(
+                case_run_dir / "gotm_out.nc"
+            )  # in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
+            val = metric_type_catalog(metric_type)(ds, metadata)
             metric.append(val)
-        else: # penalize gotm crash 
-            les = omldb.load_case(case_id)  
+        else:  # penalize gotm crash
+            les = omldb.load_case(case_id)
             metadata = omldb.load_case_metadata(case_id)
-            val = penalization + metric_type_catalog(metric_type)(les,metadata)
+            val = penalization + metric_type_catalog(metric_type)(les, metadata)
             metric.append(val)
     return metric
 
+
 def parameter_file_to_dic(param_file):
-    """  
-    Read parameter ascii file 
-      
-    Parameters  
-    ----------  
+    """
+    Read parameter ascii file
+
+    Parameters
+    ----------
     param_file: ascii file produced by htune_convertDesign.R
-          
-    Returns  
-    -------  
-    dict  
-    """ 
+
+    Returns
+    -------
+    dict
+    """
     # Initialize an empty dictionary
     param_dict = {}
     # Open the file and read lines
@@ -346,79 +285,94 @@ def parameter_file_to_dic(param_file):
         # Read the first line (header) and strip quotes
         header_line = file.readline().strip()
         headers = [header.strip('"') for header in header_line.split()]
-        
+
         # Store the headers as the first entry in the dictionary
         param_dict["t_IDs"] = headers[1:]  # Skip the first header entry, "t_IDs"
-        
+
         # Read the remaining lines for data entries
         for line in file:
             # Split line into identifier and data values
             parts = line.strip().split()
             key = parts[0].strip('"')  # First item is the identifier, without quotes
-            values = [float(value) for value in parts[1:]]  # Convert remaining values to floats
-            
+            values = [
+                float(value) for value in parts[1:]
+            ]  # Convert remaining values to floats
+
             # Add to dictionary
             param_dict[key] = values
     return param_dict
-  
-###############  
-# Main script  
-###############  
-
-print("\n" + "="*60)  
-print("Loading GOTM configurations")  
-print("="*60)  
-runs_dir = Path(f'WAVE{waven}/runs')  
-runs_dir.mkdir(parents=True, exist_ok=True)  
-# structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{_id}/{case_id}/ gotm_modified.yaml and gotm.out
-
-case_configs = {}  
-for case_id in case_ids:  
-    # try:  
-    config_path = get_gotm_config_for_case(case_id)  
-    case_configs[case_id] = config_path  
-    print(f"  {case_id}: {config_path}")  
-    # except FileNotFoundError as e:  
-    #     print(f"  Warning: {e}")  
-    #     # Remove case from metrics if no config found  
-    #     del les_metrics[case_id]  
-  
-if not case_configs:  
-    raise ValueError("No GOTM configuration files found for any cases")  
-  
-print("\n" + "="*60)  
-print("Step 3: Setting up calibration parameters")  
-print("="*60)  
-
-param_file =f'Par1D_Wave{waven}.asc'
-param_dict = parameter_file_to_dic(param_file)
 
 
-# run cases in parrallel
-metrics={}
+###############
+# Main script
+###############
 
-# Define the task to parallelize for each run
-def task(run_id):
-    print(f'\n Running {run_id}') 
-    return simulation_wrapper(param_dict[run_id], case_configs, param_dict["t_IDs"], runs_dir/run_id)
+if __name__ == "__main__":
+    # ------- Read script input
+    debug = False
+    if debug:
+        waven = 1
+        metrics_names = ["LES_IDEAL_GARANAIK2023_C01_mld4h"]
+    else:
+        waven = sys.argv[1]  # First argument
+        metrics_names = sys.argv[
+            2:
+        ]  # Other arguments=metrics name with the format case-ids_metric-type
+    case_ids = [
+        arg.rsplit("_", 1)[0] for arg in metrics_names
+    ]  # extract case_ids on which to run GOTM
 
-L = list(param_dict.keys())[1:]
+    print("\n" + "=" * 60)
+    print("Loading GOTM configurations")
+    print("=" * 60)
+    runs_dir = Path(f"WAVE{waven}/runs")
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    # structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{run_id}/{case_id}/ gotm_modified.yaml and gotm.out
 
-with Pool() as p:
-    out = p.map(task, list(param_dict.keys())[1:])
+    case_configs = {}
+    for case_id in case_ids:
+        config_path = get_gotm_config_for_case(case_id)
+        case_configs[case_id] = config_path
+        print(f"  {case_id}: {config_path}")
 
-run_ids = list(param_dict.keys())[1:]
+    if not case_configs:
+        raise ValueError("No GOTM configuration files found for any cases")
 
-for m_name in metrics_names:
-    metrics[m_name] = compute_one_metric(m_name)
+    # ------- Read ensembles of parameters
+    param_file = f"Par1D_Wave{waven}.asc"
+    param_dict = parameter_file_to_dic(param_file)
 
-output_file = "Metrics.csv"
-with open(output_file, mode="w", newline="") as file:
-    writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=' ')  # No quotes
-    writer.writerow(["SIM"] + metrics_names)  # Write header row
+    # ------- Run cases in parrallel
+    metrics = {}
 
-    vals_inline = [metrics[key] for key in metrics]  
+    # Define the task to parallelize for each run
+    def task(run_id):
+        print(f"\n Running single-column model {run_id}")
+        return simulation_wrapper(
+            param_dict[run_id], case_configs, param_dict["t_IDs"], runs_dir / run_id
+        )
 
-    for i,run_id in enumerate(run_ids):
-        row = [run_id] + [float(vals_inline[k][i]) for k in range(len(vals_inline))]  # Exclude repeated run_id
-        writer.writerow(row)
+    L = list(param_dict.keys())[1:]
+
+    with Pool() as p:
+        out = p.map(task, list(param_dict.keys())[1:])
+
+    run_ids = list(param_dict.keys())[1:]
+
+    # ------- Compute metrics (i.e. summary statistics)
+    for m_name in metrics_names:
+        metrics[m_name] = compute_one_metric(m_name)
+
+    # ------- Write output file
+    output_file = "Metrics.csv"
+    with open(output_file, mode="w", newline="") as file:
+        writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=" ")  # No quotes
+        writer.writerow(["SIM"] + metrics_names)  # Write header row
+
+        vals_inline = [metrics[key] for key in metrics]
+
+        for i, run_id in enumerate(run_ids):
+            row = [run_id] + [
+                float(vals_inline[k][i]) for k in range(len(vals_inline))
+            ]  # Exclude repeated run_id
+            writer.writerow(row)
