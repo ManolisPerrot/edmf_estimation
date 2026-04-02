@@ -22,6 +22,7 @@ from multiprocess import Pool #multiprocessING cannot handle locally defined fun
 import csv
 from summary_statistics import metric_type_catalog
 import xarray as xr
+from warnings import warn
 
   
 # # Import oMLDb  
@@ -103,39 +104,79 @@ def run_gotm(config, run_dir):
     stderr_log = run_dir / "gotm_stderr.log"  
     command = ["gotm", "--ignore_unknown_config", config]  
     out_file = run_dir / "gotm_out.nc"
-      
+
+    # --- Clean previous output (IMPORTANT) ---
+    if out_file.exists():
+        out_file.unlink()
+
+    with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
+        subprocess.run(
+            command,
+            check=True,
+            stdout=fout,
+            stderr=ferr,
+            cwd=str(run_dir)
+        )    
+    # try:
+    #     # --- Clean previous output (IMPORTANT) ---
+    #     if out_file.exists():
+    #         out_file.unlink()
+
+    #     with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
+    #         subprocess.run(
+    #             command,
+    #             check=True,
+    #             stdout=fout,
+    #             stderr=ferr,
+    #             cwd=str(run_dir)
+    #         )
+
+    # #     # --- Validate output ---
+    # #     if not out_file.exists():
+    # #         raise RuntimeError("gotm_out.nc not created")
+
+    # #     try:
+    # #         ds = xr_opendataset_gotm(out_file)
+    # #     except Exception:
+    # #         raise RuntimeError("Invalid NetCDF output")
+
+    # #     if ds.dims.get("time", 0) == 0:
+    # #         raise RuntimeError("Empty dataset")
+
+    # # except Exception as e:
+    # #     # Optional: enrich error with log hint
+    # #     raise RuntimeError(
+    # #         f"GOTM run failed in {run_dir}. See logs: {stderr_log}"
+    # #     ) from e
+
+def gotm_run_valid(run_dir):
+    """
+    Returns True if gotm_out.nc exists and looks valid.
+    """
+    out_file = Path(run_dir) / "gotm_out.nc"
+
+    # File exists?
+    if not out_file.exists():
+        warn(f"GOTM run failed in {run_dir}: gotm_out.nc has not been created")
+        return False
+
+    # Try opening it
     try:
-        # --- Clean previous output (IMPORTANT) ---
-        if out_file.exists():
-            out_file.unlink()
+        ds = xr_opendataset_gotm(out_file)
+    except Exception:
+        warn(f"GOTM run failed in {run_dir}: Invalid NetCDF output")
+        return False
 
-        with open(stdout_log, "w") as fout, open(stderr_log, "w") as ferr:
-            subprocess.run(
-                command,
-                check=True,
-                stdout=fout,
-                stderr=ferr,
-                cwd=str(run_dir)
-            )
+    # Check it’s not empty
+    if ds.dims.get("time", 0) == 0:
+        warn(f"GOTM run failed in {run_dir}: Empty dataset")
+        return False
+    # Check it does not contain NaN
+    if np.isnan(ds.temp).any() or np.isnan(ds.salt).any() :
+        warn(f"GOTM run failed in {run_dir}: Temperature or salinity contains NaN")
+        return False
+    return True
 
-        # --- Validate output ---
-        if not out_file.exists():
-            raise RuntimeError("gotm_out.nc not created")
-
-        try:
-            ds = xr_opendataset_gotm(out_file)
-        except Exception:
-            raise RuntimeError("Invalid NetCDF output")
-
-        if ds.dims.get("time", 0) == 0:
-            raise RuntimeError("Empty dataset")
-
-    except Exception as e:
-        # Optional: enrich error with log hint
-        raise RuntimeError(
-            f"GOTM run failed in {run_dir}. See logs: {stderr_log}"
-        ) from e
-    
 def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=None):  
     """  
     Run GOTM simulation for each LES case
@@ -153,7 +194,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
           
     Returns  
     -------  
-    dict  
+    None  
     """  
     params = np.asarray(params)  
     runs_dir = Path(runs_dir)  
@@ -165,11 +206,11 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         new_params[param_list[idx]] = p  
       
     # Run GOTM for each case  
-    errors = []  
-    gotm_blds = {}  
+    # errors = []  
+    # gotm_blds = {}  
       
     for case_id in case_ids :  
-        print(f"\n  Running GOTM for {case_id}...")  
+        # print(f"\n  Running GOTM for {case_id}...")  
           
         # Create run directory for this case and iteration  
         case_run_dir = runs_dir / case_id  
@@ -186,24 +227,21 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir, keep_every=No
         try:  
             run_gotm("gotm_modified.yaml" , case_run_dir)  
         except Exception as e:  
-            print(f"  Error running GOTM for {case_id}: {e}")  
-            # Assign large penalty for failed runs  
-            errors.append(mynan)  
-            gotm_blds[case_id] = mynan 
+            print(f"  Error running GOTM for {case_id}: {e}")   
             continue  
           
-        # Read GOTM output  
-        with open(modified_config) as f:  
-            config = yaml.safe_load(f)  
+        # # Read GOTM output  
+        # with open(modified_config) as f:  
+        #     config = yaml.safe_load(f)  
           
-        output_file = list(config['output'].keys())[0] + '.nc'  
-        output_path = case_run_dir / output_file  
+        # output_file = list(config['output'].keys())[0] + '.nc'  
+        # output_path = case_run_dir / output_file  
           
-        if not output_path.exists():  
-            print(f"  Warning: Output file not found for {case_id}")  
-            errors.append(mynan)  
-            gotm_blds[case_id] = mynan 
-            continue  
+        # if not output_path.exists():  
+        #     print(f"  Warning: Output file not found for {case_id}")  
+        #     errors.append(mynan)  
+        #     gotm_blds[case_id] = mynan 
+        #     continue  
 
 def xr_opendataset_gotm(path,**kwargs):
     """  
@@ -259,7 +297,7 @@ def xr_opendataset_gotm(path,**kwargs):
     # return a reorderd view
     return out.transpose('time', 'z', 'zi', 'lon', 'lat')
 
-def compute_one_metric(metric_name):  
+def compute_one_metric(metric_name,penalization=1e10):  
     """  
     Compute one metric type on one case for ALL varying parameters (labelled by runID) 
       
@@ -277,10 +315,16 @@ def compute_one_metric(metric_name):
     metadata = omldb.load_case_metadata(case_id)
     metric = []
     for run_id in run_ids:
-        # ds = xr.open_dataset(runs_dir/run_id/case_id/'gotm_out.nc',drop_variables=['z','zi'])
-        ds = xr_opendataset_gotm(runs_dir/run_id/case_id/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
-        val = metric_type_catalog(metric_type)(ds,metadata)
-        metric.append(val)
+        case_run_dir = runs_dir/run_id/case_id
+        if gotm_run_valid(case_run_dir):
+            ds = xr_opendataset_gotm(case_run_dir/'gotm_out.nc') #in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
+            val = metric_type_catalog(metric_type)(ds,metadata)
+            metric.append(val)
+        else: # penalize gotm crash 
+            les = omldb.load_case(case_id)  
+            metadata = omldb.load_case_metadata(case_id)
+            val = penalization + metric_type_catalog(metric_type)(les,metadata)
+            metric.append(val)
     return metric
 
 def parameter_file_to_dic(param_file):
@@ -355,6 +399,7 @@ metrics={}
 
 # Define the task to parallelize for each run
 def task(run_id):
+    print(f'\n Running {run_id}') 
     return simulation_wrapper(param_dict[run_id], case_configs, param_dict["t_IDs"], runs_dir/run_id)
 
 L = list(param_dict.keys())[1:]
