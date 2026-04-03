@@ -321,7 +321,6 @@ if __name__ == "__main__":
     case_ids = [
         arg.rsplit("_", 1)[0] for arg in metrics_names
     ]  # extract case_ids on which to run GOTM
-    print (waven_str, metrics_names,tol)
     print("\n" + "=" * 60)
     print("Loading GOTM configurations")
     print("=" * 60)
