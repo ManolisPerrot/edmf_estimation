@@ -16,12 +16,11 @@ if [ $# -lt 1 ]; then
 fi
 
 # 0.1/ Default values
-metrics='LES_IDEAL_GARANAIK2023_C01_mld4h'
+metric_args='LES_IDEAL_GARANAIK2023_C01_mld4h --tol 1' #metricName of the form caseId_metricType and optional non-default tolerance 
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
 sample_size_next_design=10 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
 action="run"
-tolerance=1
 
 # 0.3/ options
 while (($# > 0)) ; do
@@ -35,8 +34,14 @@ while (($# > 0)) ; do
           -wave)  wave="$2"  ; shift ; shift ;;
 	        # -GCM)  GCM="$2"  ; shift ; shift ;;
           # -model) model=$2 ; shift ; shift ;;
-          -metrics) metrics="`echo $2 | sed -e 's/,/ /g'`" ; shift ; shift ;;
-          -tolerance)  tolerance="$2"  ; shift ; shift ;; #tolerance to the metrics
+        #   -metrics) metrics="`echo $2 | sed -e 's/,/ /g'`" ; shift ; shift ;;
+        #   -tolerance)  tolerance="$2"  ; shift ; shift ;; #tolerance to the metrics
+          -metrics)
+            shift
+            # of the format caseID_metricType [--tol tolerance1] for each metric
+            metric_args=("$@")
+            break
+            ;;
           # -dry) dryrun=1 ; shift ;;
           # TODO: WRITE --help
 #           -h|-help|--help) echo Usage: $0 "[-param param_file] [-waves "1 [2 3 ...]"] [-wdir DIRNAME] [-sample_size sample_size] [-model model] [-metrics metrics1,metrics2,...] or directly "$0 model"" ; cat <<eod
@@ -56,8 +61,7 @@ while (($# > 0)) ; do
 done
 
 echo "wave=$wave"
-echo "metrics=$metrics"
-
+echo "metrics and tolerances ${metric_args[@]}"
 
 # wave=$1
 wave_two_metrics=9999 # starting from this wave, a second metric will be added
@@ -172,7 +176,7 @@ echo -------------------------------------------------------------
 # VAR,1
 # eod
 
-python compute_metrics_les.py $metrics $tolerance
+python compute_metrics_les.py ${metric_args[@]}
 
 # # Extract the columns corresponding to user-defined metrics
 # metrics_str=$(echo $metrics | tr ' ' ',') # Convert space-separated metrics to comma-separated
@@ -206,7 +210,7 @@ echo -------------------------------------------------------------
 #conda deactivate
 #conda activate baseMano
 
-python compute_metrics_gotm.py $wave $metrics
+python compute_metrics_gotm.py $wave ${metric_args[@]}
 
 #conda deactivate
 #conda activate hightune
@@ -222,4 +226,4 @@ echo -------------------------------------------------------------
 # ModelParam.R
 time Rscript htune_Emulating_Multi_Metric_Multi_LHS_new.R -wave ${wave} -cutoff 3 -sample_size $sample_size -sample_size_next_design $sample_size_next_design
 
-#evince InputSpace_wave${wave}.pdf
+evince InputSpace_wave${wave}.pdf

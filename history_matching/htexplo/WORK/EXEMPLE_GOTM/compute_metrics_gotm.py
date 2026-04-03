@@ -3,10 +3,11 @@
 Compute metrics for gotm ouputs.
 Main usage:
 ```bash
-python compute_metrics_les.py $metrics
+python compute_metrics_gotm.py $wavenumber metric_name1 [-tol tolerance1] metric_name2 [-tol tolerance2] ...
 ```
 where:
-- $metrics is a list of metrics names of the form caseId_metricType separated by spaces
+- $metric1 is the name of the metric (summary statistic) in the form caseId_metricType
+- $tolerance to error (~tolerated standard deviation), optional. Tolerance comes from the full example.sh script, but is not used here. 
 """
 
 import numpy as np
@@ -23,6 +24,7 @@ from summary_statistics import metric_type_catalog
 import xarray as xr
 from warnings import warn
 import omldb
+from cli_utils import get_script_arguments
 
 
 def get_gotm_config_for_case(case_id):
@@ -314,14 +316,12 @@ if __name__ == "__main__":
         waven = 1
         metrics_names = ["LES_IDEAL_GARANAIK2023_C01_mld4h"]
     else:
-        waven = sys.argv[1]  # First argument
-        metrics_names = sys.argv[
-            2:
-        ]  # Other arguments=metrics name with the format case-ids_metric-type
+        waven_str, metrics_names,tol = get_script_arguments(expect_prefix_args=1)
+        waven = int(waven_str[0])
     case_ids = [
         arg.rsplit("_", 1)[0] for arg in metrics_names
     ]  # extract case_ids on which to run GOTM
-
+    print (waven_str, metrics_names,tol)
     print("\n" + "=" * 60)
     print("Loading GOTM configurations")
     print("=" * 60)
@@ -330,6 +330,7 @@ if __name__ == "__main__":
     # structure of the simulation repository : WAVE{waven}/runs/SCM-{waven}-{run_id}/{case_id}/ gotm_modified.yaml and gotm.out
 
     case_configs = {}
+    print(case_ids)
     for case_id in case_ids:
         config_path = get_gotm_config_for_case(case_id)
         case_configs[case_id] = config_path
