@@ -11,14 +11,14 @@ set -eo pipefail
 
 # usage (Check for at least one argument)
 if [ $# -lt 1 ]; then
-    echo "Usage: $0 clean|setup|[-wave NWAVE] [other options]"
+    echo "Usage: $0 clean|setup|[-wave waveNumber] [-metrics caseId_metricType [--tol tolerance]]"
     exit 1
 fi
 
 # 0.1/ Default values
 metric_args='LES_IDEAL_GARANAIK2023_C01_mld4h --tol 1' #metricName of the form caseId_metricType and optional non-default tolerance 
 waves=1 # could be waves=`seq 1 15`, waves="1 2 3"
-sample_size_next_design=10 # number of SCM evaluations at each wave, 10*number of parameters
+sample_size_next_design=90 # number of SCM evaluations at each wave, 10*number of parameters
 sample_size=30000 # number of Gaussian Process evaluations
 action="run"
 
@@ -32,16 +32,17 @@ while (($# > 0)) ; do
           -sample_size) sample_size=$2 ; shift ; shift ;;
           -sample_size_next_design) sample_size_next_design=$2 ; shift ; shift ;;
           -wave)  wave="$2"  ; shift ; shift ;;
-	        # -GCM)  GCM="$2"  ; shift ; shift ;;
-          # -model) model=$2 ; shift ; shift ;;
-        #   -metrics) metrics="`echo $2 | sed -e 's/,/ /g'`" ; shift ; shift ;;
-        #   -tolerance)  tolerance="$2"  ; shift ; shift ;; #tolerance to the metrics
           -metrics)
             shift
             # of the format caseID_metricType [--tol tolerance1] for each metric
             metric_args=("$@")
             break
             ;;
+        esac
+done
+
+
+
           # -dry) dryrun=1 ; shift ;;
           # TODO: WRITE --help
 #           -h|-help|--help) echo Usage: $0 "[-param param_file] [-waves "1 [2 3 ...]"] [-wdir DIRNAME] [-sample_size sample_size] [-model model] [-metrics metrics1,metrics2,...] or directly "$0 model"" ; cat <<eod
@@ -56,10 +57,6 @@ while (($# > 0)) ; do
 # -metrics METRICS  : METRICS is a list of metrics separated by "," 
 # eod
 #                 exit 0 ;;
-          *) model=$1 ; shift ;;
-        esac
-done
-
 echo "wave=$wave"
 echo "metrics and tolerances ${metric_args[@]}"
 
