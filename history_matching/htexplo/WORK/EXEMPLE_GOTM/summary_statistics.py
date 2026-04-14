@@ -13,15 +13,27 @@ def bld_averaged(density, z):
     bld_vals = np.zeros(len(N2[:, 0]))
     dz = z[1] - z[0]
 
-    for t_idx in np.arange(len(N2[:, 0])):
+    nz = N2.shape[1]
+
+    for t_idx in range(N2.shape[0]):
         i = N2[t_idx, :].argmax()
 
-        # quadratic interpolation
-        f_1, f0, f1 = N2[t_idx, i - 1], N2[t_idx, i], N2[t_idx, i + 1]
-        delta = (f_1 - f1) / (2.0 * (f_1 - 2.0 * f0 + f1))
-        bld_vals[t_idx] = z[i] + delta * dz
+        # --- handle boundaries ---
+        if i == 0 or i == nz - 1:
+            # no interpolation possible → just take grid value
+            bld_vals[t_idx] = z[i]
+        else:
+            # quadratic interpolation
+            f_1, f0, f1 = N2[t_idx, i - 1], N2[t_idx, i], N2[t_idx, i + 1]
+            denom = (f_1 - 2.0 * f0 + f1)
 
-    return np.nanmean(bld_vals)  # depth corresponding to max N2 averaged over time
+            if denom == 0:  # avoid division by zero
+                bld_vals[t_idx] = z[i]
+            else:
+                delta = (f_1 - f1) / (2.0 * denom)
+                bld_vals[t_idx] = z[i] + delta * dz
+
+    return np.nanmean(bld_vals)
 
 
 def read_linear_eos_data(metadata):
