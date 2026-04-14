@@ -174,6 +174,7 @@ def simulation_wrapper(params, case_configs, param_list, runs_dir):
 
 
 def xr_opendataset_gotm(path, **kwargs):
+    # TODO: replace with gotmtool function 
     """
     Load gotm NetCDF outputs, as would do xarray.
     Currently, xarray cannot open gotm ouputs since z and zi are both coordinates and variables of time and space (for e.g. surface following coordinates).
@@ -251,21 +252,26 @@ def compute_one_metric(metric_name, penalization=1e10):
     """
     case_id, metric_type = metric_name.rsplit("_", 1)
     metadata = omldb.load_case_metadata(case_id)
-    metric = []
-    for run_id in run_ids:
+
+    def computation_wrapper(run_id):
         case_run_dir = runs_dir / run_id / case_id
         if gotm_run_valid(case_run_dir):
             ds = xr_opendataset_gotm(
                 case_run_dir / "gotm_out.nc"
             )  # in gotm outputs, z and zi are both coordinates and variables, which makes xarray crash
             val = metric_type_catalog(metric_type)(ds, metadata)
-            metric.append(val)
+            return val
         else:  # penalize gotm crash
             les = omldb.load_case(case_id)
-            metadata = omldb.load_case_metadata(case_id)
             val = penalization + metric_type_catalog(metric_type)(les, metadata)
-            metric.append(val)
+            return val
+
+    # compute in parallel
+    with Pool() as p:
+        metric = p.map(computation_wrapper, run_ids)
     return metric
+
+
 
 
 def parameter_file_to_dic(param_file):
